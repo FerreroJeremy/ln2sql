@@ -8,7 +8,7 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 
 ### Features
 
-- [ ] Import a database schema from sql dump
+- [X] Import a database schema from sql dump
 - [ ] Import a thesaurus from LibreOffice thesaurus template
 - [ ] Import stopword lists
 - [ ] Match database keywords with input sentence
