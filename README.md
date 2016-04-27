@@ -1,6 +1,6 @@
 # ln2sql
 
-ln2sql is a NLP tool to query a database in natural language, as described in the French paper :
+ln2sql is a tool to query a database in natural language, as described in the French paper :
 
 <i> Benoît Couderc and Jérémy Ferrero. fr2sql : Database Query in French. (fr2sql : Interrogation de bases de données en français [in French]). In Proceedings of 17th RECITAL (join with 22th TALN Conference). June 2015. Caen, France. ATALA. pp.1-12</i>
 
@@ -9,7 +9,7 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 ### Features
 
 - [X] Import a database schema from sql dump
-- [ ] Import a thesaurus from LibreOffice thesaurus template
+- [X] Import a thesaurus from LibreOffice thesaurus template
 - [ ] Import stopword lists
 - [ ] Match database keywords with input sentence
 - [ ] Parse input sentence in query sections
@@ -19,6 +19,7 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 - [ ] Date support
 - [ ] Negation support
 - [ ] User Interface
+- [ ] Multi threading
 
 ### SQL statement supported
 
@@ -44,4 +45,4 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 
 ### <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /> License
 
-This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+This tool is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
