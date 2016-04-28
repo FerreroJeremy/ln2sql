@@ -1,10 +1,10 @@
 # ln2sql
 
-ln2sql is a tool to query a database in natural language, as described in the French paper :
+ln2sql is a tool to query a database in natural language, as described in the following French paper (also available in this repository) :
 
 <i> Benoît Couderc and Jérémy Ferrero. fr2sql : Database Query in French. (fr2sql : Interrogation de bases de données en français [in French]). In Proceedings of 17th RECITAL (join with 22th TALN Conference). June 2015. Caen, France. ATALA. pp.1-12</i>
 
-In view to learn Python, I recently decided to implement our PHP ln2sql tool in Python. In addition, that will allow me to share the tool with the English-speaking community by making it public available.
+In view to learn Python, I recently decided to implement our originally PHP tool in Python. In addition, that will allow me to share the tool with the English-speaking community by making it public available.
 
 ### Features
 
@@ -14,10 +14,10 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 - [X] Match database keywords with input sentence
 - [ ] Parse input sentence in query sections
 - [ ] Parse sections
+- [ ] Print query structure in XML schema
+- [ ] Print query structure in JSON
 - [ ] Product query
 - [ ] Exception and error handling
-- [ ] Date support
-- [ ] Negation support
 - [ ] User Interface
 - [ ] Multi threading
 
@@ -40,6 +40,8 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 - [ ] order by
 - [ ] group by
 - [ ] multi query
+- [ ] Date support
+- [ ] Negation support
 
 <br/>
 
