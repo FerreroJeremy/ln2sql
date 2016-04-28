@@ -11,7 +11,7 @@ In view to learn Python, I recently decided to implement our PHP ln2sql tool in 
 - [X] Import a database schema from sql dump
 - [X] Import a thesaurus from LibreOffice thesaurus template
 - [ ] Import stopword lists
-- [ ] Match database keywords with input sentence
+- [X] Match database keywords with input sentence
 - [ ] Parse input sentence in query sections
 - [ ] Parse sections
 - [ ] Product query

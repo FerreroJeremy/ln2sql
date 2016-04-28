@@ -5,14 +5,17 @@ import sys
 
 from Database import Database
 from Thesaurus import Thesaurus
+from Grammar import Grammar
 
 if __name__ == '__main__':
     database = Database()
     database.load(sys.argv[1])
     #database.print_me()
 
-    thesaurus = Thesaurus()
-    thesaurus.load(sys.argv[2])
-    #thesaurus.print_me()
-    print(thesaurus.get_synonyms_of_a_word('élève'))
-    print(thesaurus.get_synonyms_of_a_word('eleve'))
+    grammar = Grammar()
+    grammar.set_database(database)
+    grammar.parse_sentence(sys.argv[2])
+
+    #thesaurus = Thesaurus()
+    #thesaurus.load(sys.argv[3])
+    #print(thesaurus.get_synonyms_of_a_word('eleve'))
