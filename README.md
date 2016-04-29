@@ -10,7 +10,7 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 - [X] Import a database schema from sql dump
 - [X] Import a thesaurus from LibreOffice thesaurus template
-- [ ] Import stopword lists
+- [X] Import stopword lists
 - [X] Match database keywords with input sentence
 - [ ] Parse input sentence in query sections
 - [ ] Parse sections
