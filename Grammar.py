@@ -5,6 +5,8 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 import unicodedata
+from Exception import ParsingException
+from Exception import GeneratingException
 
 class Grammar:
     database_object = None
@@ -27,28 +29,26 @@ class Grammar:
         number_of_table = 0
         number_of_select_column = 0
         number_of_where_column = 0
-        
+        last_table_position = 0
         select_phrase = ''
         from_phrase = ''
         where_phrase = ''
         
         words = re.findall(r"[\w,.]+", self.remove_accents(sentence))
-        
-        print '\n'
-        print 'Input sentence : ' + self.remove_accents(sentence)
 
         for i in range(0, len(words)):
             if words[i] in self.database_dico:
                 if number_of_table == 0:
                     select_phrase = words[:i]
                 number_of_table+=1
+                last_table_position = i
             for table in self.database_dico:
                 if words[i] in self.database_dico[table]:
                     if number_of_table == 0:
                         number_of_select_column+=1
                     else:
                         if number_of_where_column == 0:
-                            from_phrase = words[len(select_phrase):i]
+                            from_phrase = words[len(select_phrase):last_table_position+1]
                         number_of_where_column+=1
                     break
                 else:
@@ -57,28 +57,35 @@ class Grammar:
 
         where_phrase = words[len(select_phrase) + len(from_phrase):]
         
-        print '\n'
+        if (number_of_select_column + number_of_table + number_of_where_column) == 0:
+            raise ParsingException("No keyword find in sentence !")
         
-        print 'Number of columns in SELECT : ' + str(number_of_select_column)
-        print 'Number of tables : ' + str(number_of_table)
-        print 'Nombre of columns in WHERE : ' + str(number_of_where_column)
-        
-        print '\n'
-        
-        self.parse_select(number_of_select_column, select_phrase)
         self.parse_from(number_of_table, from_phrase)
+        self.parse_select(number_of_select_column, select_phrase)
         self.parse_where(number_of_where_column, where_phrase)
-        
-        print '\n'
 
     def parse_select(self, number_of_select_column, phrase):
-        print 'Select phrase : ' + ' '.join(phrase)
+        ''' TODO : count select '''
+        if number_of_select_column == 0: # select *
+            print 'Select phrase : ' + ' '.join(phrase)
+        elif number_of_select_column == 1: # one-column select
+            print 'Select phrase : ' + ' '.join(phrase)
+        else: # multi-column select
+            print 'Select phrase : ' + ' '.join(phrase)
     
     def parse_from(self, number_of_table, phrase):
-        print 'From phrase : ' + ' '.join(phrase)
+        if number_of_table == 0:
+            raise ParsingException("No table name find in sentence !")
+        if number_of_table == 1: # simple from
+            print 'From phrase : ' + ' '.join(phrase)
+        else: # there is a tier section
+            print 'From phrase : ' + ' '.join(phrase)
     
     def parse_tier(self, phrase):
         print 'Tier phrase : ' + ' '.join(phrase)
     
     def parse_where(self, number_of_where_column, phrase):
-        print 'Where phrase : ' + ' '.join(phrase)
+        if number_of_where_column == 0:
+            return
+        else:
+            print 'Where phrase : ' + ' '.join(phrase)
