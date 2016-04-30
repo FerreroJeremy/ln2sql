@@ -11,7 +11,7 @@ from StopwordFilter import StopwordFilter
 if __name__ == '__main__':
     database = Database()
     database.load(sys.argv[1])
-    #database.print_me()
+    database.print_me()
 
     try:
         grammar = Grammar()
