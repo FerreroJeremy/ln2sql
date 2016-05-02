@@ -2,11 +2,12 @@
 
 import re
 import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 import unicodedata
 from Exception import ParsingException
-from Exception import GeneratingException
+from Query import *
+
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class Grammar:
     database_object = None
@@ -69,7 +70,7 @@ class Grammar:
         from_phrase = ''
         where_phrase = ''
         
-        words = re.findall(r"[\w,.]+", self.remove_accents(sentence))
+        words = re.findall(r"[\w]+", self.remove_accents(sentence))
 
         for i in range(0, len(words)):
             if words[i] in self.database_dico:
@@ -98,128 +99,79 @@ class Grammar:
         if (number_of_select_column + number_of_table + number_of_where_column) == 0:
             raise ParsingException("No keyword found in sentence!")
         
-        self.parse_from(tables_of_from, from_phrase, columns_of_select, columns_of_where)
-        self.parse_select(number_of_select_column, select_phrase)
+        select_object = self.parse_select(columns_of_select, select_phrase)
+        queries = self.parse_from(tables_of_from, from_phrase, columns_of_select, columns_of_where)
+
+        for query in queries:
+            query.set_select(select_object)
+
         self.parse_where(number_of_where_column, where_phrase)
 
-    def parse_select(self, number_of_select_column, phrase):
+        return queries
+
+    def parse_select(self, columns_of_select, phrase):
+        select_object = Select()
         is_count_select_query = False
+        number_of_select_column = len(columns_of_select)
 
         for count_keyword in self.count_keywords:
             if count_keyword in phrase:
                 is_count_select_query = True
 
         if is_count_select_query:
-            print 'Count select phrase !'
-            if number_of_select_column == 0: # select count(*)
-                print 'Select phrase : ' + ' '.join(phrase)
-            elif number_of_select_column == 1: # one-column count select
-                print 'Select phrase : ' + ' '.join(phrase)
-            else: # multi-column count select
-                print 'Select phrase : ' + ' '.join(phrase)
+            select_object.set_count_type(True)
         else:
-            print 'Classic select'
-            if number_of_select_column == 0: # select *
-                print 'Select phrase : ' + ' '.join(phrase)
-            elif number_of_select_column == 1: # one-column select
-                print 'Select phrase : ' + ' '.join(phrase)
-            else: # multi-column select
-                print 'Select phrase : ' + ' '.join(phrase)
+            select_object.set_count_type(False)
+
+        for column in columns_of_select:
+            select_object.add_column(column)
+
+        return select_object
     
     def parse_from(self, tables_of_from, phrase, columns_of_select, columns_of_where):
         if len(tables_of_from) == 0:
             raise ParsingException("No table name found in sentence!")
 
-        print 'From phrase : ' + ' '.join(phrase)
-
         real_tables_of_from =[]
-        real_tables_of_join =[]
+        queries = []
+        number_of_junction_words = 0
+        number_of_disjunction_words = 0
 
-        if  len(tables_of_from) == 1:
-            print 'Simple query on one table'
+        for word in phrase:
+            if word in self.junction_keywords:
+                number_of_junction_words += 1
+            if word in self.disjunction_keywords:
+                number_of_disjunction_words += 1
+
+        if (number_of_junction_words + number_of_disjunction_words) == (len(tables_of_from) - 1):
             real_tables_of_from = tables_of_from
-        else:
-            number_of_junction_words = 0
-            number_of_disjunction_words = 0
-
-            for junction_keyword in self.junction_keywords:
-                if junction_keyword in phrase:
-                    number_of_junction_words += 1
-
-            for disjunction_keyword in self.disjunction_keywords:
-                if disjunction_keyword in phrase:
-                    number_of_disjunction_words += 1
-
-            if (number_of_junction_words + number_of_disjunction_words) >= 1:
-                if (number_of_junction_words + number_of_disjunction_words) == (len(tables_of_from) - 1):
-                    print 'Only multi query'
-                    real_tables_of_from = tables_of_from
-                elif (number_of_junction_words + number_of_disjunction_words) < (len(tables_of_from) - 1):
-                    print 'Multi query and TIER'
-                    real_tables_of_from = tables_of_from[:(number_of_junction_words + number_of_disjunction_words + 1)]
-                elif (number_of_junction_words + number_of_disjunction_words) > (len(tables_of_from) - 1):
-                    raise ParsingException("More junction and disjunction keywords than table name in FROM!")
-            else:
-                print 'No junction or disjunction keywords in FROM : No multi query but several table in FROM : TIER'
-                real_tables_of_from = tables_of_from[0]
+        elif (number_of_junction_words + number_of_disjunction_words) < (len(tables_of_from) - 1):
+            real_tables_of_from = tables_of_from[:(number_of_junction_words + number_of_disjunction_words + 1)]
+            # here, there are may be also table in where section, the parsing task is more complicated
+        elif (number_of_junction_words + number_of_disjunction_words) > (len(tables_of_from) - 1):
+            raise ParsingException("More junction and disjunction keywords than table name in FROM!")
 
         for table in real_tables_of_from:
-			for column in columns_of_select:
-				necessary_joint = self.is_there_a_necessary_joint(column, table)
-				if necessary_joint:
-					possible_joint = self.is_there_a_possible_joint(column, table)
-					return
-					if not possible_joint:
-						raise ParsingException("Query on column(s) inaccessible from the table of the FROM")
-					real_tables_of_join.append(table)
+            query = Query()
+            query.set_from(From(table))
+            join_object = None
+            join_object = Join()
+            for column in columns_of_select:
+                if column not in self.database_dico[table]:
+                    foreign_tables = self.get_tables_of_column(column)
+                    for foreign_table in foreign_tables:
+                        join_object.add_table(foreign_table)
+            query.set_join(join_object)
+            queries.append(query)
 
-    def is_there_a_necessary_joint(self, column, table):
-        if column not in self.database_dico[table]:
-            print column + ' is not in ' + table
-            return True
+        return queries
 
     def get_tables_of_column(self, column):
-    	tmp_table = []
+        tmp_table = []
         for table in self.database_dico:
-        	if column in self.database_dico[table]:
-        		tmp_table.append(table)
+            if column in self.database_dico[table]:
+                 tmp_table.append(table)
         return tmp_table
-
-    def get_primary_keys_of_table(self, table):
-    	primary_keys_of = self.database_object.get_primary_keys_by_table()
-    	return primary_keys_of[table]
-
-    def is_there_a_possible_joint(self, column, table):
-    	tables_containing_the_column = self.get_tables_of_column(column)
-    	for table_containing_the_column in tables_containing_the_column:
-    		link = self.is_there_a_possible_joint_between_two_table(table_containing_the_column, table)
-
-        if link:
-            return True
-        else: 
-            return False
-
-    def between_two_table(self, table_one, table_two):
-    	primary_keys_of_table_one = self.get_primary_keys_of_table(table_one)
-    	for primary_key in primary_keys_of_table_one:
-    		if primary_key in self.database_dico[table_two]:
-    			return True
-    	return False
-    
-    def is_there_a_possible_joint_between_two_table(self, table_one, table_two):
-    	for table in self.database_dico:
-    		if table_one != table:
-    			res = self.between_two_table(table_one, table_two)
-    			if res:
-    				return True
-    			else:
-    				return
-    				
-    def parse_tier(self, phrase):
-        return
     
     def parse_where(self, number_of_where_column, phrase):
-        if number_of_where_column == 0:
-            return
-        else:
-            print 'Where phrase : ' + ' '.join(phrase)
+        return

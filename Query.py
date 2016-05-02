@@ -1,8 +1,5 @@
 # -*- coding: utf-8 -*
 
-import os
-import time
-
 class Select():
 	count = False
 	columns = []
@@ -10,8 +7,12 @@ class Select():
 	def __init__(self, count=None, columns=None):
 		if count is not None:
 			self.count = count
+		else:
+			self.count = False
 		if columns is not None:
 			self.columns = columns
+		else:
+			self.columns = []
 
 	def set_count_type(self, count):
 		self.count = count
@@ -37,6 +38,9 @@ class Select():
 						output.write('"' + str(self.columns[i]) + '", ')
 				output.write(']\n')
 				output.write('\t},\n')
+		else:
+			output.write('\t"select": {\n')
+			output.write('\t},\n')
 
 class From():
 	table = ''
@@ -44,6 +48,8 @@ class From():
 	def __init__(self, table=None):
 		if table is not None:
 			self.table = table
+		else:
+			self.table = ''
 
 	def set_table(self, table):
 		self.table = table
@@ -59,6 +65,8 @@ class Join():
 	def __init__(self, tables=None):
 		if tables is not None:
 			self.tables = tables
+		else:
+			self.tables = []
 
 	def add_table(self, table):
 		self.tables.append(table)
@@ -79,6 +87,9 @@ class Join():
 						output.write('"' + str(self.tables[i]) + '", ')
 				output.write(']\n')
 				output.write('\t},\n')
+		else:
+			output.write('\t"join": {\n')
+			output.write('\t},\n')
 
 class Condition():
 	column = ''
@@ -123,6 +134,9 @@ class Where():
 					output.write('\n')
 				output.write('\t\t]\n')
 				output.write('\t},\n')
+		else:
+			output.write('\t"where": {\n')
+			output.write('\t},\n')
     
 class GroupBy():
 	columns = []
@@ -130,6 +144,8 @@ class GroupBy():
 	def __init__(self, columns=None):
 		if columns is not None:
 			self.columns = columns
+		else:
+			self.columns = []
 
 	def add_column(self, column):
 		self.columns.append(column)
@@ -150,6 +166,9 @@ class GroupBy():
 						output.write('"' + str(self.columns[i]) + '", ')
 				output.write(']\n')
 				output.write('\t},\n')
+		else:
+			output.write('\t"group_by": {\n')
+			output.write('\t},\n')
 
 class OrderBy():
 	column = ''
@@ -158,8 +177,12 @@ class OrderBy():
 	def __init__(self, column=None, order=None):
 		if column is not None:
 			self.column = column
+		else:
+			self.column = ''
 		if order is not None:
 			self.order = order
+		else:
+			self.order = None
 
 	def add_order(self, column, order):
 		self.column = column
@@ -212,9 +235,6 @@ class Query():
 		self.order_by = order_by
 
 	def print_me(self, filename="output.json"):
-		if os.path.exists(filename):
-			os.remove(filename)
-
 		output = open(filename, 'a')
 		output.write('{\n')
 		if self.select is not None:
@@ -231,6 +251,3 @@ class Query():
 			self.order_by.print_me(output)
 		output.write('}\n')
 		output.close()
-
-
-
