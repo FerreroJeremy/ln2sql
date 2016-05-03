@@ -53,6 +53,10 @@ class Grammar:
     def set_database(self, database):
         self.database_object = database
         self.database_dico = self.database_object.get_tables_into_dictionnary()
+
+    def set_language(self, language):
+        self.language = language
+        self.load_language_resources()
     
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))
