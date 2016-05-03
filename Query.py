@@ -55,9 +55,13 @@ class From():
 		self.table = table
 
 	def print_me(self, output):
-		output.write('\t"from": {\n')
-		output.write('\t\t"table": "' + str(self.table) + '"\n')
-		output.write('\t},\n')
+		if self.table != '':
+			output.write('\t"from": {\n')
+			output.write('\t\t"table": "' + str(self.table) + '"\n')
+			output.write('\t},\n')
+		else:
+			output.write('\t"from": {\n')
+			output.write('\t},\n')
 
 class Join():
 	tables = []
@@ -107,8 +111,9 @@ class Condition():
 class Where():
 	conditions = []
 
-	def __init__(self, clause):
-		self.conditions.append([None, clause])
+	def __init__(self, clause=None):
+		if clause is not None:
+			self.conditions.append([None, clause])
 
 	def add_condition(self, junction, clause):
 		self.conditions.append([junction, clause])
@@ -189,10 +194,14 @@ class OrderBy():
 		self.order = order
 
 	def print_me(self, output):
-		output.write('\t"order_by": {\n')
-		output.write('\t\t"order": "' + str(self.order) + '",\n')
-		output.write('\t\t"column": "' + str(self.column) + '"\n')
-		output.write('\t}\n')
+		if self.column != '':
+			output.write('\t"order_by": {\n')
+			output.write('\t\t"order": "' + str(self.order) + '",\n')
+			output.write('\t\t"column": "' + str(self.column) + '"\n')
+			output.write('\t}\n')
+		else:
+			output.write('\t"order_by": {\n')
+			output.write('\t}\n')
 
 class Query():
 	select = None
@@ -219,35 +228,47 @@ class Query():
 	def set_select(self, select):
 		self.select = select
 
+	def get_select(self):
+		return self.select
+
 	def set_from(self, _from):
 		self._from = _from
+
+	def get_from(self):
+		return self._from
 
 	def set_join(self, join):
 		self.join = join
 
+	def get_join(self):
+		return self.join
+
 	def set_where(self, where):
 		self.where = where
+
+	def get_where(self):
+		return self.where
 
 	def set_group_by(self, group_by):
 		self.group_by = group_by
 
+	def get_group_by(self):
+		return self.group_by
+
 	def set_order_by(self, order_by):
 		self.order_by = order_by
+
+	def get_order_by(self):
+		return self.order_by
 
 	def print_me(self, filename="output.json"):
 		output = open(filename, 'a')
 		output.write('{\n')
-		if self.select is not None:
-			self.select.print_me(output)
-		if self._from is not None:
-			self._from.print_me(output)
-		if self.join is not None:
-			self.join.print_me(output)
-		if self.where is not None:
-			self.where.print_me(output)
-		if self.group_by is not None:
-			self.group_by.print_me(output)
-		if self.order_by is not None:
-			self.order_by.print_me(output)
+		self.select.print_me(output)
+		self._from.print_me(output)
+		self.join.print_me(output)
+		self.where.print_me(output)
+		self.group_by.print_me(output)
+		self.order_by.print_me(output)
 		output.write('}\n')
 		output.close()

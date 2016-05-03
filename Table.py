@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*
 
+from Column import Column
+
 class Table:
     name = ''
     columns = []
@@ -33,8 +35,8 @@ class Table:
     def get_columns(self):
         return self.columns
 
-    def add_column(self, column):
-        self.columns.append(column)
+    def add_column(self, column_name, column_type):
+        self.columns.append(Column(column_name, column_type))
 
     def get_number_of_primary_keys(self):
         return len(self.primary_keys)

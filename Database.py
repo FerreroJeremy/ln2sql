@@ -3,7 +3,6 @@
 import re
 
 from Table import Table
-from Column import Column
 
 class color:
     PURPLE = '\033[95m'
@@ -78,9 +77,8 @@ class Database:
             else:
                 column_name = re.search("`(\w+)`", line)
                 if column_name is not None:
-                    type = self.predict_type(line)
-                    column = Column(column_name.group(1), type)
-                    table.add_column(column)
+                    column_type = self.predict_type(line)
+                    table.add_column(column_name.group(1), column_type)
         return table
 
     def print_me(self):

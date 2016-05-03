@@ -9,10 +9,11 @@ from Query import *
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-class Grammar:
+class Parser:
     database_object = None
     database_dico = None
     language = None
+    thesaurus_object = None
 
     count_keywords = []
     junction_keywords = []
@@ -57,6 +58,9 @@ class Grammar:
     def set_language(self, language):
         self.language = language
         self.load_language_resources()
+
+    def set_thesaurus(self, thesaurus):
+        self.thesaurus_object = thesaurus
     
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))
@@ -105,11 +109,13 @@ class Grammar:
         
         select_object = self.parse_select(columns_of_select, select_phrase)
         queries = self.parse_from(tables_of_from, from_phrase, columns_of_select, columns_of_where)
+        where_object = self.parse_where(number_of_where_column, where_phrase)
 
         for query in queries:
             query.set_select(select_object)
-
-        self.parse_where(number_of_where_column, where_phrase)
+            query.set_where(where_object)
+            query.set_group_by(GroupBy())
+            query.set_order_by(OrderBy())
 
         return queries
 
@@ -178,4 +184,5 @@ class Grammar:
         return tmp_table
     
     def parse_where(self, number_of_where_column, phrase):
-        return
+        where_object = Where()
+        return where_object

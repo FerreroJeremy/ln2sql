@@ -8,15 +8,12 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 ### Features in development
 
-- [X] Import a database schema from SQL dump
-- [X] Import a thesaurus from LibreOffice thesaurus template
-- [X] Import stopword lists
-- [X] Match database keywords with input sentence
-- [X] Parse input sentence in query sections
-- [X] Print query structure in JSON
-- [ ] Product query
+- [X] Load a database schema from SQL dump
+- [X] Import a personal thesaurus (from LibreOffice thesaurus template)
+- [X] Import a personnal stop word list
+- [X] Print the query structure in JSON file
 - [X] Exception and error handling
-- [ ] User Interface
+- [ ] Graphical User Interface
 - [ ] Multi-threading
 
 ### SQL statement supported
@@ -58,33 +55,7 @@ Example:
 ./ln2sql.py -i "Quel est l'âge de l'élève et du professeur dont le prénom est Jean ?" -l french -d ./bdd/tal.sql -j output.json
 ```
 
-### The Query Structure in JSON
-
-#### Class usage
-
-```python
-from Query import *
-
-# Create the Select, From and Join object directly in the Query constructor
-query = Query(Select(True, ['name', 'nickname', 'age']), From('student'), Join(['professor', 'class']))
-# Create three condition objects
-condition1 = Condition('name', '==', 'Nemmar')
-condition2 = Condition('nickname', '==', 'Jean')
-condition3 = Condition('age', '>=', '16')
-# Create a Where object with an initial condition
-where = Where(condition1)
-# Add two conditions to the Where object
-where.add_condition('and', condition2)
-where.add_condition('or', condition3)
-# Add Where, GroupBy and OrderBy objects to the Query object
-query.set_where(where)
-query.set_group_by(GroupBy(['name', 'nickname']))
-query.set_order_by(OrderBy('name', 'desc'))
-# Print the Query object
-query.print_me()
-```
-
-#### JSON format
+### The JSON output format
 
 ```JSON
 {
