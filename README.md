@@ -4,14 +4,14 @@ ln2sql is a tool to query a database in natural language, as described in the fo
 
 <i><a rel="license" href="https://www.researchgate.net/publication/278965118_fr2sql_Interrogation_de_bases_de_donnees_en_francais">Benoît Couderc and Jérémy Ferrero. fr2sql : Database Query in French. (fr2sql : Interrogation de bases de données en français [in French]). In Proceedings of the 17th RECITAL (affiliated with the 22th TALN Conference). June 2015. Caen, France. ATALA. pp.1-12 </a></i>
 
-In view to learn Python, I recently decided to implement our originally PHP project in Python. In addition, that will allow me to share the tool with the English-speaking community by making it public available.
+In view to learn Python, I recently decided to implement our originally PHP project in Python. In addition, that will allow me to share the tool with the English-speaking community by making it public available here. The languages provided are for now English and French.
 
-### Features in development
+### Extra features
 
 - [X] Load a database schema from SQL dump
-- [X] Import a personal thesaurus (from LibreOffice thesaurus template)
+- [X] Import a personal thesaurus (<a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>)
 - [X] Import a personnal stop word list
-- [X] Print the query structure in JSON file
+- [X] Print a query structure in JSON
 - [X] Exception and error handling
 - [X] Graphical User Interface
 - [ ] Multi-threading
@@ -41,6 +41,8 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 ### Usage
 
+You can directly use the python wrapper by the following way:
+
 ```
 usage: ./ln2sql.py -d <path> -l <language> -i <input-sentence> [-t] [-j <path>]
 -h						print this help message
@@ -50,10 +52,20 @@ usage: ./ln2sql.py -d <path> -l <language> -i <input-sentence> [-t] [-j <path>]
 -j <path>				path to JSON output file
 -t						use thesaurus
 ```
-Example:
+example of usage:
 ```
-./ln2sql.py -i "Quel est l'âge de l'élève et du professeur dont le prénom est Jean ?" -l french -d ./bdd/tal.sql -j output.json
+./ln2sql.py -i "Quel est l'âge de l'élève et du professeur dont le prénom est Jean ?" -l french -d ./database/tal.sql -j output.json
 ```
+
+or by graphical interface by typing the following command:
+```
+./ln2sql_gui.py
+```
+a window like the one below will appear:
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/graphical_user_interface.png">
+</p>
 
 ### The JSON output format
 
@@ -96,6 +108,13 @@ Example:
 	}
 }
 ```
+### Conception
+
+<p align="center">
+<img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/entity_mvc_class_diagram.png">
+</p>
+The tool is implemented under the Model-View-Controller pattern. The diagram is an entity embedding class diagram, not all relations appear in this one; Each packaged class is a file. The classes imported from the Python Standard Library like Tkinter, Thread, sys or unicodedata do not appear in the diagram.
+
 <br/>
 
 ### <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /> License
