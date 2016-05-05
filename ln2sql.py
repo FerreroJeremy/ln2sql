@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*
 
 import os, sys, getopt
+import unicodedata
 
 from Database import Database
 from Parser import Parser
@@ -9,31 +10,42 @@ from Generator import Generator
 from Thesaurus import Thesaurus
 from StopwordFilter import StopwordFilter
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
+class color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
 class ln2sql:
     def __init__(self, database_name, input_sentence, language, thesaurus_use=None, json_output_path=None):
         database = Database()
         database.load(database_name)
-        database.print_me()
+        #database.print_me()
 
-        try:
-            parser = Parser()
-            parser.set_database(database)
-            parser.set_language(language)
+        parser = Parser()
+        parser.set_database(database)
+        parser.set_language(language)
 
-            if thesaurus_use is not None:
-                thesaurus = Thesaurus()
-                thesaurus.load('./thesaurus/th_' + language + '.dat')
-                parser.set_thesaurus(thesaurus)
+        if thesaurus_use is not None:
+            thesaurus = Thesaurus()
+            thesaurus.load('./thesaurus/th_' + language + '.dat')
+            parser.set_thesaurus(thesaurus)
 
-            queries = parser.parse_sentence(input_sentence)
+        queries = parser.parse_sentence(input_sentence)
 
-            if json_output_path is not None:
-                self.remove_json(json_output_path)
-                for query in queries:
-                    query.print_me(json_output_path)
-                    
-        except Exception, e:
-            print e
+        if json_output_path is not None:
+            self.remove_json(json_output_path)
+            for query in queries:
+                query.print_me(json_output_path)
 
     def remove_json(self, filename="output.json"):
         if os.path.exists(filename):
@@ -81,7 +93,10 @@ def main(argv):
             if json_output_path is not None:
                 json_output_path = str(json_output_path)
 
+        try:
             ln2sql(str(database_name), str(input_sentence), str(language), thesaurus_usage, json_output_path)
+        except Exception, e:
+            print color.BOLD + color.RED + str(e) + color.END
 
     except getopt.GetoptError:
         print_help_message()

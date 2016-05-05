@@ -13,7 +13,7 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 - [X] Import a personnal stop word list
 - [X] Print the query structure in JSON file
 - [X] Exception and error handling
-- [ ] Graphical User Interface
+- [X] Graphical User Interface
 - [ ] Multi-threading
 
 ### SQL statement supported
