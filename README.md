@@ -10,7 +10,7 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 - [X] Load a database schema from SQL dump
 - [X] Import a personal thesaurus (<a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>)
-- [X] Import a personnal stop word list
+- [X] Import a personal stop word list
 - [X] Print a query structure in JSON
 - [X] Exception and error handling
 - [X] Graphical User Interface
