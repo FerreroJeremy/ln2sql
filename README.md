@@ -42,7 +42,6 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 ### Usage
 
 You can directly use the python wrapper by the following way:
-
 ```
 usage: ./ln2sql.py -d <path> -l <language> -i <input-sentence> [-t] [-j <path>]
 -h						print this help message
@@ -54,57 +53,54 @@ usage: ./ln2sql.py -d <path> -l <language> -i <input-sentence> [-t] [-j <path>]
 ```
 example of usage:
 ```
-./ln2sql.py -i "Quel est l'âge de l'élève et du professeur dont le prénom est Jean ?" -l french -d ./database/tal.sql -j output.json
+./ln2sql.py -i "What is the number of students?" -l english -d ./database/tal.sql -j output.json
 ```
-
 or by graphical interface by typing the following command:
 ```
 ./ln2sql_gui.py
 ```
 a window like the one below will appear:
-
 <p align="center">
 <img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/graphical_user_interface.png">
 </p>
 
-### The JSON output format
+### JSON output format
 
+With the following input:
+```
+What is the average age of students whose name is Doe or age over 25?
+```
+the output is:
 ```JSON
 {
 	"select": {
-		"count": "True",
-		"columns": ["name", "nickname", "age"]
+		"column": "age",
+		"type": "AVG"
 	},
 	"from": {
 		"table": "student"
 	},
 	"join": {
-		"tables": ["professor", "class"]
+	
 	},
 	"where": {
 		"conditions": [
 			{ "column": "name",
 			  "operator": "==",
-			  "value": "Nemmar"
-			},
-			{ "operator": "and" },
-			{ "column": "nickname",
-			  "operator": "==",
-			  "value": "Jean"
+			  "value": "DOe"
 			},
 			{ "operator": "or" },
 			{ "column": "age",
 			  "operator": ">=",
-			  "value": "16"
+			  "value": "25"
 			}
 		]
 	},
 	"group_by": {
-		"columns": ["name", "nickname"]
+	
 	},
 	"order_by": {
-		"order": "desc",
-		"column": "name"
+	
 	}
 }
 ```
