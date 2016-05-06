@@ -87,7 +87,7 @@ the output is:
 		"conditions": [
 			{ "column": "name",
 			  "operator": "==",
-			  "value": "DOe"
+			  "value": "Doe"
 			},
 			{ "operator": "or" },
 			{ "column": "age",
