@@ -3,11 +3,153 @@
 import re
 import sys
 import unicodedata
+from threading import Thread
 from Exception import ParsingException
 from Query import *
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
+class SelectParser(Thread):
+    def __init__(self, columns_of_select, phrase, count_keywords):
+        Thread.__init__(self)
+        self.select_object = None
+        self.columns_of_select = columns_of_select
+        self.phrase = phrase
+        self.count_keywords = count_keywords
+
+    def run(self):
+        self.select_object = Select()
+        is_count_select_query = False
+        number_of_select_column = len(self.columns_of_select)
+
+        for count_keyword in self.count_keywords:
+            if count_keyword in self.phrase:
+                is_count_select_query = True
+
+        if is_count_select_query:
+            self.select_object.set_count_type(True)
+        else:
+            self.select_object.set_count_type(False)
+
+        for column in self.columns_of_select:
+            self.select_object.add_column(column)
+
+    def join(self):
+        Thread.join(self)
+        return self.select_object
+
+class FromParser(Thread):
+    def __init__(self, tables_of_from, phrase, columns_of_select, columns_of_where, database_dico, junction_keywords, disjunction_keywords):
+        Thread.__init__(self)
+        self.queries = None
+        self.tables_of_from = tables_of_from
+        self.phrase = phrase
+        self.columns_of_select = columns_of_select
+        self.columns_of_where = columns_of_where
+        self.junction_keywords = junction_keywords
+        self.disjunction_keywords = disjunction_keywords
+        self.database_dico = database_dico
+
+    def get_tables_of_column(self, column):
+        tmp_table = []
+        for table in self.database_dico:
+            if column in self.database_dico[table]:
+                 tmp_table.append(table)
+        return tmp_table
+
+    def run(self):
+        if len(self.tables_of_from) == 0:
+            raise ParsingException("No table name found in sentence!")
+
+        real_tables_of_from =[]
+        self.queries = []
+        number_of_junction_words = 0
+        number_of_disjunction_words = 0
+
+        for word in self.phrase:
+            if word in self.junction_keywords:
+                number_of_junction_words += 1
+            if word in self.disjunction_keywords:
+                number_of_disjunction_words += 1
+
+        if (number_of_junction_words + number_of_disjunction_words) == (len(self.tables_of_from) - 1):
+            real_tables_of_from = self.tables_of_from
+        elif (number_of_junction_words + number_of_disjunction_words) < (len(self.tables_of_from) - 1):
+            real_tables_of_from = self.tables_of_from[:(number_of_junction_words + number_of_disjunction_words + 1)]
+            # here, there are may be also table in where section, the parsing task is more complicated
+        elif (number_of_junction_words + number_of_disjunction_words) > (len(self.tables_of_from) - 1):
+            raise ParsingException("More junction and disjunction keywords than table name in FROM!")
+
+        for table in real_tables_of_from:
+            query = Query()
+            query.set_from(From(table))
+            join_object = None
+            join_object = Join()
+            for column in self.columns_of_select:
+                if column not in self.database_dico[table]:
+                    foreign_tables = self.get_tables_of_column(column)
+                    for foreign_table in foreign_tables:
+                        join_object.add_table(foreign_table)
+            for column in self.columns_of_where:
+                if column not in self.database_dico[table]:
+                    foreign_tables = self.get_tables_of_column(column)
+                    for foreign_table in foreign_tables:
+                        join_object.add_table(foreign_table)
+            query.set_join(join_object)
+            self.queries.append(query)
+
+    def join(self):
+        Thread.join(self)
+        return self.queries
+
+class WhereParser(Thread):
+    def __init__(self, number_of_where_column, phrase):
+        Thread.__init__(self)
+        self.where_object = None
+
+    def run(self):
+        self.where_object = Where()
+
+    def join(self):
+        Thread.join(self)
+        return self.where_object
+
+class JoinParser(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.join_object = None
+
+    def run(self):
+        self.join_object = Join()
+
+    def join(self):
+        Thread.join(self)
+        return self.join_object
+
+class GroupByParser(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.group_by_object = None
+
+    def run(self):
+        self.group_by_object = GroupBy()
+
+    def join(self):
+        Thread.join(self)
+        return self.group_by_object
+
+class OrderByParser(Thread):
+    def __init__(self):
+        Thread.__init__(self)
+        self.order_by_object = None
+
+    def run(self):
+        self.order_by_object = OrderBy()
+
+    def join(self):
+        Thread.join(self)
+        return self.order_by_object
 
 class Parser:
     database_object = None
@@ -26,7 +168,7 @@ class Parser:
     english_count_keywords = ['how many', 'number']
     english_junction_keywords = ['and']
     english_disjunction_keywords = ['or']
-    
+
     def __init__(self, language=None, database=None):
         if language is not None:
             self.language = language
@@ -61,11 +203,11 @@ class Parser:
 
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus
-    
+
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))
         return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
-    
+
     def parse_sentence(self, sentence):
         number_of_table = 0
         number_of_select_column = 0
@@ -99,90 +241,39 @@ class Parser:
                         number_of_where_column+=1
                     break
                 else:
-                    if number_of_table != 0 and number_of_where_column == 0 and i == (len(words)-1):
+                    if (number_of_table != 0) and (number_of_where_column == 0) and (i == (len(words)-1)):
                         from_phrase = words[len(select_phrase):]
 
         where_phrase = words[len(select_phrase) + len(from_phrase):]
         
         if (number_of_select_column + number_of_table + number_of_where_column) == 0:
             raise ParsingException("No keyword found in sentence!")
-        
-        select_object = self.parse_select(columns_of_select, select_phrase)
-        queries = self.parse_from(tables_of_from, from_phrase, columns_of_select, columns_of_where)
-        where_object = self.parse_where(number_of_where_column, where_phrase)
+
+        select_parser = SelectParser(columns_of_select, select_phrase, self.count_keywords)
+        from_parser = FromParser(tables_of_from, from_phrase, columns_of_select, columns_of_where, self.database_dico, self.junction_keywords, self.disjunction_keywords)
+        where_parser = WhereParser(number_of_where_column, where_phrase)
+        join_parser = JoinParser()
+        group_by_parser = GroupByParser()
+        order_by_parser = OrderByParser()
+
+        select_parser.start()
+        from_parser.start()
+        where_parser.start()
+        join_parser.start()
+        group_by_parser.start()
+        order_by_parser.start()
+
+        select_object = select_parser.join()
+        queries = from_parser.join()
+        where_object = where_parser.join()
+        join_object = join_parser.join()
+        group_by_object = group_by_parser.join()
+        order_by_object = order_by_parser.join()
 
         for query in queries:
             query.set_select(select_object)
             query.set_where(where_object)
-            query.set_group_by(GroupBy())
-            query.set_order_by(OrderBy())
+            query.set_group_by(group_by_object)
+            query.set_order_by(order_by_object)
 
         return queries
-
-    def parse_select(self, columns_of_select, phrase):
-        select_object = Select()
-        is_count_select_query = False
-        number_of_select_column = len(columns_of_select)
-
-        for count_keyword in self.count_keywords:
-            if count_keyword in phrase:
-                is_count_select_query = True
-
-        if is_count_select_query:
-            select_object.set_count_type(True)
-        else:
-            select_object.set_count_type(False)
-
-        for column in columns_of_select:
-            select_object.add_column(column)
-
-        return select_object
-    
-    def parse_from(self, tables_of_from, phrase, columns_of_select, columns_of_where):
-        if len(tables_of_from) == 0:
-            raise ParsingException("No table name found in sentence!")
-
-        real_tables_of_from =[]
-        queries = []
-        number_of_junction_words = 0
-        number_of_disjunction_words = 0
-
-        for word in phrase:
-            if word in self.junction_keywords:
-                number_of_junction_words += 1
-            if word in self.disjunction_keywords:
-                number_of_disjunction_words += 1
-
-        if (number_of_junction_words + number_of_disjunction_words) == (len(tables_of_from) - 1):
-            real_tables_of_from = tables_of_from
-        elif (number_of_junction_words + number_of_disjunction_words) < (len(tables_of_from) - 1):
-            real_tables_of_from = tables_of_from[:(number_of_junction_words + number_of_disjunction_words + 1)]
-            # here, there are may be also table in where section, the parsing task is more complicated
-        elif (number_of_junction_words + number_of_disjunction_words) > (len(tables_of_from) - 1):
-            raise ParsingException("More junction and disjunction keywords than table name in FROM!")
-
-        for table in real_tables_of_from:
-            query = Query()
-            query.set_from(From(table))
-            join_object = None
-            join_object = Join()
-            for column in columns_of_select:
-                if column not in self.database_dico[table]:
-                    foreign_tables = self.get_tables_of_column(column)
-                    for foreign_table in foreign_tables:
-                        join_object.add_table(foreign_table)
-            query.set_join(join_object)
-            queries.append(query)
-
-        return queries
-
-    def get_tables_of_column(self, column):
-        tmp_table = []
-        for table in self.database_dico:
-            if column in self.database_dico[table]:
-                 tmp_table.append(table)
-        return tmp_table
-    
-    def parse_where(self, number_of_where_column, phrase):
-        where_object = Where()
-        return where_object

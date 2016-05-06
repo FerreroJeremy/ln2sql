@@ -79,7 +79,8 @@ class Join():
 			self.tables = []
 
 	def add_table(self, table):
-		self.tables.append(table)
+		if table not in self.tables:
+			self.tables.append(table)
 
 	def print_me(self, output):
 		if len(self.tables) >= 1:

@@ -14,7 +14,7 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 - [X] Print a query structure in JSON
 - [X] Exception and error handling
 - [X] Graphical User Interface
-- [ ] Multi-threading
+- [X] Multi-threading
 
 ### SQL statement supported
 
