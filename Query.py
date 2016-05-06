@@ -7,42 +7,34 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 class Select():
-	count = False
 	columns = []
 
-	def __init__(self, count=None, columns=None):
-		if count is not None:
-			self.count = count
-		else:
-			self.count = False
-		if columns is not None:
-			self.columns = columns
-		else:
-			self.columns = []
+	def __init__(self):
+		self.columns = []
 
-	def set_count_type(self, count):
-		self.count = count
-
-	def add_column(self, column):
-		self.columns.append(column)
+	def add_column(self, column, column_type):
+		self.columns.append([column, column_type])
 
 	def print_me(self, output):
 		if len(self.columns) >= 1:
 			if len(self.columns) == 1:
 				output.write('\t"select": {\n')
-				output.write('\t\t"count": "' + str(self.count) + '",\n')
-				output.write('\t\t"column": "' + str(self.columns[0]) + '"\n')
+				output.write('\t\t"column": "' + str(self.columns[0][0]) + '",\n')
+				output.write('\t\t"type": "' + str(self.columns[0][1]) + '"\n')
 				output.write('\t},\n')
 			else:
 				output.write('\t"select": {\n')
-				output.write('\t\t"count": "' + str(self.count) + '",\n')
-				output.write('\t\t"columns": [')
+				output.write('\t\t"columns": [\n')
 				for i in range(0, len(self.columns)):
 					if i == (len(self.columns)-1):
-						output.write('"' + str(self.columns[i]) + '"')
+						output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
+						output.write('\t\t\t  "type": "' + str(self.columns[i][1]) + '"\n')
+						output.write('\t\t\t}\n')
 					else:
-						output.write('"' + str(self.columns[i]) + '", ')
-				output.write(']\n')
+						output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
+						output.write('\t\t\t  "type": "' + str(self.columns[i][1]) + '"\n')
+						output.write('\t\t\t},\n')
+				output.write('\t\t]\n')
 				output.write('\t},\n')
 		else:
 			output.write('\t"select": {\n')
