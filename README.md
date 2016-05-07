@@ -4,7 +4,7 @@ ln2sql is a tool to query a database in natural language, as described in the fo
 
 <i><a rel="license" href="https://www.researchgate.net/publication/278965118_fr2sql_Interrogation_de_bases_de_donnees_en_francais">Benoît Couderc and Jérémy Ferrero. fr2sql : Database Query in French. (fr2sql : Interrogation de bases de données en français [in French]). In Proceedings of the 17th RECITAL (affiliated with the 22th TALN Conference). June 2015. Caen, France. ATALA. pp.1-12 </a></i>
 
-In view to learn Python, I recently decided to implement our originally PHP project in Python. In addition, that will allow me to share the tool with the English-speaking community by making it public available here. The languages provided are for now English and French.
+In view to learn Python, I recently decided to implement our originally PHP project in Python. In addition, that will allow me to share the tool with the English-speaking community by making it public available here. Languages currently supported are English and French.
 
 ### Extra features
 
@@ -107,9 +107,9 @@ the output is:
 ### Conception
 
 <p align="center">
-<img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/entity_mvc_class_diagram.png">
+<img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/mvc_class_diagram.png">
 </p>
-The tool is implemented under the Model-View-Controller pattern. The diagram is an entity embedding class diagram, not all relations appear in this one; Each packaged class is a file. The classes imported from the Python Standard Library like Tkinter, Thread, sys or unicodedata do not appear in the diagram.
+The tool is implemented under the Model-View-Controller pattern. The classes imported from the Python Standard Library do not appear in the diagram except those required for inheritance (<i>e.g.</i> <i>Thread</i> or <i>Exception</i>).
 
 <br/>
 
