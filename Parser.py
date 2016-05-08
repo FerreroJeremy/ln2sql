@@ -114,9 +114,6 @@ class FromParser(Thread):
         return tmp_table
 
     def run(self):
-        if len(self.tables_of_from) == 0:
-            raise ParsingException("No table name found in sentence!")
-
         self.queries = []
 
         for table in self.tables_of_from:
@@ -189,62 +186,30 @@ class Parser:
     min_keywords = []
     junction_keywords = []
     disjunction_keywords = []
+    greater_keywords = []
+    less_keywords = []
+    between_keywords = []
+    order_by_keywords = []
+    group_by_keywords = []
+    negation_keywords = []
 
-    french_count_keywords = ['combien', 'nombre']
-    french_sum_keywords = ['somme', 'total']
-    french_average_keywords = ['moyenne']
-    french_max_keywords = ['maximum', 'maximale', 'plus grand']
-    french_min_keywords = ['minimum', 'minimale', 'plus petit']
-    french_junction_keywords = ['et']
-    french_disjunction_keywords = ['ou']
-
-    english_count_keywords = ['how many', 'number']
-    english_sum_keywords = ['sum', 'total']
-    english_average_keywords = ['average']
-    english_max_keywords = ['maximum']
-    english_min_keywords = ['minimum']
-    english_junction_keywords = ['and']
-    english_disjunction_keywords = ['or']
-
-    def __init__(self, language=None, database=None):
-        if language is not None:
-            self.language = language
-        else:
-            self.language = 'french'
-
-        self.load_language_resources()
-
-        if database is not None:
-            self.database_object = database
-            self.database_dico = self.database_object.get_tables_into_dictionnary()
-
-    def load_language_resources(self):
-        if self.language == 'french':
-            self.count_keywords = self.french_count_keywords
-            self.sum_keywords = self.french_sum_keywords
-            self.average_keywords = self.french_average_keywords
-            self.max_keywords = self.french_max_keywords
-            self.min_keywords = self.french_min_keywords
-            self.junction_keywords = self.french_junction_keywords
-            self.disjunction_keywords = self.french_disjunction_keywords
-        elif self.language == 'english':
-            self.count_keywords = self.english_count_keywords
-            self.sum_keywords = self.english_sum_keywords
-            self.average_keywords = self.english_average_keywords
-            self.max_keywords = self.english_max_keywords
-            self.min_keywords = self.english_min_keywords
-            self.junction_keywords = self.english_junction_keywords
-            self.disjunction_keywords = self.english_disjunction_keywords
-        else:
-            raise ParsingException("No resource found!")
-
-    def set_database(self, database):
+    def __init__(self, database, config):
         self.database_object = database
         self.database_dico = self.database_object.get_tables_into_dictionnary()
 
-    def set_language(self, language):
-        self.language = language
-        self.load_language_resources()
+        self.count_keywords = config.get_count_keywords()
+        self.sum_keywords = config.get_sum_keywords()
+        self.average_keywords = config.get_avg_keywords()
+        self.max_keywords = config.get_max_keywords()
+        self.min_keywords = config.get_min_keywords()
+        self.junction_keywords = config.get_junction_keywords()
+        self.disjunction_keywords = config.get_disjunction_keywords()
+        self.greater_keywords = config.get_greater_keywords()
+        self.less_keywords = config.get_less_keywords()
+        self.between_keywords = config.get_between_keywords()
+        self.order_by_keywords = config.get_order_by_keywords()
+        self.group_by_keywords = config.get_group_by_keywords()
+        self.negation_keywords = config.get_negation_keywords()
 
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus
@@ -330,6 +295,9 @@ class Parser:
             if word in tables_of_from:
                 real_tables_of_from.append(word)
         tables_of_from = real_tables_of_from
+
+        if len(tables_of_from) == 0:
+            raise ParsingException("No table name found in sentence!")
 
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
         from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_dico)

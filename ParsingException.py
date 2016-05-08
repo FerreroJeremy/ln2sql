@@ -13,4 +13,4 @@ class ParsingException(Exception):
         self.reason = reason
 
     def __str__(self):
-        return 'Error : ' + self.reason
+        return 'Error: ' + self.reason

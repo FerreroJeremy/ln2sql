@@ -51,17 +51,17 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 You can directly use the python wrapper by the following way:
 ```
-usage: ./ln2sql.py -d <path> -l <language> -i <input-sentence> [-t] [-j <path>]
+usage: ./ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]
 -h						print this help message
 -d <path>				path to sql dump file
--l <language>			language of the input sentence
+-l <path>				path to language configuration file
 -i <input-sentence>		input sentence to parse
 -j <path>				path to JSON output file
--t						use thesaurus
+-t <path>				path to thesaurus file
 ```
 example of usage:
 ```
-./ln2sql.py -i "What is the number of students?" -l english -d ./database/tal.sql -j output.json
+./ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/tal.sql -j output.json
 ```
 or by graphical interface by typing the following command:
 ```
