@@ -4,78 +4,104 @@ import re
 import sys
 import unicodedata
 from threading import Thread
-from Exception import ParsingException
+from ParsingException import ParsingException
 from Query import *
 
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
 class SelectParser(Thread):
-    def __init__(self, columns_of_select, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords):
+    def __init__(self, columns_of_select, tables_of_from, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, database_dico):
         Thread.__init__(self)
-        self.select_object = None
+        self.select_objects = []
         self.columns_of_select = columns_of_select
+        self.tables_of_from = tables_of_from
         self.phrase = phrase
         self.count_keywords = count_keywords
         self.sum_keywords = sum_keywords
         self.average_keywords = average_keywords
         self.max_keywords = max_keywords
         self.min_keywords = min_keywords
+        self.database_dico = database_dico
+
+    def get_tables_of_column(self, column):
+        tmp_table = []
+        for table in self.database_dico:
+            if column in self.database_dico[table]:
+                 tmp_table.append(table)
+        return tmp_table
 
     def run(self):
-        self.select_object = Select()
-        is_count = False
-        number_of_select_column = len(self.columns_of_select)
+        for table_of_from in self.tables_of_from:
+            self.select_object = Select()
+            is_count = False
+            number_of_select_column = len(self.columns_of_select)
 
-        if number_of_select_column == 0:
-            for count_keyword in self.count_keywords:
-                if count_keyword in self.phrase:
-                    is_count = True
+            if number_of_select_column == 0:
+                for count_keyword in self.count_keywords:
+                    if count_keyword in self.phrase:
+                        is_count = True
 
-            if is_count:
-                self.select_object.add_column(None, 'COUNT')
+                if is_count:
+                    self.select_object.add_column(None, 'COUNT')
+                else:
+                    self.select_object.add_column(None, None)
             else:
-                self.select_object.add_column(None, None)
-        else:
-            select_phrases = []
-            previous_index = 0
-            for i in range(0,len(self.phrase)):
-                if self.phrase[i] in self.columns_of_select:
-                    select_phrases.append(self.phrase[previous_index:i+1])
-                    previous_index = i+1
+                select_phrases = []
+                previous_index = 0
+                for i in range(0,len(self.phrase)):
+                    if self.phrase[i] in self.columns_of_select:
+                        select_phrases.append(self.phrase[previous_index:i+1])
+                        previous_index = i+1
 
-            for i in range(0, len(select_phrases)):
-                select_type = None
-                phrase = ' '.join(select_phrases[i])
+                select_phrases.append(self.phrase[previous_index:])
 
-                for keyword in self.average_keywords:
-                    if keyword in phrase:
-                        select_type = 'AVG'
-                for keyword in self.count_keywords:
-                    if keyword in phrase:
-                        select_type = 'COUNT'
-                for keyword in self.max_keywords:
-                    if keyword in phrase:
-                        select_type = 'MAX'
-                for keyword in self.min_keywords:
-                    if keyword in phrase:
-                        select_type = 'MIN'
-                for keyword in self.sum_keywords:
-                    if keyword in phrase:
-                        select_type = 'SUM'
-                self.select_object.add_column(self.columns_of_select[i], select_type)
+                for i in range(0, len(select_phrases)):
+                    select_type = None
+                    phrase = ' '.join(select_phrases[i])
+
+                    for keyword in self.average_keywords:
+                        if keyword in phrase:
+                            select_type = 'AVG'
+                    for keyword in self.count_keywords:
+                        if keyword in phrase:
+                            select_type = 'COUNT'
+                    for keyword in self.max_keywords:
+                        if keyword in phrase:
+                            select_type = 'MAX'
+                    for keyword in self.min_keywords:
+                        if keyword in phrase:
+                            select_type = 'MIN'
+                    for keyword in self.sum_keywords:
+                        if keyword in phrase:
+                            select_type = 'SUM'
+
+                    if (i != len(select_phrases)-1) or (select_type is not None):
+                        if i >= len(self.columns_of_select):
+                            column = None
+                        else:
+                            tables_of_column = self.get_tables_of_column(self.columns_of_select[i])
+                            for table in tables_of_column:
+                                column = str(table) + '.' + str(self.columns_of_select[i])
+                                break
+                            for table in tables_of_column:
+                                if table == table_of_from:
+                                    column = str(table) + '.' + str(self.columns_of_select[i])
+                                    break
+                        self.select_object.add_column(column, select_type)
+
+            self.select_objects.append(self.select_object)
 
 
     def join(self):
         Thread.join(self)
-        return self.select_object
+        return self.select_objects
 
 class FromParser(Thread):
-    def __init__(self, tables_of_from, phrase, columns_of_select, columns_of_where, database_dico):
+    def __init__(self, tables_of_from, columns_of_select, columns_of_where, database_dico):
         Thread.__init__(self)
         self.queries = []
         self.tables_of_from = tables_of_from
-        self.phrase = phrase
         self.columns_of_select = columns_of_select
         self.columns_of_where = columns_of_where
         self.database_dico = database_dico
@@ -92,13 +118,8 @@ class FromParser(Thread):
             raise ParsingException("No table name found in sentence!")
 
         self.queries = []
-        real_tables_of_from = []
 
-        for word in self.phrase:
-            if word in self.tables_of_from:
-                real_tables_of_from.append(word)
-
-        for table in real_tables_of_from:
+        for table in self.tables_of_from:
             query = Query()
             query.set_from(From(table))
             join_object = Join()
@@ -284,7 +305,6 @@ class Parser:
             last_junction_word_index = -1
 
             for i in range(0, len(from_phrases)):
-                phrase = ' '.join(from_phrases[i])
                 number_of_junction_words = 0
                 number_of_disjunction_words = 0
 
@@ -296,7 +316,7 @@ class Parser:
 
                 if (number_of_junction_words + number_of_disjunction_words) > 0:
                     last_junction_word_index = i
-            
+
             if last_junction_word_index == -1:
                 from_phrase = sum(from_phrases[:1], [])
                 where_phrase = sum(from_phrases[1:], []) + where_phrase
@@ -304,8 +324,15 @@ class Parser:
                  from_phrase = sum(from_phrases[:last_junction_word_index+1], [])
                  where_phrase = sum(from_phrases[last_junction_word_index+1:], []) + where_phrase
 
-        select_parser = SelectParser(columns_of_select, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords)
-        from_parser = FromParser(tables_of_from, from_phrase, columns_of_select, columns_of_where, self.database_dico)
+        real_tables_of_from = []
+
+        for word in from_phrase:
+            if word in tables_of_from:
+                real_tables_of_from.append(word)
+        tables_of_from = real_tables_of_from
+
+        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
+        from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_dico)
         where_parser = WhereParser(number_of_where_column, where_phrase)
         group_by_parser = GroupByParser()
         order_by_parser = OrderByParser()
@@ -316,14 +343,15 @@ class Parser:
         group_by_parser.start()
         order_by_parser.start()
 
-        select_object = select_parser.join()
+        select_objects = select_parser.join()
         queries = from_parser.join()
         where_object = where_parser.join()
         group_by_object = group_by_parser.join()
         order_by_object = order_by_parser.join()
 
-        for query in queries:
-            query.set_select(select_object)
+        for i in range(0, len(queries)):
+            query = queries[i]
+            query.set_select(select_objects[i])
             query.set_where(where_object)
             query.set_group_by(group_by_object)
             query.set_order_by(order_by_object)

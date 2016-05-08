@@ -17,17 +17,17 @@ class App:
 		root.title('ln2sql')
 
 		self.sentence_frame = LabelFrame(root, text="Input Sentence", padx=5, pady=5)
-		self.sentence_frame.pack(fill="both", expand="yes", padx=10, pady=10)
+		self.sentence_frame.pack(fill="both", expand="yes", padx=10, pady=5)
 
 		self.input_sentence_string = StringVar() 
 		self.input_sentence_string.set("Enter a sentence...")
-		self.input_sentence_entry = Entry(self.sentence_frame, textvariable=self.input_sentence_string, width=75)
+		self.input_sentence_entry = Entry(self.sentence_frame, textvariable=self.input_sentence_string, width=50)
 		self.input_sentence_entry.pack()
 		self.input_sentence_entry.bind('<Button-1>', self.clearEntry)
 
 
 		self.database_frame = LabelFrame(root, text="Database Selection", padx=5, pady=5)
-		self.database_frame.pack(fill="both", expand="yes", padx=10, pady=10)
+		self.database_frame.pack(fill="both", expand="yes", padx=10, pady=5)
 
 		self.database_path_label = Label(self.database_frame, text="No SQL dump selected...")
 		self.database_path_label.pack(side="left")
@@ -37,7 +37,7 @@ class App:
 
 
 		self.thesaurus_frame = LabelFrame(root, text="Import your personal thesaurus ?", padx=5, pady=5)
-		self.thesaurus_frame.pack(fill="both", expand="yes", padx=10, pady=10)
+		self.thesaurus_frame.pack(fill="both", expand="yes", padx=10, pady=5)
 
 		self.thesaurus_path_label = Label(self.thesaurus_frame, text="No thesaurus selected...")
 		self.thesaurus_path_label.pack(side="left")
@@ -53,7 +53,6 @@ class App:
 		self.language_frame = LabelFrame(settings_frame, text="Language Selection", padx=5, pady=5)
 		self.language_frame.pack(side="left", fill="both", expand="yes", padx=5, pady=5)
 
-
 		self.language = StringVar()
 		self.language.set("english")
 		self.english_radio_button = Radiobutton(self.language_frame, text="English", variable=self.language, value="english", justify="left")
@@ -68,27 +67,11 @@ class App:
 		self.german_radio_button.pack(side="top", fill="both", expand="yes")
 
 
-		self.output_frame = LabelFrame(settings_frame, text="Output Settings", padx=5, pady=5)
-		self.output_frame.pack(side="left", fill="both", expand="yes", padx=5, pady=5)
+		self.go_button = Button(root, text="Go!", command=self.lanch_parsing)
+		self.go_button.pack(side="right", fill="both", expand="yes", padx=10, pady=2)
 
-		self.translate_sql_value = IntVar()
-		self.translate_no_sql_value = IntVar()
-		self.json_output_value = IntVar()
-		self.translate_sql_button = Checkbutton(self.output_frame, text="Translate to SQL query", variable=self.translate_sql_value, justify="left")
-		self.translate_no_sql_button = Checkbutton(self.output_frame, text="Translate to NoSQL query", variable=self.translate_no_sql_value, justify="left")
-		self.print_json_file_button = Checkbutton(self.output_frame, text="Print the query structure in output JSON file", variable=self.json_output_value, justify="left")
-		self.translate_sql_button.pack(side="top", fill="both", expand="yes")
-		self.translate_no_sql_button.pack(side="top", fill="both", expand="yes")
-		self.print_json_file_button.pack(side="top", fill="both", expand="yes")
-		self.print_json_file_button.select()
-		self.translate_sql_button.select()
-
-
-		self.go_button = Button(root, text="Go!", command=self.lanch_parsing, width=75)
-		self.go_button.pack(padx=5, pady=5)
-
-		self.reset_button = Button(root, text="Reset", fg="red", command=self.reset_window, width=75)
-		self.reset_button.pack(padx=5, pady=5)
+		self.reset_button = Button(root, text="Reset", fg="red", command=self.reset_window)
+		self.reset_button.pack(side="right", fill="both", expand="yes", padx=10, pady=2)
 
 	def clearEntry(self, event):
 		self.input_sentence_string.set("")
@@ -106,25 +89,17 @@ class App:
 		self.thesaurus_path_label["text"] = "No thesaurus selected..."
 		self.input_sentence_string.set("Enter a sentence...")
 		self.language.set("english")
-		self.print_json_file_button.deselect()
-		self.translate_no_sql_button.deselect()
-		self.translate_sql_button.deselect()
 		return
 
 	def lanch_parsing(self):
 		try:
 			thesaurus_use = False
 
-			if self.json_output_value.get() == 1:
-				json_output_path = './output.json'
-			else:
-				json_output_path = None
-
 			if str(self.thesaurus_path_label["text"]) != "No thesaurus selected...":
 				thesaurus_use = True
 
 			if str(self.database_path_label["text"]) != "No SQL dump selected..." and str(self.input_sentence_string.get()) != "Enter a sentence...":
-				ln2sql(self.database_path_label["text"], self.input_sentence_string.get(), str(self.language.get()).lower(), thesaurus_use, json_output_path)
+				ln2sql(self.database_path_label["text"], self.input_sentence_string.get(), str(self.language.get()).lower(), thesaurus_use, './output.json')
 				showinfo('Result', 'Parsing done!')
 			else:
 				showwarning('Warning','You must fill in all fields, please.')

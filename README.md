@@ -18,24 +18,32 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 ### SQL statement supported
 
-- [ ] one-column select
-- [ ] multi-column select
-- [ ] table select
-- [ ] count select
+- [X] one-column select
+- [X] multiple columns select
+- [X] all columns select
+- [X] count-select
+- [X] sum-select
+- [X] avg-select
+- [X] min-select
+- [X] max-select
 - [ ] inner join
-- [ ] where
-- [ ] comparison
+- [ ] one-condition where
+- [ ] multiple conditions where
 - [ ] junction
 - [ ] disjunction
 - [ ] cross-condition
-- [ ] sum
-- [ ] avg
-- [ ] min
-- [ ] max
-- [ ] between
+- [ ] equal operator
+- [ ] not equal operator
+- [ ] greater-than operator
+- [ ] less-than operator
+- [ ] between operator
+- [ ] sum in condition
+- [ ] avg in condition
+- [ ] min in condition
+- [ ] max in condition
 - [ ] order by
 - [ ] group by
-- [ ] multi query
+- [X] multiple queries
 - [ ] date support
 - [ ] negation support
 

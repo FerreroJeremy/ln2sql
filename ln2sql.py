@@ -6,7 +6,6 @@ import unicodedata
 
 from Database import Database
 from Parser import Parser
-from Generator import Generator
 from Thesaurus import Thesaurus
 from StopwordFilter import StopwordFilter
 
@@ -45,7 +44,10 @@ class ln2sql:
         if json_output_path is not None:
             self.remove_json(json_output_path)
             for query in queries:
-                query.print_me(json_output_path)
+                query.print_json(json_output_path)
+
+        for query in queries:
+            print query
 
     def remove_json(self, filename="output.json"):
         if os.path.exists(filename):

@@ -15,7 +15,43 @@ class Select():
 	def add_column(self, column, column_type):
 		self.columns.append([column, column_type])
 
-	def print_me(self, output):
+	def get_columns(self):
+		return self.columns
+
+	def print_column(self, selection):
+		column = selection[0]
+		column_type = selection[1]
+
+		if column is None:
+			if column_type == 'COUNT':
+				return 'COUNT(*)'
+			else:
+				return '*'
+		else:
+			if column_type == 'COUNT':
+				return 'COUNT(' + str(column) + ')'
+			elif column_type == 'AVG':
+				return 'AVG(' + str(column) + ')'
+			elif column_type == 'SUM':
+				return 'SUM(' + str(column) + ')'
+			elif column_type == 'MAX':
+				return 'MAX(' + str(column) + ')'
+			elif column_type == 'MIN':
+				return 'MIN(' + str(column) + ')'
+			else:
+				return str(column)
+
+	def __str__(self):
+		select_string = ''
+		for i in range(0, len(self.columns)):
+			if i == (len(self.columns)-1):
+				select_string = select_string + str(self.print_column(self.columns[i]))
+			else:
+				select_string = select_string + str(self.print_column(self.columns[i])) + ', '
+
+		return 'SELECT ' + select_string + '\n'
+
+	def print_json(self, output):
 		if len(self.columns) >= 1:
 			if len(self.columns) == 1:
 				output.write('\t"select": {\n')
@@ -52,7 +88,13 @@ class From():
 	def set_table(self, table):
 		self.table = table
 
-	def print_me(self, output):
+	def get_table(self):
+		return self.table
+
+	def __str__(self):
+		return 'FROM ' + str(self.table) + '\n'
+
+	def print_json(self, output):
 		if self.table != '':
 			output.write('\t"from": {\n')
 			output.write('\t\t"table": "' + str(self.table) + '"\n')
@@ -74,7 +116,16 @@ class Join():
 		if table not in self.tables:
 			self.tables.append(table)
 
-	def print_me(self, output):
+	def get_tables(self):
+		return self.tables
+
+	def __str__(self):
+		if len(self.tables) >= 1:
+			return '' + '\n'
+		else:
+			return ''
+
+	def print_json(self, output):
 		if len(self.tables) >= 1:
 			if len(self.tables) == 1:
 				output.write('\t"join": {\n')
@@ -104,7 +155,22 @@ class Condition():
 		self.operator = operator
 		self.value = value
 
-	def print_me(self, output):
+	def get_column(self):
+		return self.column
+
+	def get_operator(self):
+		return self.operator
+
+	def get_value(self):
+		return self.value
+
+	def get_in_list(self):
+		return [self.column, self.operator, self.value]
+
+	def __str__(self):
+		return '' + '\n'
+
+	def print_json(self, output):
 		output.write('\t\t\t{ "column": "' + str(self.column) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
 
 class Where():
@@ -117,7 +183,16 @@ class Where():
 	def add_condition(self, junction, clause):
 		self.conditions.append([junction, clause])
 
-	def print_me(self, output):
+	def get_conditions(self):
+		return self.conditions
+
+	def __str__(self):
+		if len(self.conditions) >= 1:
+			return '' + '\n'
+		else:
+			return ''
+
+	def print_json(self, output):
 		if len(self.conditions) >= 1:
 			if len(self.conditions) == 1:
 				output.write('\t"where": {\n')
@@ -154,7 +229,16 @@ class GroupBy():
 	def add_column(self, column):
 		self.columns.append(column)
 
-	def print_me(self, output):
+	def get_columns(self):
+		return self.columns
+
+	def __str__(self):
+		if len(self.columns) >= 1:
+			return '' + '\n'
+		else:
+			return ''
+
+	def print_json(self, output):
 		if len(self.columns) >= 1:
 			if len(self.columns) == 1:
 				output.write('\t"group_by": {\n')
@@ -192,7 +276,16 @@ class OrderBy():
 		self.column = column
 		self.order = order
 
-	def print_me(self, output):
+	def get_order(self):
+		return [self.column, self.order]
+
+	def __str__(self):
+		if self.column != '':
+			return '' + '\n'
+		else:
+			return ''
+
+	def print_json(self, output):
 		if self.column != '':
 			output.write('\t"order_by": {\n')
 			output.write('\t\t"order": "' + str(self.order) + '",\n')
@@ -260,14 +353,17 @@ class Query():
 	def get_order_by(self):
 		return self.order_by
 
-	def print_me(self, filename="output.json"):
+	def __str__(self):
+		return str(self.select) + str(self._from) + str(self.join) + str(self.where) + str(self.group_by) + str(self.order_by)
+
+	def print_json(self, filename="output.json"):
 		output = open(filename, 'a')
 		output.write('{\n')
-		self.select.print_me(output)
-		self._from.print_me(output)
-		self.join.print_me(output)
-		self.where.print_me(output)
-		self.group_by.print_me(output)
-		self.order_by.print_me(output)
+		self.select.print_json(output)
+		self._from.print_json(output)
+		self.join.print_json(output)
+		self.where.print_json(output)
+		self.group_by.print_json(output)
+		self.order_by.print_json(output)
 		output.write('}\n')
 		output.close()
