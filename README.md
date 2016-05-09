@@ -8,31 +8,41 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 
 ### SQL statement supported
 
-- [X] one-column select
-- [X] multiple columns select
-- [X] all columns select
-- [X] count-select
-- [X] sum-select
-- [X] avg-select
-- [X] min-select
-- [X] max-select
-- [ ] inner join
-- [ ] one-condition where
-- [ ] multiple conditions where
-- [ ] junction
-- [ ] disjunction
-- [ ] cross-condition
-- [ ] equal operator
-- [ ] not equal operator
-- [ ] greater-than operator
-- [ ] less-than operator
-- [ ] between operator
-- [ ] sum in condition
-- [ ] avg in condition
-- [ ] min in condition
-- [ ] max in condition
-- [ ] order by
-- [ ] group by
+- [X] SELECT 
+	- [X] one-column
+	- [X] multiple columns
+	- [X] all columns
+	- [X] aggregate functions 
+		- [X] count-select
+		- [X] sum-select
+		- [X] avg-select
+		- [X] min-select
+		- [X] max-select
+- [ ] JOIN 
+	- [ ] inner join
+	- [ ] outer join
+	- [ ] natural join
+	- [ ] union join
+	- [ ] cross join
+- [ ] WHERE 
+	- [ ] one-condition
+	- [ ] multiple conditions
+	- [ ] junction
+	- [ ] disjunction
+	- [ ] cross-condition
+	- [ ] operators
+		- [ ] equal operator
+		- [ ] not equal operator
+		- [ ] greater-than operator
+		- [ ] less-than operator
+		- [ ] between operator
+	- [ ] aggregate functions
+		- [ ] sum in condition
+		- [ ] avg in condition
+		- [ ] min in condition
+		- [ ] max in condition
+- [ ] ORDER BY 
+- [ ] GROUP BY 
 - [X] multiple queries
 - [ ] date support
 - [ ] negation support
