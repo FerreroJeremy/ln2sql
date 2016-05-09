@@ -57,6 +57,8 @@ database = Database()
 database.load("database/tal.sql")
 database.print_me()
 ```
+For the following SQL statements loaded, the output in the terminal looks like:
+<p align="center"><img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/database_loading.png" width="700"></p>
 
 ### Thesaurus and Stop word list
 
