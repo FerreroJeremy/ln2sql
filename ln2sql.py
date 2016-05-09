@@ -56,13 +56,17 @@ class ln2sql:
             os.remove(filename)
 
 def print_help_message():
-    print 'usage: ./ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]'
-    print '-h\t\t\tprint this help message'
-    print '-d <path>\t\tpath to SQL dump file'
-    print '-l <path>\t\tpath to language configuration file'
-    print '-i <input-sentence>\tinput sentence to parse'
-    print '-j <path>\t\tpath to JSON output file'
-    print '-t <path>\t\tpath to thesaurus file'
+    print '\n'
+    print 'Usage:'
+    print '\tpython ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]'
+    print 'Parameters:'
+    print '\t-h\t\t\tprint this help message'
+    print '\t-d <path>\t\tpath to SQL dump file'
+    print '\t-l <path>\t\tpath to language configuration file'
+    print '\t-i <input-sentence>\tinput sentence to parse'
+    print '\t-j <path>\t\tpath to JSON output file'
+    print '\t-t <path>\t\tpath to thesaurus file'
+    print '\n'
 
 def main(argv):
     try:
