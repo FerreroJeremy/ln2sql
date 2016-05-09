@@ -6,17 +6,6 @@
 
 In view to learn Python, I recently decided to implement our originally PHP project in <b>Python</b>. In addition, that will allow me to share the tool with the English-speaking community by making it public available here.
 
-### Extra features
-
-- [X] Load a database schema from SQL dump
-- [X] Import a personal thesaurus (<a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>)
-- [X] Import a personal stop word list
-- [X] Import a personal language configuration file
-- [X] Print a query structure in JSON
-- [X] Exception and error handling
-- [X] Graphical User Interface
-- [X] Multi-threading
-
 ### SQL statement supported
 
 - [X] one-column select
@@ -54,27 +43,51 @@ The tool can deal with any language, so long as it has its configuration file (<
 
 Language configuration files can be found in <i>lang/</i> directory. The files are CSV files. Each line represent a type of keywords. Anything before the colon is ignored. Keywords must be separated by a comma. 
 
-You can build your own language configuration file following the English and French template.
+You can build your own language configuration file following the English and French templates.
+
+### Database input
+
+To be effective ln2sql need to learn the data model of the database that the user want to query. It need to load the corresponding SQL dump file to do that.<br/>
+A <a rel="dump" href="https://en.wikipedia.org/wiki/Database_dump">database dump</a> is a file containing a record of the table structure and/or the data of a database.
+
+##### Usage of the Database class
+
+```python
+database = Database()
+database.load("database/tal.sql")
+database.print_me()
+```
+
+### Thesaurus and Stop word list
+
+You can improve the keyword filtering using a thesaurus.<br/>
+Thesaurus can be found in <i>thesaurus/</i> directory.<br/>
+You can build your own thesaurus following the <a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>.
+
+You can improve the stop word filtering using a stop word list.<br/>
+You can build your own stop word list following the template of the lists in <i>stopwords/</i> directory.
 
 ### Usage
 
 You can directly use the python wrapper by the following way:
 ```
-usage: ./ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]
--h						print this help message
--d <path>				path to sql dump file
--l <path>				path to language configuration file
--i <input-sentence>		input sentence to parse
--j <path>				path to JSON output file
--t <path>				path to thesaurus file
+Usage: 
+	python ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]
+Parameters:
+	-h						print this help message
+	-d <path>				path to sql dump file
+	-l <path>				path to language configuration file
+	-i <input-sentence>		input sentence to parse
+	-j <path>				path to JSON output file
+	-t <path>				path to thesaurus file
 ```
 example of usage:
 ```
-./ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/tal.sql -j output.json
+python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/tal.sql -j output.json
 ```
 or by graphical interface by typing the following command:
 ```
-./ln2sql_gui.py
+python ln2sql_gui.py
 ```
 a window like the one below will appear:
 <p align="center"><img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/graphical_user_interface.png" width="600"></p>
