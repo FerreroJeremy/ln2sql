@@ -1,10 +1,12 @@
 # ln2sql
 
-<b>ln2sql is a tool to query a database in natural language</b>, as described in the following French paper (which can be found in the <i>docs/</i> directory):
+<b>ln2sql is a NLP tool to query a database in natural language.</b> The tool inputs a data model and a sentence and translate the latter in a valid SQL statement able to query the data model.
+
+##### Scientific paper
+
+The tool is described in the following French paper (which can be found in the <i>docs/</i> directory), although since it greatly diverged for reasons of generic programming and speed optimizations.
 
 <i><a rel="license" href="https://www.researchgate.net/publication/278965118_fr2sql_Interrogation_de_bases_de_donnees_en_francais">Benoît Couderc and Jérémy Ferrero. fr2sql : Database Query in French. (fr2sql : Interrogation de bases de données en français [in French]). In Proceedings of the 17th RECITAL (affiliated with the 22th TALN Conference). June 2015. Caen, France. ATALA. pp.1-12 </a></i>
-
-In view to learn Python, I recently decided to implement our originally PHP project in <b>Python</b>. In addition, that will allow me to share the tool with the English-speaking community by making it public available here.
 
 ### SQL statement supported
 
@@ -20,10 +22,8 @@ In view to learn Python, I recently decided to implement our originally PHP proj
 		- [X] max-select
 - [ ] JOIN 
 	- [ ] inner join
-	- [ ] outer join
 	- [ ] natural join
 	- [ ] union join
-	- [ ] cross join
 - [ ] WHERE 
 	- [ ] one-condition
 	- [ ] multiple conditions
@@ -144,12 +144,11 @@ the output is:
 	}
 }
 ```
-### Conception
 
-<p align="center">
-<img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/mvc_class_diagram.png">
-</p>
+### Conception
 The tool is implemented under the Model-View-Controller pattern. The classes imported from the Python Standard Library do not appear in the diagram except those required for inheritance (<i>e.g.</i> <i>Thread</i> or <i>Exception</i>).
+<p align="center"><img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/mvc_class_diagram.png"></p>
+The above diagram was modeled with <a rel="staruml" href="http://staruml.io/">StarUML</a>.
 
 <br/>
 
