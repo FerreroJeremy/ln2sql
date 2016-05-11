@@ -22,7 +22,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 
 * [In theory, all languages can be supported.](https://github.com/FerreroJeremy/ln2sql#supported-languages)
 
-* A grammar still parse the input sentence to generate the corresponding query structure, but now this structure is stocked in a Python class able to print a query structure JSON file. Thus, the hash map for the query generation was abandoned. In addition, a multi-threading implementation was adopted.
+* A grammar still parse the input sentence to generate the corresponding query structure, but now this structure is stocked in a Python class able to print [a query structure JSON file](https://github.com/FerreroJeremy/ln2sql/blob/master/README.md#json-output). Thus, the hash map for the query generation was abandoned. In addition, a multi-threading implementation was adopted.
 
 ## SQL statements supported
 
@@ -88,7 +88,7 @@ database.print_me()
 For the following SQL statements loaded, the output in the terminal looks like:
 <p align="center"><img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/database_loading.png" width="700"></p>
 
-#### Thesaurus and Stop word list
+#### Thesaurus and stop word list
 
 You can improve the keyword filtering using a thesaurus. Thesaurus can be found in <i>thesaurus/</i> directory. You can build your own thesaurus following the <a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>.
 
