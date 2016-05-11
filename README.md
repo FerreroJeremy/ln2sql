@@ -10,7 +10,7 @@ The tool is described in the following French paper (which can be found in the <
 
 #### Differences between the version of the paper <i>(fr2sql)</i> and this version <i>(ln2sql)</i>
 
-* [A data model is only learn from a parsing of a SQL dump file. Thus <b>no database connection is needed</b>.](https://github.com/FerreroJeremy/ln2sql#database-input)
+* [A data model is only learn from a parsing of a SQL dump file. Thus, <b>no database connection is needed</b>.](https://github.com/FerreroJeremy/ln2sql#database-input)
 
 * In the paper, <a rel="tt" href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a> is used to filter the words of the input sentence according to its POS tagging.
 In this way, a mapping between the keywords of the input sentence and the keywords of the data model can be performed.
@@ -22,7 +22,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 
 * [In theory, all languages can be supported.](https://github.com/FerreroJeremy/ln2sql#supported-languages)
 
-* A grammar still parse the input sentence to generate the corresponding query structure, but now this structure is stocked in a Python class. Thus, the hash map for the query generation was abandoned. In addition, a multi-threading implementation was adopted.
+* A grammar still parse the input sentence to generate the corresponding query structure, but now this structure is stocked in a Python class able to print a query structure JSON file. Thus, the hash map for the query generation was abandoned. In addition, a multi-threading implementation was adopted.
 
 ## SQL statements supported
 
@@ -90,12 +90,9 @@ For the following SQL statements loaded, the output in the terminal looks like:
 
 #### Thesaurus and Stop word list
 
-You can improve the keyword filtering using a thesaurus.<br/>
-Thesaurus can be found in <i>thesaurus/</i> directory.<br/>
-You can build your own thesaurus following the <a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>.
+You can improve the keyword filtering using a thesaurus. Thesaurus can be found in <i>thesaurus/</i> directory. You can build your own thesaurus following the <a rel="thesaurus" href="http://extensions.openoffice.org/en/search?f%5B0%5D=field_project_tags%3A157">OpenOffice template</a>.
 
-You can improve the stop word filtering using a stop word list.<br/>
-You can build your own stop word list following the template of the lists in <i>stopwords/</i> directory.
+You can improve the stop word filtering using a stop word list. You can build your own stop word list following the template of the lists in <i>stopwords/</i> directory.
 
 #### Usage
 
