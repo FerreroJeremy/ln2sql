@@ -27,7 +27,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 ## SQL statements supported
 
 - [X] SELECT 
-	- [X] one-column
+	- [X] one column
 	- [X] multiple columns
 	- [X] all columns
 	- [X] aggregate functions 
@@ -36,12 +36,12 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [X] avg-select
 		- [X] min-select
 		- [X] max-select
-- [ ] JOIN 
-	- [ ] inner join
-	- [ ] natural join
-	- [ ] union join
+- [X] JOIN 
+	- [X] inner join
+	- [X] natural join
+	- [X] union join
 - [ ] WHERE 
-	- [ ] one-condition
+	- [ ] one condition
 	- [ ] multiple conditions
 	- [ ] junction
 	- [ ] disjunction
@@ -58,9 +58,10 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [ ] min in condition
 		- [ ] max in condition
 - [ ] ORDER BY 
-- [ ] GROUP BY 
+- [ ] GROUP BY
+- [X] alias
 - [X] multiple queries
-- [ ] date support
+- [X] exception and error handling
 - [ ] negation support
 
 ## How to use it?

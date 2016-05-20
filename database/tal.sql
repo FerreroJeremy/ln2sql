@@ -22,6 +22,27 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 -- --------------------------------------------------------
 
 --
+-- Structure de la table `chambre`
+--
+
+CREATE TABLE IF NOT EXISTS `chambre` (
+  `idChambre` int(11) NOT NULL AUTO_INCREMENT,
+  `nbLit` int(11) NOT NULL,
+  PRIMARY KEY (`idChambre`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=6 ;
+
+--
+-- Contenu de la table `chambre`
+--
+
+INSERT INTO `chambre` (`idChambre`, `nbLit`) VALUES
+(1, 2),
+(2, 2),
+(3, 4),
+(4, 4),
+(5, 5);
+
+--
 -- Structure de la table `classe`
 --
 

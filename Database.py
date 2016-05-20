@@ -45,6 +45,11 @@ class Database:
             data[table.name] = table.primary_keys
         return data
 
+    def get_primary_keys_of_table(self, table):
+        for _table in self.tables:
+            if _table.name == table:
+                return _table.primary_keys
+
     def add_table(self, table):
         self.tables.append(table)
     

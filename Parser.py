@@ -80,14 +80,12 @@ class SelectParser(Thread):
                         if i >= len(self.columns_of_select):
                             column = None
                         else:
+                            one_table_of_column = self.get_tables_of_column(self.columns_of_select[i])[0]
                             tables_of_column = self.get_tables_of_column(self.columns_of_select[i])
-                            for table in tables_of_column:
-                                column = str(table) + '.' + str(self.columns_of_select[i])
-                                break
-                            for table in tables_of_column:
-                                if table == table_of_from:
-                                    column = str(table) + '.' + str(self.columns_of_select[i])
-                                    break
+                            if table_of_from in tables_of_column:
+                                column = str(table_of_from) + '.' + str(self.columns_of_select[i])
+                            else:
+                            	column = str(one_table_of_column) + '.' + str(self.columns_of_select[i])
                         self.select_object.add_column(column, select_type)
 
             self.select_objects.append(self.select_object)
@@ -98,13 +96,14 @@ class SelectParser(Thread):
         return self.select_objects
 
 class FromParser(Thread):
-    def __init__(self, tables_of_from, columns_of_select, columns_of_where, database_dico):
+    def __init__(self, tables_of_from, columns_of_select, columns_of_where, database_object):
         Thread.__init__(self)
         self.queries = []
         self.tables_of_from = tables_of_from
         self.columns_of_select = columns_of_select
         self.columns_of_where = columns_of_where
-        self.database_dico = database_dico
+        self.database_object = database_object
+        self.database_dico = self.database_object.get_tables_into_dictionnary()
 
     def get_tables_of_column(self, column):
         tmp_table = []
@@ -113,25 +112,108 @@ class FromParser(Thread):
                  tmp_table.append(table)
         return tmp_table
 
+    def intersect(self, a, b):
+        return list(set(a) & set(b))
+
+    def difference(self, a, b):
+        differences = []
+        for _list in a:
+            if _list not in b:
+               differences.append(_list)
+        return differences
+
+    def is_direct_join_is_possible(self, table_src, table_trg):
+        join = []
+        pk_table_src = self.database_object.get_primary_keys_of_table(table_src)
+        pk_table_trg = self.database_object.get_primary_keys_of_table(table_trg)
+        match_pk_table_src_with_table_trg = self.intersect(pk_table_src, self.database_dico[table_trg])
+        match_pk_table_trg_with_table_src = self.intersect(pk_table_trg, self.database_dico[table_src])
+        
+        if len(match_pk_table_src_with_table_trg) >=1:
+            return [table_src, match_pk_table_src_with_table_trg[0], table_trg]
+        elif len(match_pk_table_trg_with_table_src) >= 1:
+            return [table_src, match_pk_table_trg_with_table_src[0], table_trg]
+
+    def get_all_direct_linked_tables_of_a_table(self, table_src):
+        links = []
+        for table_trg in self.database_dico:
+            if table_trg != table_src:
+                link = self.is_direct_join_is_possible(table_src, table_trg)
+                if link is not None:
+                    links.append(link)
+        return links
+
+    def is_join(self, historic, table_src, table_trg):
+        historic = historic
+        links = self.get_all_direct_linked_tables_of_a_table(table_src)
+
+        differences = []
+        for join in links:
+            if join[2] not in historic:
+               differences.append(join)
+        links = differences 
+
+        for join in links:
+            if join[2] == table_trg:
+                return [0, join]
+
+        path = []
+        historic.append(table_src)
+
+        for join in links:
+            result = [1, self.is_join(historic, join[2], table_trg)]
+            if result[1] != []:
+                if result[0] == 0:
+                    path.append(result[1])
+                    path.append(join)
+                else:
+                    path = result[1]
+                    path.append(join)
+        return path
+
+    def get_link(self, table_src, table_trg):
+        path = self.is_join([], table_src, table_trg)
+        if len(path) > 0:
+            path.pop(0)
+            path.reverse()
+        return path
+
+    def unique(self, _list):
+        return [list(x) for x in set(tuple(x) for x in _list)]
+
+    def unique_ordered(self, _list):
+        frequency = []
+        for element in _list:
+            if element not in frequency:
+                frequency.append(element)
+        return frequency
+
+
     def run(self):
         self.queries = []
 
-        for table in self.tables_of_from:
+        for table_of_from in self.tables_of_from:
+            links = []
             query = Query()
-            query.set_from(From(table))
+            query.set_from(From(table_of_from))
             join_object = Join()
             for column in self.columns_of_select:
-                if column not in self.database_dico[table]:
-                    foreign_tables = self.get_tables_of_column(column)
-                    for foreign_table in foreign_tables:
-                        join_object.add_table(foreign_table)
+                if column not in self.database_dico[table_of_from]:
+                    foreign_table = self.get_tables_of_column(column)[0]
+                    join_object.add_table(foreign_table)
+                    link = self.get_link(table_of_from, foreign_table)
+                    links.extend(link)
             for column in self.columns_of_where:
-                if column not in self.database_dico[table]:
-                    foreign_tables = self.get_tables_of_column(column)
-                    for foreign_table in foreign_tables:
-                        join_object.add_table(foreign_table)
+                if column not in self.database_dico[table_of_from]:
+                    foreign_table = self.get_tables_of_column(column)[0]
+                    join_object.add_table(foreign_table)
+                    link = self.get_link(table_of_from, foreign_table)
+                    links.extend(link)
+            join_object.set_links(self.unique_ordered(links))
             query.set_join(join_object)
             self.queries.append(query)
+            if len(join_object.get_tables()) > len(join_object.get_links()):
+                self.queries = None
 
     def join(self):
         Thread.join(self)
@@ -300,7 +382,7 @@ class Parser:
             raise ParsingException("No table name found in sentence!")
 
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
-        from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_dico)
+        from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
         where_parser = WhereParser(number_of_where_column, where_phrase)
         group_by_parser = GroupByParser()
         order_by_parser = OrderByParser()
@@ -311,8 +393,12 @@ class Parser:
         group_by_parser.start()
         order_by_parser.start()
 
-        select_objects = select_parser.join()
         queries = from_parser.join()
+
+        if queries is None:
+            raise ParsingException("There is at least one unattainable column from the table of FROM!")
+
+        select_objects = select_parser.join()
         where_object = where_parser.join()
         group_by_object = group_by_parser.join()
         order_by_object = order_by_parser.join()

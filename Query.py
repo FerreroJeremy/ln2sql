@@ -6,6 +6,18 @@ import unicodedata
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+class color:
+    PURPLE = '\033[95m'
+    CYAN = '\033[96m'
+    DARKCYAN = '\033[36m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+    END = '\033[0m'
+
 class Select():
 	columns = []
 
@@ -18,26 +30,32 @@ class Select():
 	def get_columns(self):
 		return self.columns
 
+	def get_just_column_name(self, column):
+		if column != str(None):
+			return column.rsplit('.', 1)[1]
+		else:
+			return column
+
 	def print_column(self, selection):
 		column = selection[0]
 		column_type = selection[1]
 
 		if column is None:
 			if column_type == 'COUNT':
-				return 'COUNT(*)'
+				return color.BOLD + 'COUNT(' + color.END + '*' + color.BOLD + ')' + color.END
 			else:
 				return '*'
 		else:
 			if column_type == 'COUNT':
-				return 'COUNT(' + str(column) + ')'
+				return color.BOLD + 'COUNT(' + color.END + str(column) + color.BOLD + ')' + color.END
 			elif column_type == 'AVG':
-				return 'AVG(' + str(column) + ')'
+				return color.BOLD + 'AVG(' + color.END + str(column) + color.BOLD + ')' + color.END
 			elif column_type == 'SUM':
-				return 'SUM(' + str(column) + ')'
+				return color.BOLD + 'SUM(' + color.END + str(column) + color.BOLD + ')' + color.END
 			elif column_type == 'MAX':
-				return 'MAX(' + str(column) + ')'
+				return color.BOLD + 'MAX(' + color.END + str(column) + color.BOLD + ')' + color.END
 			elif column_type == 'MIN':
-				return 'MIN(' + str(column) + ')'
+				return color.BOLD + 'MIN(' + color.END + str(column) + color.BOLD + ')' + color.END
 			else:
 				return str(column)
 
@@ -49,13 +67,13 @@ class Select():
 			else:
 				select_string = select_string + str(self.print_column(self.columns[i])) + ', '
 
-		return 'SELECT ' + select_string + '\n'
+		return color.BOLD + 'SELECT ' + color.END + select_string + '\n'
 
 	def print_json(self, output):
 		if len(self.columns) >= 1:
 			if len(self.columns) == 1:
 				output.write('\t"select": {\n')
-				output.write('\t\t"column": "' + str(self.columns[0][0]) + '",\n')
+				output.write('\t\t"column": "' + self.get_just_column_name(str(self.columns[0][0])) + '",\n')
 				output.write('\t\t"type": "' + str(self.columns[0][1]) + '"\n')
 				output.write('\t},\n')
 			else:
@@ -63,11 +81,11 @@ class Select():
 				output.write('\t\t"columns": [\n')
 				for i in range(0, len(self.columns)):
 					if i == (len(self.columns)-1):
-						output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
+						output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.columns[i][0])) + '",\n')
 						output.write('\t\t\t  "type": "' + str(self.columns[i][1]) + '"\n')
 						output.write('\t\t\t}\n')
 					else:
-						output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
+						output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.columns[i][0])) + '",\n')
 						output.write('\t\t\t  "type": "' + str(self.columns[i][1]) + '"\n')
 						output.write('\t\t\t},\n')
 				output.write('\t\t]\n')
@@ -92,7 +110,7 @@ class From():
 		return self.table
 
 	def __str__(self):
-		return 'FROM ' + str(self.table) + '\n'
+		return color.BOLD + 'FROM ' + color.END + str(self.table) + '\n'
 
 	def print_json(self, output):
 		if self.table != '':
@@ -105,23 +123,42 @@ class From():
 
 class Join():
 	tables = []
+	links = []
 
-	def __init__(self, tables=None):
-		if tables is not None:
-			self.tables = tables
-		else:
-			self.tables = []
+	def __init__(self):
+		self.tables = []
+		self.links = []
 
 	def add_table(self, table):
 		if table not in self.tables:
 			self.tables.append(table)
 
+	def set_links(self, links):
+		self.links = links
+
 	def get_tables(self):
 		return self.tables
 
+	def get_links(self):
+		return self.links
+
 	def __str__(self):
-		if len(self.tables) >= 1:
-			return '' + '\n'
+		if len(self.links) >= 1:
+			string = ''
+			for i in range(0, len(self.links)):
+				string += color.BOLD + 'INNER JOIN ' + color.END + str(self.links[i][2]) + '\n' + color.BOLD + 'ON ' + color.END + str(self.links[i][0]) + '.' + str(self.links[i][1]) + ' = ' + str(self.links[i][2]) + '.' + str(self.links[i][1]) + '\n'
+			return string
+		elif len(self.tables) >= 1:
+			if len(self.tables) == 1:
+				return color.BOLD + 'NATURAL JOIN ' + color.END + self.tables[0] + '\n'
+			else:
+				string = color.BOLD + 'NATURAL JOIN ' + color.END
+				for i in range(0, len(self.tables)):
+					if i == (len(self.tables)-1):
+						string += str(self.tables[i])
+					else:
+						string += str(self.tables[i]) + ', '
+				return string + '\n'
 		else:
 			return ''
 
@@ -158,6 +195,9 @@ class Condition():
 	def get_column(self):
 		return self.column
 
+	def get_just_column_name(self, column):
+		return column.rsplit('.', 1)[1]
+
 	def get_operator(self):
 		return self.operator
 
@@ -171,7 +211,7 @@ class Condition():
 		return '' + '\n'
 
 	def print_json(self, output):
-		output.write('\t\t\t{ "column": "' + str(self.column) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
+		output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.column)) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
 
 class Where():
 	conditions = []
@@ -242,16 +282,16 @@ class GroupBy():
 		if len(self.columns) >= 1:
 			if len(self.columns) == 1:
 				output.write('\t"group_by": {\n')
-				output.write('\t\t"column": "' + str(self.columns[0]) + '"\n')
+				output.write('\t\t"column": "' + self.get_just_column_name(str(self.columns[0])) + '"\n')
 				output.write('\t},\n')
 			else:
 				output.write('\t"group_by": {\n')
 				output.write('\t\t"columns": [')
 				for i in range(0, len(self.columns)):
 					if i == (len(self.columns)-1):
-						output.write('"' + str(self.columns[i]) + '"')
+						output.write('"' + self.get_just_column_name(str(self.columns[i])) + '"')
 					else:
-						output.write('"' + str(self.columns[i]) + '", ')
+						output.write('"' + self.get_just_column_name(str(self.columns[i])) + '", ')
 				output.write(']\n')
 				output.write('\t},\n')
 		else:
@@ -289,7 +329,7 @@ class OrderBy():
 		if self.column != '':
 			output.write('\t"order_by": {\n')
 			output.write('\t\t"order": "' + str(self.order) + '",\n')
-			output.write('\t\t"column": "' + str(self.column) + '"\n')
+			output.write('\t\t"column": "' + self.get_just_column_name(str(self.column)) + '"\n')
 			output.write('\t}\n')
 		else:
 			output.write('\t"order_by": {\n')
