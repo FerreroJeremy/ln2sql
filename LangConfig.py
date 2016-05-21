@@ -62,34 +62,38 @@ class LangConfig:
 	def get_negation_keywords(self):
 		return self.negation_keywords
 
+	def remove_accents(self, string):
+		nkfd_form = unicodedata.normalize('NFKD', unicode(string))
+		return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
+
 	def load(self, path):
 		with open(path) as f:
 			content = f.readlines()
-			self.avg_keywords = map(str.strip, content[0].replace(':',',').split(","))
+			self.avg_keywords = map(self.remove_accents, map(str.strip, content[0].replace(':',',').split(",")))
 			self.avg_keywords = self.avg_keywords[1:len(self.avg_keywords)]
-			self.sum_keywords = map(str.strip, content[1].replace(':',',').split(","))
+			self.sum_keywords = map(self.remove_accents, map(str.strip, content[1].replace(':',',').split(",")))
 			self.sum_keywords = self.sum_keywords[1:len(self.sum_keywords)]
-			self.max_keywords = map(str.strip, content[2].replace(':',',').split(","))
+			self.max_keywords = map(self.remove_accents, map(str.strip, content[2].replace(':',',').split(",")))
 			self.max_keywords = self.max_keywords[1:len(self.max_keywords)]
-			self.min_keywords = map(str.strip, content[3].replace(':',',').split(","))
+			self.min_keywords = map(self.remove_accents, map(str.strip, content[3].replace(':',',').split(",")))
 			self.min_keywords = self.min_keywords[1:len(self.min_keywords)]
-			self.count_keywords = map(str.strip, content[4].replace(':',',').split(","))
+			self.count_keywords = map(self.remove_accents, map(str.strip, content[4].replace(':',',').split(",")))
 			self.count_keywords = self.count_keywords[1:len(self.count_keywords)]
-			self.junction_keywords = map(str.strip, content[5].replace(':',',').split(","))
+			self.junction_keywords = map(self.remove_accents, map(str.strip, content[5].replace(':',',').split(",")))
 			self.junction_keywords = self.junction_keywords[1:len(self.junction_keywords)]
-			self.disjunction_keywords = map(str.strip, content[6].replace(':',',').split(","))
+			self.disjunction_keywords = map(self.remove_accents, map(str.strip, content[6].replace(':',',').split(",")))
 			self.disjunction_keywords = self.disjunction_keywords[1:len(self.disjunction_keywords)]
-			self.greater_keywords = map(str.strip, content[7].replace(':',',').split(","))
+			self.greater_keywords = map(self.remove_accents, map(str.strip, content[7].replace(':',',').split(",")))
 			self.greater_keywords = self.greater_keywords[1:len(self.greater_keywords)]
-			self.less_keywords = map(str.strip, content[8].replace(':',',').split(","))
+			self.less_keywords = map(self.remove_accents, map(str.strip, content[8].replace(':',',').split(",")))
 			self.less_keywords = self.less_keywords[1:len(self.less_keywords)]
-			self.between_keywords = map(str.strip, content[9].replace(':',',').split(","))
+			self.between_keywords = map(self.remove_accents, map(str.strip, content[9].replace(':',',').split(",")))
 			self.between_keywords = self.between_keywords[1:len(self.between_keywords)]
-			self.order_by_keywords = map(str.strip, content[10].replace(':',',').split(","))
+			self.order_by_keywords = map(self.remove_accents, map(str.strip, content[10].replace(':',',').split(",")))
 			self.order_by_keywords = self.order_by_keywords[1:len(self.order_by_keywords)]
-			self.group_by_keywords = map(str.strip, content[11].replace(':',',').split(","))
+			self.group_by_keywords = map(self.remove_accents, map(str.strip, content[11].replace(':',',').split(",")))
 			self.group_by_keywords = self.group_by_keywords[1:len(self.group_by_keywords)]
-			self.negation_keywords = map(str.strip, content[12].replace(':',',').split(","))
+			self.negation_keywords = map(self.remove_accents, map(str.strip, content[12].replace(':',',').split(",")))
 			self.negation_keywords = self.negation_keywords[1:len(self.negation_keywords)]
 
 	def print_me(self):

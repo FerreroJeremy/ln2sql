@@ -8,6 +8,6 @@ DISJUNCTION: ou
 GREATER: plus grand
 LESS: plus petit
 BETWEEN: entre
-ORDER: ordre
-GROUP: groupe
+ORDER: ordre, ordonné
+GROUP: groupe, groupé, rangé
 NEGATION: ne, pas, aucun
