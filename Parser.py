@@ -234,7 +234,6 @@ class WhereParser(Thread):
         self.less_keywords = less_keywords
         self.between_keywords = between_keywords
         self.negation_keywords = negation_keywords
-
         self.database_dico = database_dico
 
     def run(self):
@@ -281,38 +280,84 @@ class WhereParser(Thread):
         #print columns_of_where
         #print offset
 
-        #for table_of_from in self.tables_of_from:
-        where_object = Where()
-
-        self.where_objects.append(where_object)
+        for table_of_from in self.tables_of_from:
+        	where_object = Where()
+        	self.where_objects.append(where_object)
 
     def join(self):
         Thread.join(self)
         return self.where_objects
 
 class GroupByParser(Thread):
-    def __init__(self, phrase):
+    def __init__(self, phrases, tables_of_from, database_dico):
         Thread.__init__(self)
-        self.group_by_object = None
+        self.group_by_objects = []
+        self.phrases = phrases
+        self.tables_of_from = tables_of_from
+        self.database_dico = database_dico
+
+    def get_tables_of_column(self, column):
+        tmp_table = []
+        for table in self.database_dico:
+            if column in self.database_dico[table]:
+                 tmp_table.append(table)
+        return tmp_table
 
     def run(self):
-        self.group_by_object = GroupBy()
+        for table_of_from in self.tables_of_from:
+            group_by_object = GroupBy()
+            for phrase in self.phrases:
+                for i in range(0, len(phrase)):
+                    for table in self.database_dico:
+                        if phrase[i] in self.database_dico[table]:
+                            one_table_of_column = self.get_tables_of_column(phrase[i])[0]
+                            tables_of_column = self.get_tables_of_column(phrase[i])
+                            if table_of_from in tables_of_column:
+                                column = str(table_of_from) + '.' + str(phrase[i])
+                            else:
+                                column = str(one_table_of_column) + '.' + str(phrase[i])
+                            group_by_object.set_column(column)
+            self.group_by_objects.append(group_by_object)
 
     def join(self):
         Thread.join(self)
-        return self.group_by_object
+        return self.group_by_objects
 
 class OrderByParser(Thread):
-    def __init__(self, phrase):
+    def __init__(self, phrases, tables_of_from, database_dico):
         Thread.__init__(self)
-        self.order_by_object = None
+        self.order_by_objects = []
+        self.phrases = phrases
+        self.tables_of_from = tables_of_from
+        self.database_dico = database_dico
+
+    def get_tables_of_column(self, column):
+        tmp_table = []
+        for table in self.database_dico:
+            if column in self.database_dico[table]:
+                 tmp_table.append(table)
+        return tmp_table
 
     def run(self):
-        self.order_by_object = OrderBy()
+        for table_of_from in self.tables_of_from:
+            order_by_object = OrderBy()
+            for phrase in self.phrases:
+                for i in range(0, len(phrase)):
+                    for table in self.database_dico:
+                        if phrase[i] in self.database_dico[table]:
+                            one_table_of_column = self.get_tables_of_column(phrase[i])[0]
+                            tables_of_column = self.get_tables_of_column(phrase[i])
+                            if table_of_from in tables_of_column:
+                                column = str(table_of_from) + '.' + str(phrase[i])
+                            else:
+                                column = str(one_table_of_column) + '.' + str(phrase[i])
+                            order_by_object.add_column(column)
+            order_by_object.set_order(0)
+            self.order_by_objects.append(order_by_object)
 
     def join(self):
         Thread.join(self)
-        return self.order_by_object
+        return self.order_by_objects
 
 class Parser:
     database_object = None
@@ -479,8 +524,8 @@ class Parser:
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
         from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
         where_parser = WhereParser(new_where_phrase, tables_of_from, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.database_dico)
-        group_by_parser = GroupByParser(group_by_phrase)
-        order_by_parser = OrderByParser(order_by_phrase)
+        group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
+        order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.database_dico)
 
         select_parser.start()
         from_parser.start()
@@ -495,14 +540,14 @@ class Parser:
 
         select_objects = select_parser.join()
         where_objects = where_parser.join()
-        group_by_object = group_by_parser.join()
-        order_by_object = order_by_parser.join()
+        group_by_objects = group_by_parser.join()
+        order_by_objects = order_by_parser.join()
 
         for i in range(0, len(queries)):
             query = queries[i]
             query.set_select(select_objects[i])
             query.set_where(where_objects[i])
-            query.set_group_by(group_by_object)
-            query.set_order_by(order_by_object)
+            query.set_group_by(group_by_objects[i])
+            query.set_order_by(order_by_objects[i])
 
         return queries

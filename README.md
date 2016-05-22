@@ -57,8 +57,10 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [ ] avg in condition
 		- [ ] min in condition
 		- [ ] max in condition
-- [ ] ORDER BY 
-- [ ] GROUP BY
+- [X] ORDER BY
+	- [X] ASC
+	- [ ] DESC
+- [X] GROUP BY
 - [X] alias
 - [X] multiple queries
 - [X] exception and error handling
