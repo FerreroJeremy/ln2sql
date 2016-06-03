@@ -197,7 +197,10 @@ class Condition():
 		return self.column
 
 	def get_just_column_name(self, column):
-		return column.rsplit('.', 1)[1]
+		if column != str(None):
+			return column.rsplit('.', 1)[1]
+		else:
+			return column
 
 	def get_operator(self):
 		return self.operator
@@ -238,7 +241,7 @@ class Where():
 			if len(self.conditions) == 1:
 				output.write('\t"where": {\n')
 				output.write('\t\t"condition": [\n')
-				self.conditions[0][1].print_me(output)
+				self.conditions[0][1].print_json(output)
 				output.write('\n')
 				output.write('\t\t]\n')
 				output.write('\t},\n')
@@ -248,7 +251,7 @@ class Where():
 				for i in range(0, len(self.conditions)):
 					if self.conditions[i][0] is not None:
 						output.write('\t\t\t{ "operator": "' + str(self.conditions[i][0]) + '" },\n')
-					self.conditions[i][1].print_me(output)
+					self.conditions[i][1].print_json(output)
 					if i != (len(self.conditions)-1):
 						output.write(',')
 					output.write('\n')

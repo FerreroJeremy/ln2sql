@@ -101,10 +101,10 @@ def main(argv):
             if json_output_path is not None:
                 json_output_path = str(json_output_path)
 
-        try:
-            ln2sql(str(database_path), str(input_sentence), str(language_path), thesaurus_path, json_output_path)
-        except Exception, e:
-            print color.BOLD + color.RED + str(e) + color.END
+        #try:
+        ln2sql(str(database_path), str(input_sentence), str(language_path), thesaurus_path, json_output_path)
+        #except Exception, e:
+        #    print color.BOLD + color.RED + str(e) + color.END
 
     except getopt.GetoptError:
         print_help_message()

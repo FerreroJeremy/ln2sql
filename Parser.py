@@ -31,6 +31,14 @@ class SelectParser(Thread):
                  tmp_table.append(table)
         return tmp_table
 
+    def get_column_name_with_alias_table(self, column, table_of_from):
+        one_table_of_column = self.get_tables_of_column(column)[0]
+        tables_of_column = self.get_tables_of_column(column)
+        if table_of_from in tables_of_column:
+            return str(table_of_from) + '.' + str(column)
+        else:
+            return str(one_table_of_column) + '.' + str(column)
+
     def run(self):
         for table_of_from in self.tables_of_from:
             self.select_object = Select()
@@ -80,12 +88,7 @@ class SelectParser(Thread):
                         if i >= len(self.columns_of_select):
                             column = None
                         else:
-                            one_table_of_column = self.get_tables_of_column(self.columns_of_select[i])[0]
-                            tables_of_column = self.get_tables_of_column(self.columns_of_select[i])
-                            if table_of_from in tables_of_column:
-                                column = str(table_of_from) + '.' + str(self.columns_of_select[i])
-                            else:
-                            	column = str(one_table_of_column) + '.' + str(self.columns_of_select[i])
+                        	column = self.get_column_name_with_alias_table(self.columns_of_select[i], table_of_from)
                         self.select_object.add_column(column, select_type)
 
             self.select_objects.append(self.select_object)
@@ -220,10 +223,10 @@ class FromParser(Thread):
         return self.queries
 
 class WhereParser(Thread):
-    def __init__(self, phrase, tables_of_from, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, database_dico):
+    def __init__(self, phrases, tables_of_from, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, database_dico):
         Thread.__init__(self)
         self.where_objects = []
-        self.phrase = phrase
+        self.phrases = phrases
         self.tables_of_from = tables_of_from
         self.count_keywords = count_keywords
         self.sum_keywords = sum_keywords
@@ -234,55 +237,92 @@ class WhereParser(Thread):
         self.less_keywords = less_keywords
         self.between_keywords = between_keywords
         self.negation_keywords = negation_keywords
+        self.junction_keywords = junction_keywords
+        self.disjunction_keywords = disjunction_keywords
         self.database_dico = database_dico
+
+    def get_tables_of_column(self, column):
+        tmp_table = []
+        for table in self.database_dico:
+            if column in self.database_dico[table]:
+                 tmp_table.append(table)
+        return tmp_table
+
+    def get_column_name_with_alias_table(self,column, table_of_from):
+        one_table_of_column = self.get_tables_of_column(column)[0]
+        tables_of_column = self.get_tables_of_column(column)
+        if table_of_from in tables_of_column:
+            return str(table_of_from) + '.' + str(column)
+        else:
+            return str(one_table_of_column) + '.' + str(column)
 
     def run(self):
         number_of_where_columns = 0
         columns_of_where = []
-        offset = {}
+        offset_of = {}
+        column_offset = []
+        count_keyword_offset = []
+        sum_keyword_offset = []
+        average_keyword_offset = []
+        max_keyword_offset = []
+        min_keyword_offset = []
+        greater_keyword_offset = []
+        less_keyword_offset = []
+        between_keyword_offset = []
+        junction_keyword_offset = []
+        disjunction_keyword_offset = []
+        negation_keyword_offset = []
 
-        for i in range(0, len(self.phrase)):
-            for table in self.database_dico:
-                if self.phrase[i] in self.database_dico[table]:
-                    number_of_where_columns += 1
-                    columns_of_where.append(self.phrase[i])
-                    offset[self.phrase[i]] = i
-                    break
-            if self.phrase[i] in self.count_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.sum_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.average_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.max_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.min_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.greater_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.less_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.between_keywords:
-                #do something
-                return
-            if self.phrase[i] in self.negation_keywords:
-                #do something
-                return
-
-        #print number_of_where_columns
-        #print columns_of_where
-        #print offset
+        for phrase in self.phrases:
+            for i in range(0, len(phrase)):
+                for table in self.database_dico:
+                    if phrase[i] in self.database_dico[table]:
+                        number_of_where_columns += 1
+                        columns_of_where.append(phrase[i])
+                        offset_of[phrase[i]] = i
+                        column_offset.append(i)
+                        break
+                if phrase[i] in self.count_keywords: # before the column
+                    count_keyword_offset.append(i)
+                if phrase[i] in self.sum_keywords: # before the column
+                    sum_keyword_offset.append(i)
+                if phrase[i] in self.average_keywords: # before the column
+                    average_keyword_offset.append(i)
+                if phrase[i] in self.max_keywords: # before the column
+                    max_keyword_offset.append(i)
+                if phrase[i] in self.min_keywords: # before the column
+                    min_keyword_offset.append(i)
+                if phrase[i] in self.greater_keywords: # after the column
+                    greater_keyword_offset.append(i)
+                if phrase[i] in self.less_keywords: # after the column
+                    less_keyword_offset.append(i)
+                if phrase[i] in self.between_keywords: # after the column
+                    between_keyword_offset.append(i)
+                if phrase[i] in self.junction_keywords: # between the column and the equal, greater or less keyword
+                    junction_keyword_offset.append(i)
+                if phrase[i] in self.disjunction_keywords: # after the column
+                    disjunction_keyword_offset.append(i)
+                if phrase[i] in self.negation_keywords: # between the column and the equal, greater or less keyword
+                    negation_keyword_offset.append(i)
 
         for table_of_from in self.tables_of_from:
-        	where_object = Where()
-        	self.where_objects.append(where_object)
+            where_object = Where()
+            for i in range(0, len(column_offset)):
+                if i == 0:
+                     previous = 0
+                else:
+                    previous = column_offset[i-1]
+
+                if i == (len(column_offset) - 1):
+                    _next = -1
+                else:
+                    _next = column_offset[i+1]
+
+                junction = None
+                operator = None
+                value = None
+                where_object.add_condition(junction, Condition(None, operator, value))
+            self.where_objects.append(where_object)
 
     def join(self):
         Thread.join(self)
@@ -303,6 +343,14 @@ class GroupByParser(Thread):
                  tmp_table.append(table)
         return tmp_table
 
+    def get_column_name_with_alias_table(self, column, table_of_from):
+        one_table_of_column = self.get_tables_of_column(column)[0]
+        tables_of_column = self.get_tables_of_column(column)
+        if table_of_from in tables_of_column:
+            return str(table_of_from) + '.' + str(column)
+        else:
+            return str(one_table_of_column) + '.' + str(column)
+
     def run(self):
         for table_of_from in self.tables_of_from:
             group_by_object = GroupBy()
@@ -310,12 +358,7 @@ class GroupByParser(Thread):
                 for i in range(0, len(phrase)):
                     for table in self.database_dico:
                         if phrase[i] in self.database_dico[table]:
-                            one_table_of_column = self.get_tables_of_column(phrase[i])[0]
-                            tables_of_column = self.get_tables_of_column(phrase[i])
-                            if table_of_from in tables_of_column:
-                                column = str(table_of_from) + '.' + str(phrase[i])
-                            else:
-                                column = str(one_table_of_column) + '.' + str(phrase[i])
+                            column = self.get_column_name_with_alias_table(phrase[i], table_of_from)
                             group_by_object.set_column(column)
             self.group_by_objects.append(group_by_object)
 
@@ -338,6 +381,14 @@ class OrderByParser(Thread):
                  tmp_table.append(table)
         return tmp_table
 
+    def get_column_name_with_alias_table(self, column, table_of_from):
+        one_table_of_column = self.get_tables_of_column(column)[0]
+        tables_of_column = self.get_tables_of_column(column)
+        if table_of_from in tables_of_column:
+            return str(table_of_from) + '.' + str(column)
+        else:
+            return str(one_table_of_column) + '.' + str(column)
+
     def run(self):
         for table_of_from in self.tables_of_from:
             order_by_object = OrderBy()
@@ -345,12 +396,7 @@ class OrderByParser(Thread):
                 for i in range(0, len(phrase)):
                     for table in self.database_dico:
                         if phrase[i] in self.database_dico[table]:
-                            one_table_of_column = self.get_tables_of_column(phrase[i])[0]
-                            tables_of_column = self.get_tables_of_column(phrase[i])
-                            if table_of_from in tables_of_column:
-                                column = str(table_of_from) + '.' + str(phrase[i])
-                            else:
-                                column = str(one_table_of_column) + '.' + str(phrase[i])
+                            column = self.get_column_name_with_alias_table(phrase[i], table_of_from)
                             order_by_object.add_column(column)
             order_by_object.set_order(0)
             self.order_by_objects.append(order_by_object)
@@ -523,7 +569,7 @@ class Parser:
         
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
         from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
-        where_parser = WhereParser(new_where_phrase, tables_of_from, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.database_dico)
+        where_parser = WhereParser(new_where_phrase, tables_of_from, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico)
         group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
         order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.database_dico)
 
