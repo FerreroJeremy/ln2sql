@@ -185,22 +185,21 @@ class Join():
 
 class Condition():
 	column = ''
+	column_type = ''
 	operator = ''
 	value = ''
 
-	def __init__(self, column, operator, value):
+	def __init__(self, column, column_type, operator, value):
 		self.column = column
+		self.column_type = column_type
 		self.operator = operator
 		self.value = value
 
 	def get_column(self):
 		return self.column
 
-	def get_just_column_name(self, column):
-		if column != str(None):
-			return column.rsplit('.', 1)[1]
-		else:
-			return column
+	def get_column_type(self):
+		return self.column_type
 
 	def get_operator(self):
 		return self.operator
@@ -209,13 +208,45 @@ class Condition():
 		return self.value
 
 	def get_in_list(self):
-		return [self.column, self.operator, self.value]
+		return [self.column, self.column_type, self.operator, self.value]
+
+	def get_just_column_name(self, column):
+		if column != str(None):
+			return column.rsplit('.', 1)[1]
+		else:
+			return column
+
+	def get_column_with_type_operation(self, column, column_type):
+		if column_type == 0: # count
+			return color.BOLD + 'COUNT(' + color.END + self.column + color.BOLD + ')' + color.END
+		elif column_type == 1: # sum
+			return color.BOLD + 'SUM(' + color.END + self.column + color.BOLD + ')' + color.END
+		elif column_type == 2: # average
+			return color.BOLD + 'AVG(' + color.END + self.column + color.BOLD + ')' + color.END
+		elif column_type == 3: # max
+			return color.BOLD + 'MAX(' + color.END + self.column + color.BOLD + ')' + color.END
+		elif column_type == 4: # min
+			return color.BOLD + 'MIN(' + color.END + self.column + color.BOLD + ')' + color.END
+		else: # nothing
+			return self.column
+
+	def get_pretty_operator(self, operator):
+		if operator == 0: # 
+			return color.BOLD + '<' + color.END
+		elif operator == 1: # 
+			return color.BOLD + '>' + color.END
+		elif operator == 2: # 
+			return color.BOLD + 'BETWEEN' + color.END + ' OOV ' + color.BOLD + 'AND' + color.END
+		elif operator == 3: # 
+			return color.BOLD + '!=' + color.END
+		else: # 4 = nothing
+			return color.BOLD + '==' + color.END
 
 	def __str__(self):
-		return '' + '\n'
+		return str(self.get_column_with_type_operation(self.column, self.column_type)) + ' ' + str(self.get_pretty_operator(self.operator)) + ' ' + str(self.value)
 
 	def print_json(self, output):
-		output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.column)) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
+		output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.column)) + '",\n\t\t\t  "type": "' + str(self.column_type) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
 
 class Where():
 	conditions = []
@@ -223,6 +254,8 @@ class Where():
 	def __init__(self, clause=None):
 		if clause is not None:
 			self.conditions.append([None, clause])
+		else:
+			self.conditions = []
 
 	def add_condition(self, junction, clause):
 		self.conditions.append([junction, clause])
@@ -231,10 +264,16 @@ class Where():
 		return self.conditions
 
 	def __str__(self):
+		string = ''
 		if len(self.conditions) >= 1:
-			return '' + '\n'
+			for i in range(0, len(self.conditions)):
+				if i == 0:
+					string += '\n' + color.BOLD + 'WHERE' + color.END + ' ' + str(self.conditions[i][1])
+				else:
+					string += '\n' + color.BOLD + str(self.conditions[i][0]) + color.END + ' ' + str(self.conditions[i][1])
+			return string
 		else:
-			return ''
+			return string
 
 	def print_json(self, output):
 		if len(self.conditions) >= 1:
@@ -306,6 +345,7 @@ class OrderBy():
 			self.columns = columns
 		else:
 			self.columns = []
+
 		if order is not None:
 			self.order = order
 		else:
@@ -379,16 +419,28 @@ class Query():
 	def __init__(self, select=None, _from=None, join=None, where=None, group_by=None, order_by=None):
 		if select is not None:
 			self.select = select
+		else:
+			self.select = None
 		if _from is not None:
 			self._from = _from
+		else:
+			self._from = None
 		if join is not None:
 			self.join = join
+		else:
+			self.join = None
 		if where is not None:
 			self.where = where
+		else:
+			self.where = None
 		if group_by is not None:
 			self.group_by = group_by
+		else:
+			self.group_by = None
 		if order_by is not None:
 			self.order_by = order_by
+		else:
+			self.order_by = None
 
 	def set_select(self, select):
 		self.select = select

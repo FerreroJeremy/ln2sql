@@ -41,22 +41,22 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 	- [X] natural join
 	- [X] union join
 - [ ] WHERE 
-	- [ ] one condition
-	- [ ] multiple conditions
+	- [X] one condition
+	- [X] multiple conditions
 	- [ ] junction
 	- [ ] disjunction
 	- [ ] cross-condition
-	- [ ] operators
-		- [ ] equal operator
-		- [ ] not equal operator
-		- [ ] greater-than operator
-		- [ ] less-than operator
-		- [ ] between operator
-	- [ ] aggregate functions
-		- [ ] sum in condition
-		- [ ] avg in condition
-		- [ ] min in condition
-		- [ ] max in condition
+	- [X] operators
+		- [X] equal operator
+		- [X] not equal operator
+		- [X] greater-than operator
+		- [X] less-than operator
+		- [X] between operator
+	- [X] aggregate functions
+		- [X] sum in condition
+		- [X] avg in condition
+		- [X] min in condition
+		- [X] max in condition
 - [X] ORDER BY
 	- [X] ASC
 	- [ ] DESC
@@ -64,7 +64,8 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 - [X] alias
 - [X] multiple queries
 - [X] exception and error handling
-- [ ] negation support
+- [X] negation support
+- [ ] detection of values (OOV)
 
 ## How to use it?
 

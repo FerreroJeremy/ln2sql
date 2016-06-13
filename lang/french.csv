@@ -5,8 +5,8 @@ MIN: minimum, minimal, plus petit
 COUNT: combien, nombre
 JUNCTION: et
 DISJUNCTION: ou
-GREATER: plus grand
-LESS: plus petit
+GREATER: plus grand, supérieur
+LESS: plus petit, inférieur
 BETWEEN: entre
 ORDER: ordre, ordonné
 GROUP: groupe, groupé, rangé
