@@ -1,14 +1,18 @@
 # ln2sql
 
-<b>ln2sql is a NLP tool to query a database in natural language.</b> The tool inputs a data model and a sentence and translate the latter in a valid SQL statement able to query the data model.
+<b>ln2sql is a NLP tool to query a database in natural language.</b> The tool takes in input a data model and a sentence and translate the latter in a valid SQL statement able to query the input data model.
 
 ##### Scientific paper
 
-The tool is described in the following French paper (which can be found in the <i>docs/</i> directory), although since it greatly diverged for reasons of <b>generic programming and speed optimizations</b>.
+The initial tool is described in the following French paper (which can be found in the <i>docs/</i> directory):
 
 <i><a rel="license" href="https://www.researchgate.net/publication/278965118_fr2sql_Interrogation_de_bases_de_donnees_en_francais">Benoît Couderc and Jérémy Ferrero. fr2sql : Database Query in French. (fr2sql : Interrogation de bases de données en français [in French]). In Proceedings of the 17th RECITAL (affiliated with the 22th TALN Conference). June 2015. Caen, France. ATALA. pp.1-12 </a></i>
 
+Please cite the paper if you use ln2sql.
+
 #### Differences between the version of the paper <i>(fr2sql)</i> and this version <i>(ln2sql)</i>
+
+ln2sql is not the state-of-the-art tool for copyright reasons. It's just a quick & dirty Python wrapper but it has some speed optimizations.
 
 * [A data model is only learn from a parsing of a SQL dump file. Thus, <b>no database connection is needed</b>.](https://github.com/FerreroJeremy/ln2sql#database-input)
 
@@ -114,7 +118,7 @@ Parameters:
 ```
 example of usage:
 ```
-python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/your_db_dump.sql -j output.json
+python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/school.sql -j output.json
 ```
 or by graphical interface by typing the following command:
 ```
@@ -149,7 +153,7 @@ the output is:
 			  "value": "Doe"
 			},
 			{ 
-				"operator": "or" 
+			  "operator": "OR" 
 			},
 			{ "column": "age",
 			  "operator": ">",
