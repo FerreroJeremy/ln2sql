@@ -217,30 +217,16 @@ class Condition():
 			return column
 
 	def get_column_with_type_operation(self, column, column_type):
-		if column_type == 0: # count
-			return color.BOLD + 'COUNT(' + color.END + self.column + color.BOLD + ')' + color.END
-		elif column_type == 1: # sum
-			return color.BOLD + 'SUM(' + color.END + self.column + color.BOLD + ')' + color.END
-		elif column_type == 2: # average
-			return color.BOLD + 'AVG(' + color.END + self.column + color.BOLD + ')' + color.END
-		elif column_type == 3: # max
-			return color.BOLD + 'MAX(' + color.END + self.column + color.BOLD + ')' + color.END
-		elif column_type == 4: # min
-			return color.BOLD + 'MIN(' + color.END + self.column + color.BOLD + ')' + color.END
-		else: # nothing
+		if column_type is None:
 			return self.column
+		else:
+			return color.BOLD + str(column_type) + '(' + color.END + self.column + color.BOLD + ')' + color.END
 
 	def get_pretty_operator(self, operator):
-		if operator == 0: # 
-			return color.BOLD + '<' + color.END
-		elif operator == 1: # 
-			return color.BOLD + '>' + color.END
-		elif operator == 2: # 
+		if operator == 'BETWEEN':
 			return color.BOLD + 'BETWEEN' + color.END + ' OOV ' + color.BOLD + 'AND' + color.END
-		elif operator == 3: # 
-			return color.BOLD + '!=' + color.END
-		else: # 4 = nothing
-			return color.BOLD + '==' + color.END
+		else:
+			return color.BOLD + operator + color.END
 
 	def __str__(self):
 		return str(self.get_column_with_type_operation(self.column, self.column_type)) + ' ' + str(self.get_pretty_operator(self.operator)) + ' ' + str(self.value)
@@ -288,8 +274,8 @@ class Where():
 				output.write('\t"where": {\n')
 				output.write('\t\t"conditions": [\n')
 				for i in range(0, len(self.conditions)):
-					if self.conditions[i][0] is not None:
-						output.write('\t\t\t{ "operator": "' + str(self.conditions[i][0]) + '" },\n')
+					if i != 0:
+						output.write('\t\t\t{\n\t\t\t  "operator": "' + str(self.conditions[i][0]) + '"\n\t\t\t},\n')
 					self.conditions[i][1].print_json(output)
 					if i != (len(self.conditions)-1):
 						output.write(',')

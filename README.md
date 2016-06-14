@@ -40,12 +40,12 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 	- [X] inner join
 	- [X] natural join
 	- [X] union join
-- [ ] WHERE 
+- [X] WHERE 
 	- [X] one condition
 	- [X] multiple conditions
-	- [ ] junction
-	- [ ] disjunction
-	- [ ] cross-condition
+	- [X] junction
+	- [X] disjunction
+	- [X] cross-condition
 	- [X] operators
 		- [X] equal operator
 		- [X] not equal operator
@@ -114,7 +114,7 @@ Parameters:
 ```
 example of usage:
 ```
-python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/tal.sql -j output.json
+python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/your_db_dump.sql -j output.json
 ```
 or by graphical interface by typing the following command:
 ```
@@ -145,12 +145,14 @@ the output is:
 	"where": {
 		"conditions": [
 			{ "column": "name",
-			  "operator": "==",
+			  "operator": "=",
 			  "value": "Doe"
 			},
-			{ "operator": "or" },
+			{ 
+				"operator": "or" 
+			},
 			{ "column": "age",
-			  "operator": ">=",
+			  "operator": ">",
 			  "value": "25"
 			}
 		]

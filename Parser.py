@@ -262,34 +262,60 @@ class WhereParser(Thread):
     def predict_operation_type(self, previous_column_offset, current_column_offset):
         interval_offset = range(previous_column_offset, current_column_offset)
         if(len(self.intersect(interval_offset, self.count_keyword_offset)) >= 1):
-            return 0
+            return 'COUNT'
         elif(len(self.intersect(interval_offset, self.sum_keyword_offset)) >= 1):
-            return 1
+            return 'SUM'
         elif(len(self.intersect(interval_offset, self.average_keyword_offset)) >= 1):
-            return 2
+            return 'AVG'
         elif(len(self.intersect(interval_offset, self.max_keyword_offset)) >= 1):
-            return 3
+            return 'MAX'
         elif(len(self.intersect(interval_offset, self.min_keyword_offset)) >= 1):
-            return 4
+            return 'MIN'
         else:
             return None
 
     def predict_operator(self, current_column_offset, next_column_offset):
         interval_offset = range(current_column_offset, next_column_offset)
         if(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1) and (len(self.intersect(interval_offset, self.greater_keyword_offset)) >= 1):
-            return 0 # less
+            return '<'
         elif(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1) and (len(self.intersect(interval_offset, self.less_keyword_offset)) >= 1):
-            return 1 # greater
+            return '>'
         if(len(self.intersect(interval_offset, self.less_keyword_offset)) >= 1):
-            return 0 # less
+            return '<'
         elif(len(self.intersect(interval_offset, self.greater_keyword_offset)) >= 1):
-            return 1 # greater
+            return '>'
         elif(len(self.intersect(interval_offset, self.between_keyword_offset)) >= 1):
-            return 2 # between
+            return 'BETWEEN'
         elif(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1):
-            return 3 # not equal
+            return '!='
         else:
-            return 4 # equal
+            return '='
+
+    def predict_junction(self, previous_column_offset, current_column_offset):
+        interval_offset = range(previous_column_offset, current_column_offset)
+        junction = 'AND'
+        if(len(self.intersect(interval_offset, self.disjunction_keyword_offset)) >= 1):
+            return 'OR'
+        elif(len(self.intersect(interval_offset, self.junction_keyword_offset)) >= 1):
+            return 'AND'
+
+        first_encountered_junction_offset = -1
+        first_encountered_disjunction_offset = -1
+
+        for offset in self.junction_keyword_offset:
+            if offset >= current_column_offset:
+                first_encountered_junction_offset = offset
+                break
+
+        for offset in self.disjunction_keyword_offset:
+            if offset >= current_column_offset:
+                first_encountered_disjunction_offset = offset
+                break
+
+        if first_encountered_junction_offset >= first_encountered_disjunction_offset:
+            return 'AND'
+        else: 
+            return 'OR'
 
     def run(self):
         number_of_where_columns = 0
@@ -351,11 +377,11 @@ class WhereParser(Thread):
                     previous = column_offset[i-1]
 
                 if i == (len(column_offset) - 1):
-                    _next = 100 # put max integer in python, here!
+                    _next = 100 # put max integer in python here ?
                 else:
                     _next = column_offset[i+1]
 
-                junction = None
+                junction = self.predict_junction(previous, current)
                 column = self.get_column_name_with_alias_table(columns_of_where[i], table_of_from)
                 operation_type = self.predict_operation_type(previous, current)
                 value = 'OOV' # Out Of Vocabulary: feature not implemented yet
@@ -605,6 +631,8 @@ class Parser:
             order_by_phrase.append(where_phrase[previous_index:])
         elif previous_phrase_type == 2:
             group_by_phrase.append(where_phrase[previous_index:])
+        else:
+            new_where_phrase.append(where_phrase)
         
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
         from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
