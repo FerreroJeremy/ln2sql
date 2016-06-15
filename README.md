@@ -14,7 +14,7 @@ Please cite the paper if you use ln2sql.
 
 ln2sql is not the state-of-the-art tool for copyright reasons. It's just a quick & dirty Python wrapper but it has some speed optimizations.
 
-* [A data model is only learn from a parsing of a SQL dump file. Thus, <b>no database connection is needed</b>.](https://github.com/FerreroJeremy/ln2sql#database-input)
+* [A data model is only learned from a parsing of a SQL dump file. Thus, <b>no database connection is needed</b>.](https://github.com/FerreroJeremy/ln2sql#database-input)
 
 * In the paper, <a rel="tt" href="http://www.cis.uni-muenchen.de/~schmid/tools/TreeTagger/">TreeTagger</a> is used to filter the words of the input sentence according to its POS tagging.
 In this way, a mapping between the keywords of the input sentence and the keywords of the data model can be performed.
@@ -179,4 +179,4 @@ The above diagram was modeled with <a rel="staruml" href="http://staruml.io/">St
 
 ### <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /> License
 
-This tool is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+ln2sql is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
