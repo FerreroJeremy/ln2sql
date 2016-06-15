@@ -1,6 +1,6 @@
 # ln2sql
 
-<b>ln2sql is a NLP tool to query a database in natural language.</b> The tool takes in input a data model and a sentence and translate the latter in a valid SQL statement able to query the input data model.
+<b>ln2sql is a NLP tool to query a database in natural language.</b> The tool takes in input a database model and a sentence and translate the latter in a valid SQL statement able to query the input data model.
 
 ##### Scientific paper
 
@@ -20,9 +20,9 @@ ln2sql is not the state-of-the-art tool for copyright reasons. It's just a quick
 In this way, a mapping between the keywords of the input sentence and the keywords of the data model can be performed.
 In ln2sql, Treegagger is left in favour of an import of personal configuration files (for [languages](https://github.com/FerreroJeremy/ln2sql#supported-languages), [stop words and synonyms](https://github.com/FerreroJeremy/ln2sql#thesaurus-and-stop-word-list)) to be more generic.
 
-> Beware that this version can not automatically solve the gender and number problem. So if the word <i>"student<b>s</b>"</i> is in the input sentence, it does not match with the table <i>"student"</i> in the model of data.<br/>
+> Beware that ln2sql cannot therefore automatically solve the gender and number problem. So if the word <i>"student<b>s</b>"</i> is in the input sentence, it does not match with the table <i>"student"</i> in the model of data.
 To do that, the equivalence <i>"student<b>s</b> → student"</i> must be appear in the [used thesaurus](https://github.com/FerreroJeremy/ln2sql#thesaurus-and-stop-word-list).
-If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.limsi.fr/pointal/dev:treetaggerwrapper">Python wrapper</a> exists and a documentation can be found <a rel="doc" href="http://treetaggerwrapper.readthedocs.io/en/latest/">here</a>!
+If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.limsi.fr/pointal/dev:treetaggerwrapper">Python wrapper</a> exists and a documentation can be found <a rel="doc" href="http://treetaggerwrapper.readthedocs.io/en/latest/">here</a>.
 
 * [In theory, all languages can be supported.](https://github.com/FerreroJeremy/ln2sql#supported-languages)
 
