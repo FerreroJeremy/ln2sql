@@ -109,10 +109,10 @@ You can directly use the python wrapper by the following way:
 Usage: 
 	python ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]
 Parameters:
-	-h						print this help message
+	-h					print this help message
 	-d <path>				path to sql dump file
 	-l <path>				path to language configuration file
-	-i <input-sentence>		input sentence to parse
+	-i <input-sentence>			input sentence to parse
 	-j <path>				path to JSON output file
 	-t <path>				path to thesaurus file
 ```
