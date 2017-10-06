@@ -1,0 +1,24 @@
+{
+	"select": {
+		"column": "score",
+		"type": "None"
+	},
+	"from": {
+		"table": "emp"
+	},
+	"join": {
+	},
+	"where": {
+		"condition": [
+			{ "column": "name",
+			  "type": "None",
+			  "operator": "=",
+			  "value": "saf"
+			}
+		]
+	},
+	"group_by": {
+	},
+	"order_by": {
+	}
+}

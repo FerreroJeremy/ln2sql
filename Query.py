@@ -232,6 +232,7 @@ class Condition():
 		return str(self.get_column_with_type_operation(self.column, self.column_type)) + ' ' + str(self.get_pretty_operator(self.operator)) + ' ' + str(self.value)
 
 	def print_json(self, output):
+
 		output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.column)) + '",\n\t\t\t  "type": "' + str(self.column_type) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
 
 class Where():
@@ -251,12 +252,14 @@ class Where():
 
 	def __str__(self):
 		string = ''
+
 		if len(self.conditions) >= 1:
 			for i in range(0, len(self.conditions)):
 				if i == 0:
 					string += '\n' + color.BOLD + 'WHERE' + color.END + ' ' + str(self.conditions[i][1])
 				else:
 					string += '\n' + color.BOLD + str(self.conditions[i][0]) + color.END + ' ' + str(self.conditions[i][1])
+			
 			return string
 		else:
 			return string
@@ -267,6 +270,8 @@ class Where():
 				output.write('\t"where": {\n')
 				output.write('\t\t"condition": [\n')
 				self.conditions[0][1].print_json(output)
+
+				
 				output.write('\n')
 				output.write('\t\t]\n')
 				output.write('\t},\n')
@@ -368,6 +373,7 @@ class OrderBy():
 				string += color.BOLD + ' ASC' + color.END
 			else:
 				string += color.BOLD + ' ASC' + color.END
+
 			return '\n' + string
 		else:
 			return ''
