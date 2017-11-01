@@ -527,7 +527,7 @@ class Parser:
         from_phrase = ''
         where_phrase = ''
         
-        words = re.findall(r"[\w]+", self.remove_accents(sentence))
+        words = re.findall(r"[\w]+", self.remove_accents(sentence.decode('utf-8').lower()))
 
         for i in range(0, len(words)):
             if words[i] in self.database_dico:
