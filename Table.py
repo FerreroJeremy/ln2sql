@@ -50,6 +50,13 @@ class Table:
                 primary_keys.append(column)
         return primary_keys
 
+    def get_primary_key_names(self):
+        primary_keys = []
+        for column in self.columns:
+            if column.is_primary():
+                primary_keys.append(column.get_name())
+        return primary_keys
+
     def add_primary_key(self, primary_key_column):
         for column in self.columns:
             if column.get_name() == primary_key_column:
@@ -60,6 +67,13 @@ class Table:
         for column in self.columns:
             if column.is_foreign():
                 foreign_keys.append(column)
+        return foreign_keys
+
+    def get_foreign_key_names(self):
+        foreign_keys = []
+        for column in self.columns:
+            if column.is_foreign():
+                foreign_keys.append(column.get_name())
         return foreign_keys
 
     def add_foreign_key(self, column_name, foreign_table, foreign_column):

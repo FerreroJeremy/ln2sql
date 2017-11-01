@@ -118,7 +118,7 @@ Parameters:
 ```
 example of usage:
 ```
-python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/school.sql -j output.json
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
 ```
 or by graphical interface by typing the following command:
 ```

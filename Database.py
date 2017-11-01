@@ -62,10 +62,20 @@ class Database:
             if table.get_name() == table_name:
                 return table.get_primary_keys()
 
+    def get_primary_key_names_of_table(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table.get_primary_key_names()
+
     def get_foreign_keys_of_table(self, table_name):
         for table in self.tables:
             if table.get_name() == table_name:
                 return table.get_foreign_keys()
+
+    def get_foreign_key_names_of_table(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table.get_foreign_key_names()
 
     def add_table(self, table):
         self.tables.append(table)

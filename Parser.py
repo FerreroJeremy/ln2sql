@@ -126,16 +126,28 @@ class FromParser(Thread):
         return differences
 
     def is_direct_join_is_possible(self, table_src, table_trg):
-        join = []
-        pk_table_src = self.database_object.get_primary_keys_of_table(table_src)
-        pk_table_trg = self.database_object.get_primary_keys_of_table(table_trg)
-        match_pk_table_src_with_table_trg = self.intersect(pk_table_src, self.database_dico[table_trg])
-        match_pk_table_trg_with_table_src = self.intersect(pk_table_trg, self.database_dico[table_src])
+        fk_column_of_src_table = self.database_object.get_foreign_keys_of_table(table_src)
+        fk_column_of_trg_table = self.database_object.get_foreign_keys_of_table(table_trg)
+
+        for column in fk_column_of_src_table:
+            if column.is_foreign()['foreign_table'] == table_trg:
+                return [(table_src, column.get_name()), (table_trg, column.is_foreign()['foreign_column'])]
+
+        for column in fk_column_of_trg_table:
+            if column.is_foreign()['foreign_table'] == table_src:
+                return [(table_trg, column.get_name()), (table_src, column.is_foreign()['foreign_column'])]
+
+        """ @todo Restore the following lines for implicit inner join on same id columns. """
+
+        # pk_table_src = self.database_object.get_primary_key_names_of_table(table_src)
+        # pk_table_trg = self.database_object.get_primary_key_names_of_table(table_trg)
+        # match_pk_table_src_with_table_trg = self.intersect(pk_table_src, self.database_dico[table_trg])
+        # match_pk_table_trg_with_table_src = self.intersect(pk_table_trg, self.database_dico[table_src])
         
-        if len(match_pk_table_src_with_table_trg) >=1:
-            return [table_src, match_pk_table_src_with_table_trg[0], table_trg]
-        elif len(match_pk_table_trg_with_table_src) >= 1:
-            return [table_src, match_pk_table_trg_with_table_src[0], table_trg]
+        # if len(match_pk_table_src_with_table_trg) >= 1:
+        #     return [(table_trg, match_pk_table_src_with_table_trg[0]), (table_src, match_pk_table_src_with_table_trg[0])]
+        # elif len(match_pk_table_trg_with_table_src) >= 1:
+        #     return [(table_trg, match_pk_table_trg_with_table_src[0]), (table_src, match_pk_table_trg_with_table_src[0])]
 
     def get_all_direct_linked_tables_of_a_table(self, table_src):
         links = []
@@ -152,19 +164,19 @@ class FromParser(Thread):
 
         differences = []
         for join in links:
-            if join[2] not in historic:
+            if join[0][0] not in historic:
                differences.append(join)
-        links = differences 
+        links = differences
 
         for join in links:
-            if join[2] == table_trg:
+            if join[0][0] == table_trg:
                 return [0, join]
 
         path = []
         historic.append(table_src)
 
         for join in links:
-            result = [1, self.is_join(historic, join[2], table_trg)]
+            result = [1, self.is_join(historic, join[0][0], table_trg)]
             if result[1] != []:
                 if result[0] == 0:
                     path.append(result[1])
@@ -200,6 +212,7 @@ class FromParser(Thread):
             query = Query()
             query.set_from(From(table_of_from))
             join_object = Join()
+
             for column in self.columns_of_select:
                 if column not in self.database_dico[table_of_from]:
                     foreign_table = self.get_tables_of_column(column)[0]
