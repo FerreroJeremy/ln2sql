@@ -9,25 +9,23 @@ sys.setdefaultencoding("utf-8")
 class Column:
     name = ''
     type = ''
-    is_primary = False
+    primary = False
+    foreign = False
     
-    def __init__(self, name=None, type=None, is_primary=None):
+    def __init__(self, name=None, type=None):
         if name is None:
             self.name = ''
         else:
             self.name = name
+
         if type is None:
             self.type = ''
         else:
             self.type = type
-        if is_primary is None:
-            self.is_primary = False
-        else:
-            self.is_primary = is_primary
 
     def get_name(self):
         return self.name
-    
+
     def set_name(self, name):
         self.name = name
 
@@ -38,4 +36,13 @@ class Column:
         self.type = type
 
     def is_primary(self):
-        return self.is_primary
+        return self.primary
+
+    def set_as_primary(self):
+        self.primary = True
+
+    def is_foreign(self):
+        return self.foreign
+
+    def set_as_foreign(self, references):
+        self.foreign = references

@@ -29,7 +29,7 @@ class ln2sql:
     def __init__(self, database_path, input_sentence, language_path, thesaurus_path, json_output_path):
         database = Database()
         database.load(database_path)
-        #database.print_me()
+        database.print_me()
 
         config = LangConfig()
         config.load(language_path)

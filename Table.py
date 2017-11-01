@@ -11,23 +11,17 @@ from Column import Column
 class Table:
     name = ''
     columns = []
-    primary_keys = []
     
-    def __init__(self, name=None, columns=None, primary_keys=None):
+    def __init__(self, name=None, columns=None):
         if name is None:
             self.name = ''
         else:
             self.name = name
-        
+
         if columns is None:
             self.columns = []
         else:
             self.columns = columns
-        
-        if primary_keys is None:
-            self.primary_keys = []
-        else:
-            self.primary_keys = primary_keys
     
     def get_name(self):
         return self.name
@@ -41,14 +35,34 @@ class Table:
     def get_columns(self):
         return self.columns
 
+    def get_column_by_name(self, column_name):
+        for column in self.columns:
+            if column.get_name() == column_name:
+                return column
+
     def add_column(self, column_name, column_type):
         self.columns.append(Column(column_name, column_type))
 
-    def get_number_of_primary_keys(self):
-        return len(self.primary_keys)
-
     def get_primary_keys(self):
-        return self.primary_keys
+        primary_keys = []
+        for column in self.columns:
+            if column.is_primary():
+                primary_keys.append(column)
+        return primary_keys
 
-    def add_primary_key(self, primary_key):
-        self.primary_keys.append(primary_key)
+    def add_primary_key(self, primary_key_column):
+        for column in self.columns:
+            if column.get_name() == primary_key_column:
+                column.set_as_primary()
+
+    def get_foreign_keys(self):
+        foreign_keys = []
+        for column in self.columns:
+            if column.is_foreign():
+                foreign_keys.append(column)
+        return foreign_keys
+
+    def add_foreign_key(self, column_name, foreign_table, foreign_column):
+        for column in self.columns:
+            if column.get_name() == column_name:
+                column.set_as_foreign({'foreign_table':foreign_table,'foreign_column':foreign_column})
