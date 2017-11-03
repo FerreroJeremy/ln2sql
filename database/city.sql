@@ -36,11 +36,11 @@ CREATE TABLE `city` (
 --
 
 INSERT INTO `city` (`id`, `cityName`) VALUES
-(1, 'pune'),
-(2, 'apple'),
-(3, 'city c'),
-(4, 'city d'),
-(5, 'city e');
+(1, 'Pune'),
+(2, 'Hillwood'),
+(3, 'San Jose'),
+(4, 'The City'),
+(5, 'South Park');
 
 -- --------------------------------------------------------
 
@@ -60,16 +60,16 @@ CREATE TABLE `emp` (
 --
 
 INSERT INTO `emp` (`id`, `name`, `cityId`, `score`) VALUES
-(21, 'a', 1, 5),
-(22, 'b', 2, 4),
-(23, 'c', 3, 6),
-(24, 'd', 4, 4),
-(25, 'e', 5, 6),
-(26, 'g', 1, 2),
-(27, 'h', 2, 9),
-(28, 'i', 3, 4),
-(29, 'j', 4, 3),
-(30, 'k', 5, 6);
+(1, 'Lord Brain', 1, 5),
+(2, 'Matthew', 2, 4),
+(3, 'Ferrero Jeremy', 3, 6),
+(4, 'Bud Light', 4, 4),
+(5, 'Demi Moore', 5, 6),
+(6, 'Woody Allen', 1, 2),
+(7, 'Joaquin Phoenix', 2, 9),
+(8, 'Meg Ryan', 3, 4),
+(9, 'Trey Anastasio', 4, 3),
+(10, 'Marie Osmond', 5, 6);
 
 --
 -- Indexes for dumped tables

@@ -69,7 +69,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 - [X] multiple queries
 - [X] exception and error handling
 - [X] negation support
-- [ ] detection of values (OOV)
+- [X] detection of values (OOV)
 
 ## How to use it?
 
@@ -120,6 +120,12 @@ example of usage:
 ```
 python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
 ```
+
+Values for WHERE clause should be specified in single(') or double(") quotes for multi word values.example : 
+```
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city with cityName = 'San Jose'"
+```
+
 or by graphical interface by typing the following command:
 ```
 python ln2sql_gui.py

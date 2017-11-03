@@ -10,7 +10,9 @@ from Query import *
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+
 class SelectParser(Thread):
+
     def __init__(self, columns_of_select, tables_of_from, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, database_dico):
         Thread.__init__(self)
         self.select_objects = []
@@ -28,7 +30,7 @@ class SelectParser(Thread):
         tmp_table = []
         for table in self.database_dico:
             if column in self.database_dico[table]:
-                 tmp_table.append(table)
+                tmp_table.append(table)
         return tmp_table
 
     def get_column_name_with_alias_table(self, column, table_of_from):
@@ -57,10 +59,11 @@ class SelectParser(Thread):
             else:
                 select_phrases = []
                 previous_index = 0
-                for i in range(0,len(self.phrase)):
+                for i in range(0, len(self.phrase)):
                     if self.phrase[i] in self.columns_of_select:
-                        select_phrases.append(self.phrase[previous_index:i+1])
-                        previous_index = i+1
+                        select_phrases.append(
+                            self.phrase[previous_index:i + 1])
+                        previous_index = i + 1
 
                 select_phrases.append(self.phrase[previous_index:])
 
@@ -84,21 +87,23 @@ class SelectParser(Thread):
                         if keyword in phrase:
                             select_type = 'SUM'
 
-                    if (i != len(select_phrases)-1) or (select_type is not None):
+                    if (i != len(select_phrases) - 1) or (select_type is not None):
                         if i >= len(self.columns_of_select):
                             column = None
                         else:
-                        	column = self.get_column_name_with_alias_table(self.columns_of_select[i], table_of_from)
+                            column = self.get_column_name_with_alias_table(
+                                self.columns_of_select[i], table_of_from)
                         self.select_object.add_column(column, select_type)
 
             self.select_objects.append(self.select_object)
-
 
     def join(self):
         Thread.join(self)
         return self.select_objects
 
+
 class FromParser(Thread):
+
     def __init__(self, tables_of_from, columns_of_select, columns_of_where, database_object):
         Thread.__init__(self)
         self.queries = []
@@ -112,7 +117,7 @@ class FromParser(Thread):
         tmp_table = []
         for table in self.database_dico:
             if column in self.database_dico[table]:
-                 tmp_table.append(table)
+                tmp_table.append(table)
         return tmp_table
 
     def intersect(self, a, b):
@@ -122,12 +127,14 @@ class FromParser(Thread):
         differences = []
         for _list in a:
             if _list not in b:
-               differences.append(_list)
+                differences.append(_list)
         return differences
 
     def is_direct_join_is_possible(self, table_src, table_trg):
-        fk_column_of_src_table = self.database_object.get_foreign_keys_of_table(table_src)
-        fk_column_of_trg_table = self.database_object.get_foreign_keys_of_table(table_trg)
+        fk_column_of_src_table = self.database_object.get_foreign_keys_of_table(
+            table_src)
+        fk_column_of_trg_table = self.database_object.get_foreign_keys_of_table(
+            table_trg)
 
         for column in fk_column_of_src_table:
             if column.is_foreign()['foreign_table'] == table_trg:
@@ -143,11 +150,12 @@ class FromParser(Thread):
         # pk_table_trg = self.database_object.get_primary_key_names_of_table(table_trg)
         # match_pk_table_src_with_table_trg = self.intersect(pk_table_src, self.database_dico[table_trg])
         # match_pk_table_trg_with_table_src = self.intersect(pk_table_trg, self.database_dico[table_src])
-        
+
         # if len(match_pk_table_src_with_table_trg) >= 1:
         #     return [(table_trg, match_pk_table_src_with_table_trg[0]), (table_src, match_pk_table_src_with_table_trg[0])]
         # elif len(match_pk_table_trg_with_table_src) >= 1:
-        #     return [(table_trg, match_pk_table_trg_with_table_src[0]), (table_src, match_pk_table_trg_with_table_src[0])]
+        # return [(table_trg, match_pk_table_trg_with_table_src[0]),
+        # (table_src, match_pk_table_trg_with_table_src[0])]
 
     def get_all_direct_linked_tables_of_a_table(self, table_src):
         links = []
@@ -165,7 +173,7 @@ class FromParser(Thread):
         differences = []
         for join in links:
             if join[0][0] not in historic:
-               differences.append(join)
+                differences.append(join)
         links = differences
 
         for join in links:
@@ -203,7 +211,6 @@ class FromParser(Thread):
                 frequency.append(element)
         return frequency
 
-
     def run(self):
         self.queries = []
 
@@ -235,12 +242,15 @@ class FromParser(Thread):
         Thread.join(self)
         return self.queries
 
+
 class WhereParser(Thread):
-    def __init__(self, phrases, tables_of_from, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, database_dico):
+
+    def __init__(self, phrases, tables_of_from, columns_of_values_of_where, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, database_dico):
         Thread.__init__(self)
         self.where_objects = []
         self.phrases = phrases
         self.tables_of_from = tables_of_from
+        self.columns_of_values_of_where = columns_of_values_of_where
         self.count_keywords = count_keywords
         self.sum_keywords = sum_keywords
         self.average_keywords = average_keywords
@@ -258,10 +268,10 @@ class WhereParser(Thread):
         tmp_table = []
         for table in self.database_dico:
             if column in self.database_dico[table]:
-                 tmp_table.append(table)
+                tmp_table.append(table)
         return tmp_table
 
-    def get_column_name_with_alias_table(self,column, table_of_from):
+    def get_column_name_with_alias_table(self, column, table_of_from):
         one_table_of_column = self.get_tables_of_column(column)[0]
         tables_of_column = self.get_tables_of_column(column)
         if table_of_from in tables_of_column:
@@ -327,7 +337,7 @@ class WhereParser(Thread):
 
         if first_encountered_junction_offset >= first_encountered_disjunction_offset:
             return 'AND'
-        else: 
+        else:
             return 'OR'
 
     def run(self):
@@ -356,57 +366,67 @@ class WhereParser(Thread):
                         offset_of[phrase[i]] = i
                         column_offset.append(i)
                         break
-                if phrase[i] in self.count_keywords: # before the column
+                if phrase[i] in self.count_keywords:  # before the column
                     self.count_keyword_offset.append(i)
-                if phrase[i] in self.sum_keywords: # before the column
+                if phrase[i] in self.sum_keywords:  # before the column
                     self.sum_keyword_offset.append(i)
-                if phrase[i] in self.average_keywords: # before the column
+                if phrase[i] in self.average_keywords:  # before the column
                     self.average_keyword_offset.append(i)
-                if phrase[i] in self.max_keywords: # before the column
+                if phrase[i] in self.max_keywords:  # before the column
                     self.max_keyword_offset.append(i)
-                if phrase[i] in self.min_keywords: # before the column
+                if phrase[i] in self.min_keywords:  # before the column
                     self.min_keyword_offset.append(i)
-                if phrase[i] in self.greater_keywords: # after the column
+                if phrase[i] in self.greater_keywords:  # after the column
                     self.greater_keyword_offset.append(i)
-                if phrase[i] in self.less_keywords: # after the column
+                if phrase[i] in self.less_keywords:  # after the column
                     self.less_keyword_offset.append(i)
-                if phrase[i] in self.between_keywords: # after the column
+                if phrase[i] in self.between_keywords:  # after the column
                     self.between_keyword_offset.append(i)
-                if phrase[i] in self.junction_keywords: # after the column
+                if phrase[i] in self.junction_keywords:  # after the column
                     self.junction_keyword_offset.append(i)
-                if phrase[i] in self.disjunction_keywords: # after the column
+                if phrase[i] in self.disjunction_keywords:  # after the column
                     self.disjunction_keyword_offset.append(i)
-                if phrase[i] in self.negation_keywords: # between the column and the equal, greater or less keyword
+                # between the column and the equal, greater or less keyword
+                if phrase[i] in self.negation_keywords:
                     self.negation_keyword_offset.append(i)
 
         for table_of_from in self.tables_of_from:
             where_object = Where()
             for i in range(0, len(column_offset)):
-            	current = column_offset[i]
+                current = column_offset[i]
 
                 if i == 0:
                     previous = 0
                 else:
-                    previous = column_offset[i-1]
+                    previous = column_offset[i - 1]
 
                 if i == (len(column_offset) - 1):
-                    _next = 100 # put max integer in python here ?
+                    _next = 100  # put max integer in python here ?
                 else:
-                    _next = column_offset[i+1]
+                    _next = column_offset[i + 1]
 
                 junction = self.predict_junction(previous, current)
-                column = self.get_column_name_with_alias_table(columns_of_where[i], table_of_from)
+                column = self.get_column_name_with_alias_table(
+                    columns_of_where[i], table_of_from)
                 operation_type = self.predict_operation_type(previous, current)
-                value = 'OOV' # Out Of Vocabulary: feature not implemented yet
+
+                if len(self.columns_of_values_of_where) >= len(columns_of_where):
+                    value = self.columns_of_values_of_where[i]
+                else:
+                    value = 'OOV'  # Out Of Vocabulary: feature not implemented yet
+
                 operator = self.predict_operator(current, _next)
-                where_object.add_condition(junction, Condition(column, operation_type, operator, value))
+                where_object.add_condition(junction, Condition(
+                    column, operation_type, operator, value))
             self.where_objects.append(where_object)
 
     def join(self):
         Thread.join(self)
         return self.where_objects
 
+
 class GroupByParser(Thread):
+
     def __init__(self, phrases, tables_of_from, database_dico):
         Thread.__init__(self)
         self.group_by_objects = []
@@ -418,7 +438,7 @@ class GroupByParser(Thread):
         tmp_table = []
         for table in self.database_dico:
             if column in self.database_dico[table]:
-                 tmp_table.append(table)
+                tmp_table.append(table)
         return tmp_table
 
     def get_column_name_with_alias_table(self, column, table_of_from):
@@ -436,7 +456,8 @@ class GroupByParser(Thread):
                 for i in range(0, len(phrase)):
                     for table in self.database_dico:
                         if phrase[i] in self.database_dico[table]:
-                            column = self.get_column_name_with_alias_table(phrase[i], table_of_from)
+                            column = self.get_column_name_with_alias_table(
+                                phrase[i], table_of_from)
                             group_by_object.set_column(column)
             self.group_by_objects.append(group_by_object)
 
@@ -444,7 +465,9 @@ class GroupByParser(Thread):
         Thread.join(self)
         return self.group_by_objects
 
+
 class OrderByParser(Thread):
+
     def __init__(self, phrases, tables_of_from, database_dico):
         Thread.__init__(self)
         self.order_by_objects = []
@@ -456,7 +479,7 @@ class OrderByParser(Thread):
         tmp_table = []
         for table in self.database_dico:
             if column in self.database_dico[table]:
-                 tmp_table.append(table)
+                tmp_table.append(table)
         return tmp_table
 
     def get_column_name_with_alias_table(self, column, table_of_from):
@@ -474,7 +497,8 @@ class OrderByParser(Thread):
                 for i in range(0, len(phrase)):
                     for table in self.database_dico:
                         if phrase[i] in self.database_dico[table]:
-                            column = self.get_column_name_with_alias_table(phrase[i], table_of_from)
+                            column = self.get_column_name_with_alias_table(
+                                phrase[i], table_of_from)
                             order_by_object.add_column(column)
             order_by_object.set_order(0)
             self.order_by_objects.append(order_by_object)
@@ -482,6 +506,7 @@ class OrderByParser(Thread):
     def join(self):
         Thread.join(self)
         return self.order_by_objects
+
 
 class Parser:
     database_object = None
@@ -535,47 +560,120 @@ class Parser:
         last_table_position = 0
         columns_of_select = []
         columns_of_where = []
+
+        input_for_finding_value = sentence
+        columns_of_values_of_where = []
+
+        filter_list = [",", "!"]
+
+        for filter_element in filter_list:
+            input_for_finding_value = input_for_finding_value.replace(
+                filter_element, " ")
+
+        input_word_list = input_for_finding_value.split()
+
+        number_of_where_column_temp = 0
+        number_of_table_temp = 0
+        last_table_position_temp = 0
+        start_phrase = ''
+        med_phrase = ''
+        end_phrase = ''
+
+        for i in range(0, len(input_word_list)):
+            if input_word_list[i] in self.database_dico:
+                if number_of_table_temp == 0:
+                    start_phrase = input_word_list[:i]
+                number_of_table_temp += 1
+                last_table_position_temp = i
+            for table in self.database_dico:
+                if input_word_list[i] in self.database_dico[table]:
+                    if number_of_where_column_temp == 0:
+                        med_phrase = input_word_list[
+                            len(start_phrase):last_table_position_temp + 1]
+                    number_of_where_column_temp += 1
+                    break
+                else:
+                    if (number_of_table_temp != 0) and (number_of_where_column_temp == 0) and (i == (len(input_word_list) - 1)):
+                        med_phrase = input_word_list[len(start_phrase):]
+
+        end_phrase = input_word_list[len(start_phrase) + len(med_phrase):]
+        irext = ' '.join(end_phrase)
+
+        if irext:
+            mirext = irext.lower()
+
+            filter_list = [",", "!"]
+
+            for filter_element in filter_list:
+                irext = irext.replace(filter_element, " ")
+
+            assignment_list = [" equals to ", " equal to ",
+                               "=", " is ", ":", " equals ", " equal ", " than "]
+            maverickjoy_assigner_convention = "res@3#>>"
+
+            for assigners in assignment_list:
+                irext = irext.replace(assigners, " res@3#>> ")
+
+            # replace all spaces from values to <_> for proper value assignment in SQL
+            # eg. (where name is 'abc def') -> (where name is abc<_>def)
+            for i in re.findall("(['\"].*?['\"])", irext):
+                irext = irext.replace(i, i.replace(
+                    ' ', '<_>').replace("'", '').replace('"',''))
+
+            irext_list = irext.split()
+
+            index_list_values = [
+                (i + 1) for i, x in enumerate(irext_list) if x == maverickjoy_assigner_convention]
+
+            for index in index_list_values:
+                if index < len(irext_list):
+                    # replace back <_> to spaces from the values assigned
+                    columns_of_values_of_where.append(
+                        str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
+
         tables_of_from = []
         select_phrase = ''
         from_phrase = ''
         where_phrase = ''
-        
-        words = re.findall(r"[\w]+", self.remove_accents(sentence.decode('utf-8').lower()))
+
+        words = re.findall(
+            r"[\w]+", self.remove_accents(sentence.decode('utf-8').lower()))
 
         for i in range(0, len(words)):
             if words[i] in self.database_dico:
                 if number_of_table == 0:
                     select_phrase = words[:i]
                 tables_of_from.append(words[i])
-                number_of_table+=1
+                number_of_table += 1
                 last_table_position = i
             for table in self.database_dico:
                 if words[i] in self.database_dico[table]:
                     if number_of_table == 0:
                         columns_of_select.append(words[i])
-                        number_of_select_column+=1
+                        number_of_select_column += 1
                     else:
                         if number_of_where_column == 0:
-                            from_phrase = words[len(select_phrase):last_table_position+1]
+                            from_phrase = words[
+                                len(select_phrase):last_table_position + 1]
                         columns_of_where.append(words[i])
-                        number_of_where_column+=1
+                        number_of_where_column += 1
                     break
                 else:
-                    if (number_of_table != 0) and (number_of_where_column == 0) and (i == (len(words)-1)):
+                    if (number_of_table != 0) and (number_of_where_column == 0) and (i == (len(words) - 1)):
                         from_phrase = words[len(select_phrase):]
 
         where_phrase = words[len(select_phrase) + len(from_phrase):]
-        
+
         if (number_of_select_column + number_of_table + number_of_where_column) == 0:
             raise ParsingException("No keyword found in sentence!")
 
         if len(tables_of_from) > 0:
             from_phrases = []
             previous_index = 0
-            for i in range(0,len(from_phrase)):
+            for i in range(0, len(from_phrase)):
                 if from_phrase[i] in tables_of_from:
-                    from_phrases.append(from_phrase[previous_index:i+1])
-                    previous_index = i+1
+                    from_phrases.append(from_phrase[previous_index:i + 1])
+                    previous_index = i + 1
 
             last_junction_word_index = -1
 
@@ -596,8 +694,10 @@ class Parser:
                 from_phrase = sum(from_phrases[:1], [])
                 where_phrase = sum(from_phrases[1:], []) + where_phrase
             else:
-                 from_phrase = sum(from_phrases[:last_junction_word_index+1], [])
-                 where_phrase = sum(from_phrases[last_junction_word_index+1:], []) + where_phrase
+                from_phrase = sum(
+                    from_phrases[:last_junction_word_index + 1], [])
+                where_phrase = sum(
+                    from_phrases[last_junction_word_index + 1:], []) + where_phrase
 
         real_tables_of_from = []
 
@@ -646,12 +746,17 @@ class Parser:
             group_by_phrase.append(where_phrase[previous_index:])
         else:
             new_where_phrase.append(where_phrase)
-        
-        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
-        from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
-        where_parser = WhereParser(new_where_phrase, tables_of_from, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico)
-        group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
-        order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.database_dico)
+
+        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords,
+                                     self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
+        from_parser = FromParser(
+            tables_of_from, columns_of_select, columns_of_where, self.database_object)
+        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords,
+                                   self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico)
+        group_by_parser = GroupByParser(
+            group_by_phrase, tables_of_from, self.database_dico)
+        order_by_parser = OrderByParser(
+            order_by_phrase, tables_of_from, self.database_dico)
 
         select_parser.start()
         from_parser.start()
@@ -662,7 +767,8 @@ class Parser:
         queries = from_parser.join()
 
         if queries is None:
-            raise ParsingException("There is at least one unattainable column from the table of FROM!")
+            raise ParsingException(
+                "There is at least one unattainable column from the table of FROM!")
 
         select_objects = select_parser.join()
         where_objects = where_parser.join()
