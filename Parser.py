@@ -560,7 +560,7 @@ class Parser:
         last_table_position = 0
         columns_of_select = []
         columns_of_where = []
-#---------------------------------------------------- RUPI
+
         input_for_finding_value = sentence
         columns_of_values_of_where = []
 
@@ -571,10 +571,6 @@ class Parser:
                 filter_element, " ")
 
         input_word_list = input_for_finding_value.split()
-
-        # print "asd -> ",input_word_list
-
-        #===    clause extractor
 
         number_of_where_column_temp = 0
         number_of_table_temp = 0
@@ -602,32 +598,9 @@ class Parser:
 
         end_phrase = input_word_list[len(start_phrase) + len(med_phrase):]
         irext = ' '.join(end_phrase)
-        # print 'irext :',irext
-
-        #===
-
-        # condition_str_where='where'
-        # exist_check_where=sentence.find(condition_str_where)
-
-        # condition_str_for='for'
-        # exist_check_for=sentence.find(condition_str_for)
-        # if exist_check_where != -1 or exist_check_for != -1:
 
         if irext:
-
-            # print "entered"
-
-            # if  exist_check_where != -1 :
-            #     irext=sentence.split(condition_str_where)[1]
-            # else :
-            #     irext=sentence.split(condition_str_for)[1]
-
             mirext = irext.lower()
-
-            # print "-----"
-            # print "sentence : ",sentence
-            # print "irext : ",irext
-            # print "-----"
 
             filter_list = [",", "!"]
 
@@ -640,8 +613,6 @@ class Parser:
 
             for assigners in assignment_list:
                 irext = irext.replace(assigners, " res@3#>> ")
-                # print "ire : ",irext
-            # print 'irext:',irext
 
             # replace all spaces from values to <_> for proper value assignment in SQL
             # eg. (where name is 'abc def') -> (where name is abc<_>def)
@@ -650,19 +621,15 @@ class Parser:
                     ' ', '<_>').replace("'", '').replace('"',''))
 
             irext_list = irext.split()
-            # print "ire : ",irext_list
 
             index_list_values = [
                 (i + 1) for i, x in enumerate(irext_list) if x == maverickjoy_assigner_convention]
-            # print "ilv : ",index_list_values
 
             for index in index_list_values:
                 if index < len(irext_list):
                     # replace back <_> to spaces from the values assigned
                     columns_of_values_of_where.append(
                         str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
-
-#---------------------------------------------------- RUPI
 
         tables_of_from = []
         select_phrase = ''
