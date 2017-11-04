@@ -43,7 +43,6 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 - [X] JOIN 
 	- [X] inner join
 	- [X] natural join
-	- [X] union join
 - [X] WHERE 
 	- [X] one condition
 	- [X] multiple conditions
@@ -55,7 +54,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [X] not equal operator
 		- [X] greater-than operator
 		- [X] less-than operator
-		- [ ] ** between operator (under development...) **
+		- [ ] between operator (not 100% efficient)
 	- [X] aggregate functions
 		- [X] sum in condition
 		- [X] avg in condition
@@ -69,7 +68,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 - [X] multiple queries
 - [X] exception and error handling
 - [X] negation support
-- [ ] ** detection of values (under development...) **
+- [ ] detection of values (not 100% efficient)
 
 ## How to use it?
 
