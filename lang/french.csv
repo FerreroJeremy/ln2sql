@@ -9,5 +9,8 @@ GREATER: plus grand, supérieur
 LESS: plus petit, inférieur
 BETWEEN: entre
 ORDER: ordre, ordonné
+ASC: ascendant, ascendante, croissant
+DESC: descendant, descendante, décroissant, inverse, inversé, inversée
 GROUP: groupe, groupé, rangé
 NEGATION: ne, pas, aucun
+EQUAL: est
