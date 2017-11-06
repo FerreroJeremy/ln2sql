@@ -747,9 +747,6 @@ class Parser:
         else:
             new_where_phrase.append(where_phrase)
 
-        # print(columns_of_select, tables_of_from, select_phrase, self.count_keywords,
-            # self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
-
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords,
                                      self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
         from_parser = FromParser(
