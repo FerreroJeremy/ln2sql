@@ -637,7 +637,7 @@ class Parser:
         where_phrase = ''
 
         words = re.findall(
-            r"[\w]+", self.remove_accents(sentence.decode('utf-8').lower()))
+            r"[\w]+", self.remove_accents(sentence.decode('utf-8')))
 
         for i in range(0, len(words)):
             if words[i] in self.database_dico:
@@ -746,6 +746,9 @@ class Parser:
             group_by_phrase.append(where_phrase[previous_index:])
         else:
             new_where_phrase.append(where_phrase)
+
+        # print(columns_of_select, tables_of_from, select_phrase, self.count_keywords,
+            # self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
 
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords,
                                      self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
