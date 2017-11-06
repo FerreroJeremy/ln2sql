@@ -649,8 +649,7 @@ class Parser:
         from_phrase = ''
         where_phrase = ''
 
-        words = re.findall(
-            r"[\w]+", self.remove_accents(sentence.decode('utf-8')))
+        words = re.findall(r"[\w]+", self.remove_accents(sentence.decode('utf-8')))
 
         for i in range(0, len(words)):
             if words[i] in self.database_dico:
@@ -760,16 +759,11 @@ class Parser:
         else:
             new_where_phrase.append(where_phrase)
 
-        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords,
-                                     self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
-        from_parser = FromParser(
-            tables_of_from, columns_of_select, columns_of_where, self.database_object)
-        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords,
-                                   self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico)
-        group_by_parser = GroupByParser(
-            group_by_phrase, tables_of_from, self.database_dico)
-        order_by_parser = OrderByParser(
-            order_by_phrase, tables_of_from, self.database_dico)
+        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
+        from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
+        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico)
+        group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
+        order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.asc_keywords, self.desc_keywords, self.database_dico)
 
         select_parser.start()
         from_parser.start()
