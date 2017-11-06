@@ -20,8 +20,11 @@ class LangConfig:
 		self.less_keywords = []
 		self.between_keywords = []
 		self.order_by_keywords = []
+		self.asc_keywords = []
+		self.desc_keywords = []
 		self.group_by_keywords = []
 		self.negation_keywords = []
+		self.equal_keywords = []
 
 	def get_avg_keywords(self):
 		return self.avg_keywords
@@ -56,11 +59,20 @@ class LangConfig:
 	def get_order_by_keywords(self):
 		return self.order_by_keywords
 
+	def get_asc_keywords(self):
+		return self.asc_keywords
+
+	def get_desc_keywords(self):
+		return self.desc_keywords
+
 	def get_group_by_keywords(self):
 		return self.group_by_keywords
 
 	def get_negation_keywords(self):
 		return self.negation_keywords
+
+	def get_equal_keywords(self):
+		return self.equal_keywords
 
 	def remove_accents(self, string):
 		nkfd_form = unicodedata.normalize('NFKD', unicode(string))
@@ -91,10 +103,16 @@ class LangConfig:
 			self.between_keywords = self.between_keywords[1:len(self.between_keywords)]
 			self.order_by_keywords = map(self.remove_accents, map(str.strip, content[10].replace(':',',').split(",")))
 			self.order_by_keywords = self.order_by_keywords[1:len(self.order_by_keywords)]
-			self.group_by_keywords = map(self.remove_accents, map(str.strip, content[11].replace(':',',').split(",")))
+			self.asc_keywords = map(self.remove_accents, map(str.strip, content[11].replace(':',',').split(",")))
+			self.asc_keywords = self.asc_keywords[1:len(self.asc_keywords)]
+			self.desc_keywords = map(self.remove_accents, map(str.strip, content[12].replace(':',',').split(",")))
+			self.desc_keywords = self.desc_keywords[1:len(self.desc_keywords)]
+			self.group_by_keywords = map(self.remove_accents, map(str.strip, content[13].replace(':',',').split(",")))
 			self.group_by_keywords = self.group_by_keywords[1:len(self.group_by_keywords)]
-			self.negation_keywords = map(self.remove_accents, map(str.strip, content[12].replace(':',',').split(",")))
+			self.negation_keywords = map(self.remove_accents, map(str.strip, content[14].replace(':',',').split(",")))
 			self.negation_keywords = self.negation_keywords[1:len(self.negation_keywords)]
+			self.equal_keywords = map(self.remove_accents, map(str.strip, content[15].replace(':',',').split(",")))
+			self.equal_keywords = self.equal_keywords[1:len(self.equal_keywords)]
 
 	def print_me(self):
 		print self.avg_keywords
@@ -108,6 +126,9 @@ class LangConfig:
 		print self.less_keywords
 		print self.between_keywords
 		print self.order_by_keywords
+		print self.asc_keywords
+		print self.desc_keywords
 		print self.group_by_keywords
 		print self.negation_keywords
+		print self.equal_keywords
         
