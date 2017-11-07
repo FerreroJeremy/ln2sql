@@ -147,7 +147,7 @@ class Join():
 		if len(self.links) >= 1:
 			string = ''
 			for i in range(0, len(self.links)):
-				string += '\n' + color.BOLD + 'INNER JOIN ' + color.END + str(self.links[i][2]) + '\n' + color.BOLD + 'ON ' + color.END + str(self.links[i][0]) + '.' + str(self.links[i][1]) + ' = ' + str(self.links[i][2]) + '.' + str(self.links[i][1])
+				string += '\n' + color.BOLD + 'INNER JOIN ' + color.END + str(self.links[i][0][0]) + '\n' + color.BOLD + 'ON ' + color.END + str(self.links[i][0][0]) + '.' + str(self.links[i][0][1]) + ' = ' + str(self.links[i][1][0]) + '.' + str(self.links[i][1][1])
 			return string
 		elif len(self.tables) >= 1:
 			if len(self.tables) == 1:
@@ -329,51 +329,25 @@ class GroupBy():
 
 class OrderBy():
 	columns = []
-	order = None
 
-	def __init__(self, columns=None, order=None):
-		if columns is not None:
-			self.columns = columns
-		else:
-			self.columns = []
+	def __init__(self):
+		self.columns = []
 
-		if order is not None:
-			self.order = order
-		else:
-			self.order = None
-
-	def add_column(self, column):
-		if column not in self.columns:
-			self.columns.append(column)
+	def add_column(self, column, order):
+		if [column, order] not in self.columns:
+			self.columns.append([column, order])
 
 	def get_columns(self):
 		return self.columns
-
-	def set_order(self, order):
-		self.order = order
-
-	def get_order(self):
-		return self.order
-
-	def get_just_column_name(self, column):
-		if column != str(None):
-			return column.rsplit('.', 1)[1]
-		else:
-			return column
 
 	def __str__(self):
 		if self.columns != []:
 			string = color.BOLD + 'ORDER BY ' + color.END
 			for i in range(0, len(self.columns)):
 				if i == (len(self.columns)-1):
-					string += self.columns[i]
+					string += self.columns[i][0] + ' ' + color.BOLD + self.columns[i][1] + color.END
 				else:
-					string += self.columns[i] + ', '
-			if self.order == 0:
-				string += color.BOLD + ' ASC' + color.END
-			else:
-				string += color.BOLD + ' ASC' + color.END
-
+					string += self.columns[i][0] + ' ' + color.BOLD + self.columns[i][1] + color.END + ', '
 			return '\n' + string
 		else:
 			return ''
@@ -381,24 +355,27 @@ class OrderBy():
 	def print_json(self, output):
 		if len(self.columns) >= 1:
 			if len(self.columns) == 1:
-				output.write('\t"order_by": {\n')
-				output.write('\t\t"order": "' + str(self.order) + '",\n')
-				output.write('\t\t"column": "' + self.get_just_column_name(str(self.columns[0])) + '"\n')
+				output.write('\t"select": {\n')
+				output.write('\t\t"column": "' + str(self.columns[0][0]) + '",\n')
+				output.write('\t\t"order": "' + str(self.columns[0][1]) + '"\n')
 				output.write('\t},\n')
 			else:
-				output.write('\t"order_by": {\n')
-				output.write('\t\t"order": "' + str(self.order) + '",\n')
-				output.write('\t\t"columns": [')
+				output.write('\t"select": {\n')
+				output.write('\t\t"columns": [\n')
 				for i in range(0, len(self.columns)):
 					if i == (len(self.columns)-1):
-						output.write('"' + self.get_just_column_name(str(self.columns[i])) + '"')
+						output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
+						output.write('\t\t\t  "order": "' + str(self.columns[i][1]) + '"\n')
+						output.write('\t\t\t}\n')
 					else:
-						output.write('"' + self.get_just_column_name(str(self.columns[i])) + '", ')
-				output.write(']\n')
+						output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
+						output.write('\t\t\t  "order": "' + str(self.columns[i][1]) + '"\n')
+						output.write('\t\t\t},\n')
+				output.write('\t\t]\n')
 				output.write('\t},\n')
 		else:
-			output.write('\t"order_by": {\n')
-			output.write('\t}\n')
+			output.write('\t"select": {\n')
+			output.write('\t},\n')
 
 class Query():
 	select = None

@@ -43,7 +43,6 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 - [X] JOIN 
 	- [X] inner join
 	- [X] natural join
-	- [X] union join
 - [X] WHERE 
 	- [X] one condition
 	- [X] multiple conditions
@@ -55,7 +54,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [X] not equal operator
 		- [X] greater-than operator
 		- [X] less-than operator
-		- [X] between operator
+		- [ ] between operator (not 100% efficient)
 	- [X] aggregate functions
 		- [X] sum in condition
 		- [X] avg in condition
@@ -63,13 +62,13 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [X] max in condition
 - [X] ORDER BY
 	- [X] ASC
-	- [ ] DESC
+	- [X] DESC
 - [X] GROUP BY
 - [X] alias
 - [X] multiple queries
 - [X] exception and error handling
 - [X] negation support
-- [ ] detection of values (OOV)
+- [ ] detection of values (not 100% efficient)
 
 ## How to use it?
 
@@ -118,8 +117,14 @@ Parameters:
 ```
 example of usage:
 ```
-python ln2sql.py -i "What is the number of students?" -l lang/english.csv -d database/school.sql -j output.json
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
 ```
+
+Values for WHERE clause should be specified in single(') or double(") quotes for multi word values.example : 
+```
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city with cityName = 'San Jose'"
+```
+
 or by graphical interface by typing the following command:
 ```
 python ln2sql_gui.py

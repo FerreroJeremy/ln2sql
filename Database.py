@@ -17,6 +17,7 @@ class color:
     YELLOW = '\033[93m'
     RED = '\033[91m'
     BOLD = '\033[1m'
+    ITALIC = '\033[3m'
     UNDERLINE = '\033[4m'
     END = '\033[0m'
 
@@ -30,25 +31,51 @@ class Database:
     
     def get_tables(self):
         return self.tables
+
+    def get_table_by_name(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table
     
     def get_tables_into_dictionnary(self):
         data = {}
         for table in self.tables:
-            data[table.name] = []
-            for column in table.columns:
-                data[table.name].append(column.name)
+            data[table.get_name()] = []
+            for column in table.get_columns():
+                data[table.get_name()].append(column.get_name())
         return data
 
     def get_primary_keys_by_table(self):
         data = {}
         for table in self.tables:
-            data[table.name] = table.primary_keys
+            data[table.get_name()] = table.get_primary_keys()
         return data
 
-    def get_primary_keys_of_table(self, table):
-        for _table in self.tables:
-            if _table.name == table:
-                return _table.primary_keys
+    def get_foreign_keys_by_table(self):
+        data = {}
+        for table in self.tables:
+            data[table.get_name()] = table.get_foreign_keys()
+        return data
+
+    def get_primary_keys_of_table(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table.get_primary_keys()
+
+    def get_primary_key_names_of_table(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table.get_primary_key_names()
+
+    def get_foreign_keys_of_table(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table.get_foreign_keys()
+
+    def get_foreign_key_names_of_table(self, table_name):
+        for table in self.tables:
+            if table.get_name() == table_name:
+                return table.get_foreign_key_names()
 
     def add_table(self, table):
         self.tables.append(table)
@@ -61,6 +88,10 @@ class Database:
                 if 'TABLE' in table_string:
                     table = self.create_table(table_string)
                     self.add_table(table)
+            alter_tables_string = [p.split(';')[0] for p in content.split('ALTER') if ';' in p]
+            for alter_table_string in alter_tables_string:
+                if 'TABLE' in alter_table_string:
+                    self.alter_table(alter_table_string)
 
     def predict_type(self, string):
         if 'int' in string.lower():
@@ -90,17 +121,32 @@ class Database:
                     table.add_column(column_name.group(1), column_type)
         return table
 
+    def alter_table(self, alter_string):
+        lines = alter_string.replace('\n', ' ').split(';')
+        for line in lines:
+            if 'PRIMARY KEY' in line:
+                table_name = re.search("TABLE `(\w+)`", line).group(1)
+                table = self.get_table_by_name(table_name)
+                primary_key_columns = re.findall("PRIMARY KEY \(`(\w+)`\)", line)
+                for primary_key_column in primary_key_columns:
+                    table.add_primary_key(primary_key_column)
+            elif 'FOREIGN KEY' in line:
+                table_name = re.search("TABLE `(\w+)`", line).group(1)
+                table = self.get_table_by_name(table_name)
+                foreign_keys_list = re.findall("FOREIGN KEY \(`(\w+)`\) REFERENCES `(\w+)` \(`(\w+)`\)", line)
+                for column, foreign_table, foreign_column in foreign_keys_list:
+                    table.add_foreign_key(column, foreign_table, foreign_column)
+
     def print_me(self):
         for table in self.tables:
             print('+-------------------------------------+')
-            print("| %25s           |" % (table.name.upper()))
+            print("| %25s           |" % (table.get_name().upper()))
             print('+-------------------------------------+')
             for column in table.columns:
-                if column.name in table.primary_keys:
-                    print("| 🔑 %31s           |" % (color.BOLD + column.name + ' (' + column.type + ')' + color.END))
+                if column.is_primary():
+                    print("| 🔑 %31s           |" % (color.BOLD + column.get_name() + ' (' + column.get_type() + ')' + color.END))
+                elif column.is_foreign():
+                    print("| #️⃣ %31s           |" % (color.ITALIC + column.get_name() + ' (' + column.get_type() + ')' + color.END))
                 else:
-                    print("|   %23s           |" % (column.name + ' (' + column.type + ')'))
+                    print("|   %23s           |" % (column.get_name() + ' (' + column.get_type() + ')'))
             print('+-------------------------------------+\n')
-
-
-
