@@ -1,19 +1,20 @@
 {
 	"select": {
 		"column": "None",
-		"type": "None"
+		"type": "COUNT"
 	},
 	"from": {
 		"table": "city"
 	},
 	"join": {
+		"table": "emp"
 	},
 	"where": {
 		"condition": [
-			{ "column": "cityName",
+			{ "column": "name",
 			  "type": "None",
-			  "operator": "=",
-			  "value": "'pune agra'"
+			  "operator": ">",
+			  "value": "'matthew'"
 			}
 		]
 	},

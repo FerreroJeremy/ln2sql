@@ -265,7 +265,6 @@ class WhereParser(Thread):
         self.disjunction_keywords = disjunction_keywords
         self.database_dico = database_dico
         self.columns_of_values_of_where = columns_of_values_of_where
-
         self.like_keywords = like_keywords
 
     def get_tables_of_column(self, column):
@@ -421,7 +420,7 @@ class WhereParser(Thread):
                 column = self.get_column_name_with_alias_table(columns_of_where[i], table_of_from)
                 operation_type = self.predict_operation_type(previous, current)
 
-                if len(self.columns_of_values_of_where) >= len(columns_of_where):
+                if len(self.columns_of_values_of_where) > i:
                     value = self.columns_of_values_of_where[i]
                 else:
                     value = 'OOV'  # Out Of Vocabulary: default value
@@ -527,6 +526,25 @@ class OrderByParser(Thread):
         return self.order_by_objects
 
 
+# ---------------------------------------PART OF ALGORITHM FOR VALUE EXTRACTION STRARTS
+def _myCmp(s1,s2):
+    # if len(s1.split()) == 1 and len(s2.split()) == 1:
+    if len(s1.split()) == len(s2.split()) :
+        if len(s1) >= len(s2) :
+            return 1
+        else:
+            return -1
+    else:
+        if len(s1.split()) >= len(s2.split()):
+            return 1
+        else:
+            return -1
+
+def _transformationSortAlgo(transitionalList):
+    return sorted(transitionalList,cmp=_myCmp,reverse=True)
+# ---------------------------------------PART OF ALGORITHM FOR VALUE EXTRACTION ENDS
+
+
 class Parser:
     database_object = None
     database_dico = None
@@ -626,43 +644,47 @@ class Parser:
         end_phrase = input_word_list[len(start_phrase) + len(med_phrase):]
         irext = ' '.join(end_phrase)
 
-        print 'irext : ',irext
-
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
             mirext = irext.lower()
-
+            # .lower() is necessary to make our own irext case insensetive for proper value extraction and it will not even
+            # reflect any problems for Case Sensetive values or fields , it is just for improving logic for our extracting assigners.
+            # eg -> "show data for city where cityName is LIke Pune" A query like this would also work even if lang you dont write all the permutations of 'like'.
             filter_list = [",", "!"]
 
             for filter_element in filter_list:
-                irext = irext.replace(filter_element, " ")
+                irext = mirext.replace(filter_element, " ")
 
-            ''' @todo set this assignment_list dynamic and in config language file '''
-            
+            assignment_list = self.equal_keywords + self.like_keywords +  self.greater_keywords + self.less_keywords
+            # As these words can also be part of assigners
 
-            assignment_list = self.equal_keywords
-            # Feature addition
-            # for assigner such as 'like' one should go for a different feature query ,eg " where LIKE %value% ;"
-            # custom operators added can be possibilities
             assignment_list.append(':')
             assignment_list.append('=')
-            # assignment_list = [" equals to ", " equal to ", "=", " is ", ":", " equals ", " equal ", " than "]
-            print "assignment_list : ",assignment_list
+            # custom operators added as they can be possibilities
 
-            maverickjoy_assigner_convention = "*res@3#>>*"
+            assignment_list = _transformationSortAlgo(assignment_list) # Algorithmic logic for best substitution for extraction of values with the help of assigners.
+
+
+            maverickjoy_general_assigner = "*res*@3#>>*"
+            maverickjoy_like_assigner = "*like*@3#>>*"
+            # Feature Addition
+            # for assigner such as 'like' one should go for a different feature query ,eg " where LIKE %value% ;"
 
             for idx,assigner in enumerate(assignment_list):
-                assigner = str(" " + assigner + " ")
-                # Reason for this is according to the logic implemented assigner operators help us extract the value,
-                # hence they should be independent entities not part of some other big entity else logic will fail.
-                # for eg -> "show data for city where cityName where I like to risk my life  is Pune" will end up extacting ,
-                # 'k' and '1' both. I know its a lame sentence but something like this could be a problem.
+                if assigner in self.like_keywords:
+                    assigner = str(" " + assigner + " ")
+                    irext = irext.replace(assigner, str(" "+maverickjoy_like_assigner+" "))
+                else:
+                    assigner = str(" " + assigner + " ")
+                    # Reason for adding " " these is according to the LOGIC implemented assigner operators help us extract the value,
+                    # hence they should be independent entities not part of some other big entity else logic will fail.
+                    # for eg -> "show data for city where cityName where I like to risk my life  is Pune" will end up extacting ,
+                    # 'k' and '1' both. I know its a lame sentence but something like this could be a problem.
 
-                # print "assigner : ",assigner
-                irext = irext.replace(assigner, str(" "+maverickjoy_assigner_convention+" "))
+                    irext = irext.replace(assigner, str(" "+maverickjoy_general_assigner+" "))
 
-            print "irext : ",irext
+
             # replace all spaces from values to <_> for proper value assignment in SQL
             # eg. (where name is 'abc def') -> (where name is abc<_>def)
             for i in re.findall("(['\"].*?['\"])", irext):
@@ -670,18 +692,19 @@ class Parser:
 
             irext_list = irext.split()
 
+            for idx, x in enumerate(irext_list):
+                index = idx + 1
+                if x == maverickjoy_like_assigner:
+                    if index < len(irext_list) and irext_list[index] != maverickjoy_like_assigner and irext_list[index] != maverickjoy_general_assigner:
+                        # replace back <_> to spaces from the values assigned
+                        columns_of_values_of_where.append(str("'%" + str(irext_list[index]).replace('<_>', ' ') + "%'"))
 
-            index_list_values = [(i + 1) for i, x in enumerate(irext_list) if x == maverickjoy_assigner_convention]
+                if x == maverickjoy_general_assigner:
+                    if index < len(irext_list) and irext_list[index] != maverickjoy_like_assigner and irext_list[index] != maverickjoy_general_assigner:
+                        # replace back <_> to spaces from the values assigned
+                        columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
 
-            print "index_list_values : ",index_list_values
-
-            for index in index_list_values:
-                if index < len(irext_list):
-                    # replace back <_> to spaces from the values assigned
-
-                    columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
-
-            print "columns_of_values_of_where : ",columns_of_values_of_where
+            # print "columns_of_values_of_where : ",columns_of_values_of_where
 
         tables_of_from = []
         select_phrase = ''

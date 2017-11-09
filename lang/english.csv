@@ -6,12 +6,12 @@ COUNT: number, how many, count
 JUNCTION: and
 DISJUNCTION: or
 GREATER: greater, over ,greater than
-LESS: less
+LESS: less , less than
 BETWEEN: between, per
 ORDER: order, ordered
 ASC: ascending, increasing
 DESC: descending, decreasing, inverse, reverse, opposite
 GROUP: group, grouped
 NEGATION: not, no
-EQUAL: is, equal, equals, like
-LIKE: like, likes, LIKE, LIKES
+EQUAL: is, equal, equals
+LIKE: like, likes

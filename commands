@@ -14,3 +14,6 @@ python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "sho
 
 
 python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city where cityName not is Pune and id like 1"
+
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city where cityName is LIke Pune"
