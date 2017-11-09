@@ -110,6 +110,7 @@ class FromParser(Thread):
         self.tables_of_from = tables_of_from
         self.columns_of_select = columns_of_select
         self.columns_of_where = columns_of_where
+
         self.database_object = database_object
         self.database_dico = self.database_object.get_tables_into_dictionnary()
 
@@ -245,7 +246,7 @@ class FromParser(Thread):
 
 class WhereParser(Thread):
 
-    def __init__(self, phrases, tables_of_from, columns_of_values_of_where, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, database_dico):
+    def __init__(self, phrases, tables_of_from, columns_of_values_of_where, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, database_dico, like_keywords):
         Thread.__init__(self)
         self.where_objects = []
         self.phrases = phrases
@@ -263,6 +264,8 @@ class WhereParser(Thread):
         self.junction_keywords = junction_keywords
         self.disjunction_keywords = disjunction_keywords
         self.database_dico = database_dico
+        self.columns_of_values_of_where = columns_of_values_of_where
+        self.like_keywords = like_keywords
 
     def get_tables_of_column(self, column):
         tmp_table = []
@@ -299,6 +302,7 @@ class WhereParser(Thread):
 
     def predict_operator(self, current_column_offset, next_column_offset):
         interval_offset = range(current_column_offset, next_column_offset)
+
         if(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1) and (len(self.intersect(interval_offset, self.greater_keyword_offset)) >= 1):
             return '<'
         elif(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1) and (len(self.intersect(interval_offset, self.less_keyword_offset)) >= 1):
@@ -311,6 +315,8 @@ class WhereParser(Thread):
             return 'BETWEEN'
         elif(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1):
             return '!='
+        elif(len(self.intersect(interval_offset, self.like_keyword_offset)) >= 1):
+            return 'LIKE'
         else:
             return '='
 
@@ -356,6 +362,7 @@ class WhereParser(Thread):
         self.junction_keyword_offset = []
         self.disjunction_keyword_offset = []
         self.negation_keyword_offset = []
+        self.like_keyword_offset = []
 
         for phrase in self.phrases:
             for i in range(0, len(phrase)):
@@ -366,29 +373,35 @@ class WhereParser(Thread):
                         offset_of[phrase[i]] = i
                         column_offset.append(i)
                         break
-                if phrase[i] in self.count_keywords:  # before the column
+                phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
+
+                if phrase_keyword in self.count_keywords:  # before the column
                     self.count_keyword_offset.append(i)
-                if phrase[i] in self.sum_keywords:  # before the column
+                if phrase_keyword in self.sum_keywords:  # before the column
                     self.sum_keyword_offset.append(i)
-                if phrase[i] in self.average_keywords:  # before the column
+                if phrase_keyword in self.average_keywords:  # before the column
                     self.average_keyword_offset.append(i)
-                if phrase[i] in self.max_keywords:  # before the column
+                if phrase_keyword in self.max_keywords:  # before the column
                     self.max_keyword_offset.append(i)
-                if phrase[i] in self.min_keywords:  # before the column
+                if phrase_keyword in self.min_keywords:  # before the column
                     self.min_keyword_offset.append(i)
-                if phrase[i] in self.greater_keywords:  # after the column
+                if phrase_keyword in self.greater_keywords:  # after the column
                     self.greater_keyword_offset.append(i)
-                if phrase[i] in self.less_keywords:  # after the column
+                if phrase_keyword in self.less_keywords:  # after the column
                     self.less_keyword_offset.append(i)
-                if phrase[i] in self.between_keywords:  # after the column
+                if phrase_keyword in self.between_keywords:  # after the column
                     self.between_keyword_offset.append(i)
-                if phrase[i] in self.junction_keywords:  # after the column
+                if phrase_keyword in self.junction_keywords:  # after the column
                     self.junction_keyword_offset.append(i)
-                if phrase[i] in self.disjunction_keywords:  # after the column
+                if phrase_keyword in self.disjunction_keywords:  # after the column
                     self.disjunction_keyword_offset.append(i)
                 # between the column and the equal, greater or less keyword
-                if phrase[i] in self.negation_keywords:
+                if phrase_keyword in self.negation_keywords:
                     self.negation_keyword_offset.append(i)
+
+                if phrase_keyword in self.like_keywords:  # after the column
+                    self.like_keyword_offset.append(i)
+
 
         for table_of_from in self.tables_of_from:
             where_object = Where()
@@ -409,7 +422,7 @@ class WhereParser(Thread):
                 column = self.get_column_name_with_alias_table(columns_of_where[i], table_of_from)
                 operation_type = self.predict_operation_type(previous, current)
 
-                if len(self.columns_of_values_of_where) >= len(columns_of_where):
+                if len(self.columns_of_values_of_where) > i:
                     value = self.columns_of_values_of_where[i]
                 else:
                     value = 'OOV'  # Out Of Vocabulary: default value
@@ -515,6 +528,25 @@ class OrderByParser(Thread):
         return self.order_by_objects
 
 
+# ---------------------------------------PART OF ALGORITHM FOR VALUE EXTRACTION STRARTS
+def _myCmp(s1,s2):
+    # if len(s1.split()) == 1 and len(s2.split()) == 1:
+    if len(s1.split()) == len(s2.split()) :
+        if len(s1) >= len(s2) :
+            return 1
+        else:
+            return -1
+    else:
+        if len(s1.split()) >= len(s2.split()):
+            return 1
+        else:
+            return -1
+
+def _transformationSortAlgo(transitionalList):
+    return sorted(transitionalList,cmp=_myCmp,reverse=True)
+# ---------------------------------------PART OF ALGORITHM FOR VALUE EXTRACTION ENDS
+
+
 class Parser:
     database_object = None
     database_dico = None
@@ -537,6 +569,7 @@ class Parser:
     group_by_keywords = []
     negation_keywords = []
     equal_keywords = []
+    like_keywords = []
 
     def __init__(self, database, config):
         self.database_object = database
@@ -558,6 +591,7 @@ class Parser:
         self.group_by_keywords = config.get_group_by_keywords()
         self.negation_keywords = config.get_negation_keywords()
         self.equal_keywords = config.get_equal_keywords()
+        self.like_keywords = config.get_like_keywords()
 
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus
@@ -615,20 +649,43 @@ class Parser:
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
-            mirext = irext.lower()
-
+            irext = irext.lower()
+            # .lower() is necessary to make our own irext case insensetive for proper value extraction and it will not even
+            # reflect any problems for Case Sensetive fields , it is just for improving logic for our extracting assigners.
+            # eg -> "show data for city where cityName is LIke Pune" A query like this would also work even if lang you dont write all the permutations of 'like'.
             filter_list = [",", "!"]
 
             for filter_element in filter_list:
                 irext = irext.replace(filter_element, " ")
 
-            ''' @todo set this assignment_list dynamic and in config language file '''
-            assignment_list = self.equal_keywords
-            # assignment_list = [" equals to ", " equal to ", "=", " is ", ":", " equals ", " equal ", " than "]
-            maverickjoy_assigner_convention = "res@3#>>"
+            assignment_list = self.equal_keywords + self.like_keywords +  self.greater_keywords + self.less_keywords + self.negation_keywords
+            # As these words can also be part of assigners
 
-            for assigners in assignment_list:
-                irext = irext.replace(assigners, " res@3#>> ")
+            assignment_list.append(':')
+            assignment_list.append('=')
+            # custom operators added as they can be possibilities
+
+            assignment_list = _transformationSortAlgo(assignment_list) # Algorithmic logic for best substitution for extraction of values with the help of assigners.
+
+
+            maverickjoy_general_assigner = "*res*@3#>>*"
+            maverickjoy_like_assigner = "*like*@3#>>*"
+            # Feature Addition
+            # for assigner such as 'like' one should go for a different feature query ,eg " where LIKE %value% ;"
+
+            for idx,assigner in enumerate(assignment_list):
+                if assigner in self.like_keywords:
+                    assigner = str(" " + assigner + " ")
+                    irext = irext.replace(assigner, str(" "+maverickjoy_like_assigner+" "))
+                else:
+                    assigner = str(" " + assigner + " ")
+                    # Reason for adding " " these is according to the LOGIC implemented assigner operators help us extract the value,
+                    # hence they should be independent entities not part of some other big entity else logic will fail.
+                    # for eg -> "show data for city where cityName where I like to risk my life  is Pune" will end up extacting ,
+                    # 'k' and '1' both. I know its a lame sentence but something like this could be a problem.
+
+                    irext = irext.replace(assigner, str(" "+maverickjoy_general_assigner+" "))
+
 
             # replace all spaces from values to <_> for proper value assignment in SQL
             # eg. (where name is 'abc def') -> (where name is abc<_>def)
@@ -637,12 +694,19 @@ class Parser:
 
             irext_list = irext.split()
 
-            index_list_values = [(i + 1) for i, x in enumerate(irext_list) if x == maverickjoy_assigner_convention]
+            for idx, x in enumerate(irext_list):
+                index = idx + 1
+                if x == maverickjoy_like_assigner:
+                    if index < len(irext_list) and irext_list[index] != maverickjoy_like_assigner and irext_list[index] != maverickjoy_general_assigner:
+                        # replace back <_> to spaces from the values assigned
+                        columns_of_values_of_where.append(str("'%" + str(irext_list[index]).replace('<_>', ' ') + "%'"))
 
-            for index in index_list_values:
-                if index < len(irext_list):
-                    # replace back <_> to spaces from the values assigned
-                    columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
+                if x == maverickjoy_general_assigner:
+                    if index < len(irext_list) and irext_list[index] != maverickjoy_like_assigner and irext_list[index] != maverickjoy_general_assigner:
+                        # replace back <_> to spaces from the values assigned
+                        columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
+
+            # print "columns_of_values_of_where : ",columns_of_values_of_where
 
         tables_of_from = []
         select_phrase = ''
@@ -761,7 +825,7 @@ class Parser:
 
         select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
         from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
-        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico)
+        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico, self.like_keywords)
         group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
         order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.asc_keywords, self.desc_keywords, self.database_dico)
 
@@ -772,6 +836,8 @@ class Parser:
         order_by_parser.start()
 
         queries = from_parser.join()
+
+
 
         if queries is None:
             raise ParsingException("There is at least one unattainable column from the table of FROM!")

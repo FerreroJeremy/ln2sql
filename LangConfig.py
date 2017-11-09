@@ -25,6 +25,7 @@ class LangConfig:
 		self.group_by_keywords = []
 		self.negation_keywords = []
 		self.equal_keywords = []
+		self.like_keywords = []
 
 	def get_avg_keywords(self):
 		return self.avg_keywords
@@ -74,6 +75,9 @@ class LangConfig:
 	def get_equal_keywords(self):
 		return self.equal_keywords
 
+	def get_like_keywords(self):
+		return self.like_keywords
+
 	def remove_accents(self, string):
 		nkfd_form = unicodedata.normalize('NFKD', unicode(string))
 		return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
@@ -113,6 +117,8 @@ class LangConfig:
 			self.negation_keywords = self.negation_keywords[1:len(self.negation_keywords)]
 			self.equal_keywords = map(self.remove_accents, map(str.strip, content[15].replace(':',',').split(",")))
 			self.equal_keywords = self.equal_keywords[1:len(self.equal_keywords)]
+			self.like_keywords = map(self.remove_accents, map(str.strip, content[16].replace(':',',').split(",")))
+			self.like_keywords = self.like_keywords[1:len(self.like_keywords)]
 
 	def print_me(self):
 		print self.avg_keywords
@@ -131,4 +137,4 @@ class LangConfig:
 		print self.group_by_keywords
 		print self.negation_keywords
 		print self.equal_keywords
-        
+		print self.like_keywords

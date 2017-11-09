@@ -1,0 +1,32 @@
+{
+	"select": {
+		"column": "None",
+		"type": "None"
+	},
+	"from": {
+		"table": "city"
+	},
+	"join": {
+	},
+	"where": {
+		"conditions": [
+			{ "column": "cityName",
+			  "type": "None",
+			  "operator": "!=",
+			  "value": "'pune'"
+			},
+			{
+			  "operator": "AND"
+			},
+			{ "column": "id",
+			  "type": "None",
+			  "operator": "LIKE",
+			  "value": "'%1%'"
+			}
+		]
+	},
+	"group_by": {
+	},
+	"select": {
+	},
+}

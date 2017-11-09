@@ -30,20 +30,20 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 
 ## SQL statements supported
 
-- [X] SELECT 
+- [X] SELECT
 	- [X] one column
 	- [X] multiple columns
 	- [X] all columns
-	- [X] aggregate functions 
+	- [X] aggregate functions
 		- [X] count-select
 		- [X] sum-select
 		- [X] avg-select
 		- [X] min-select
 		- [X] max-select
-- [X] JOIN 
+- [X] JOIN
 	- [X] inner join
 	- [X] natural join
-- [X] WHERE 
+- [X] WHERE
 	- [X] one condition
 	- [X] multiple conditions
 	- [X] junction
@@ -54,6 +54,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [X] not equal operator
 		- [X] greater-than operator
 		- [X] less-than operator
+		- [X] LIKE operator
 		- [ ] between operator (not 100% efficient)
 	- [X] aggregate functions
 		- [X] sum in condition
@@ -76,7 +77,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 
 The tool can deal with any language, so long as it has its configuration file (<i>i.e.</i> a file with the keywords of the language).
 
-Language configuration files can be found in `lang/` directory. The files are CSV files. Each line represent a type of keywords. Anything before the colon is ignored. Keywords must be separated by a comma. 
+Language configuration files can be found in `lang/` directory. The files are CSV files. Each line represent a type of keywords. Anything before the colon is ignored. Keywords must be separated by a comma.
 
 You can build your own language configuration file following the English and French templates.
 
@@ -105,7 +106,7 @@ You can improve the stop word filtering using a stop word list. You can build yo
 
 You can directly use the python wrapper by the following way:
 ```
-Usage: 
+Usage:
 	python ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]
 Parameters:
 	-h					print this help message
@@ -120,10 +121,11 @@ example of usage:
 python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
 ```
 
-Values for WHERE clause should be specified in single(') or double(") quotes for multi word values.example : 
+Values for WHERE clause should be specified in single(') or double(") quotes for multi word values.example :
 ```
 python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city with cityName = 'San Jose'"
 ```
+<p align="center"><img src="https://user-images.githubusercontent.com/11170508/32624509-80e01846-c5af-11e7-9d1b-eb8d4bba85e5.jpg" width="900"></p>
 
 or by graphical interface by typing the following command:
 ```
@@ -149,7 +151,7 @@ the output is:
 		"table": "student"
 	},
 	"join": {
-	
+
 	},
 	"where": {
 		"conditions": [
@@ -157,8 +159,8 @@ the output is:
 			  "operator": "=",
 			  "value": "Doe"
 			},
-			{ 
-			  "operator": "OR" 
+			{
+			  "operator": "OR"
 			},
 			{ "column": "age",
 			  "operator": ">",
@@ -167,10 +169,10 @@ the output is:
 		]
 	},
 	"group_by": {
-	
+
 	},
 	"order_by": {
-	
+
 	}
 }
 ```
