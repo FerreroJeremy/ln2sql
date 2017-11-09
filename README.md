@@ -125,7 +125,7 @@ Values for WHERE clause should be specified in single(') or double(") quotes for
 ```
 python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city with cityName = 'San Jose'"
 ```
-<p align="center"><img src="https://user-images.githubusercontent.com/11170508/32624509-80e01846-c5af-11e7-9d1b-eb8d4bba85e5.jpg" width="700"></p>
+<p align="center"><img src="https://user-images.githubusercontent.com/11170508/32624509-80e01846-c5af-11e7-9d1b-eb8d4bba85e5.jpg" width="900"></p>
 
 or by graphical interface by typing the following command:
 ```
