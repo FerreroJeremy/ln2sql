@@ -9,11 +9,19 @@
 	"join": {
 	},
 	"where": {
-		"condition": [
+		"conditions": [
 			{ "column": "cityName",
 			  "type": "None",
-			  "operator": "=",
-			  "value": "'pune agra'"
+			  "operator": "!=",
+			  "value": "'pune'"
+			},
+			{
+			  "operator": "AND"
+			},
+			{ "column": "id",
+			  "type": "None",
+			  "operator": "LIKE",
+			  "value": "'%1%'"
 			}
 		]
 	},

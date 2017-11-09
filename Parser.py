@@ -373,31 +373,33 @@ class WhereParser(Thread):
                         offset_of[phrase[i]] = i
                         column_offset.append(i)
                         break
-                if phrase[i] in self.count_keywords:  # before the column
+                phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
+
+                if phrase_keyword in self.count_keywords:  # before the column
                     self.count_keyword_offset.append(i)
-                if phrase[i] in self.sum_keywords:  # before the column
+                if phrase_keyword in self.sum_keywords:  # before the column
                     self.sum_keyword_offset.append(i)
-                if phrase[i] in self.average_keywords:  # before the column
+                if phrase_keyword in self.average_keywords:  # before the column
                     self.average_keyword_offset.append(i)
-                if phrase[i] in self.max_keywords:  # before the column
+                if phrase_keyword in self.max_keywords:  # before the column
                     self.max_keyword_offset.append(i)
-                if phrase[i] in self.min_keywords:  # before the column
+                if phrase_keyword in self.min_keywords:  # before the column
                     self.min_keyword_offset.append(i)
-                if phrase[i] in self.greater_keywords:  # after the column
+                if phrase_keyword in self.greater_keywords:  # after the column
                     self.greater_keyword_offset.append(i)
-                if phrase[i] in self.less_keywords:  # after the column
+                if phrase_keyword in self.less_keywords:  # after the column
                     self.less_keyword_offset.append(i)
-                if phrase[i] in self.between_keywords:  # after the column
+                if phrase_keyword in self.between_keywords:  # after the column
                     self.between_keyword_offset.append(i)
-                if phrase[i] in self.junction_keywords:  # after the column
+                if phrase_keyword in self.junction_keywords:  # after the column
                     self.junction_keyword_offset.append(i)
-                if phrase[i] in self.disjunction_keywords:  # after the column
+                if phrase_keyword in self.disjunction_keywords:  # after the column
                     self.disjunction_keyword_offset.append(i)
                 # between the column and the equal, greater or less keyword
-                if phrase[i] in self.negation_keywords:
+                if phrase_keyword in self.negation_keywords:
                     self.negation_keyword_offset.append(i)
 
-                if phrase[i] in self.like_keywords:  # after the column
+                if phrase_keyword in self.like_keywords:  # after the column
                     self.like_keyword_offset.append(i)
 
 
@@ -647,16 +649,16 @@ class Parser:
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
-            mirext = irext.lower()
+            irext = irext.lower()
             # .lower() is necessary to make our own irext case insensetive for proper value extraction and it will not even
-            # reflect any problems for Case Sensetive values or fields , it is just for improving logic for our extracting assigners.
+            # reflect any problems for Case Sensetive fields , it is just for improving logic for our extracting assigners.
             # eg -> "show data for city where cityName is LIke Pune" A query like this would also work even if lang you dont write all the permutations of 'like'.
             filter_list = [",", "!"]
 
             for filter_element in filter_list:
-                irext = mirext.replace(filter_element, " ")
+                irext = irext.replace(filter_element, " ")
 
-            assignment_list = self.equal_keywords + self.like_keywords +  self.greater_keywords + self.less_keywords
+            assignment_list = self.equal_keywords + self.like_keywords +  self.greater_keywords + self.less_keywords + self.negation_keywords
             # As these words can also be part of assigners
 
             assignment_list.append(':')
