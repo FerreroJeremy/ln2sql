@@ -259,7 +259,7 @@ class Where():
 					string += '\n' + color.BOLD + 'WHERE' + color.END + ' ' + str(self.conditions[i][1])
 				else:
 					string += '\n' + color.BOLD + str(self.conditions[i][0]) + color.END + ' ' + str(self.conditions[i][1])
-			
+
 			return string
 		else:
 			return string
@@ -271,7 +271,7 @@ class Where():
 				output.write('\t\t"condition": [\n')
 				self.conditions[0][1].print_json(output)
 
-				
+
 				output.write('\n')
 				output.write('\t\t]\n')
 				output.write('\t},\n')
@@ -290,7 +290,7 @@ class Where():
 		else:
 			output.write('\t"where": {\n')
 			output.write('\t},\n')
-    
+
 class GroupBy():
 	column = None
 

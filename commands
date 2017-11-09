@@ -1,0 +1,16 @@
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city where cityId is 1"
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city where cityName is 'Pune Agra'"
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show id for city where cityName is Pune"
+
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city where cityName is Pune"
+
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show id for city where cityName like Pune"
+
+
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city where cityName not is Pune and id like 1"

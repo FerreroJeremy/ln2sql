@@ -1,24 +1,32 @@
 {
 	"select": {
-		"column": "score",
+		"column": "None",
 		"type": "None"
 	},
 	"from": {
-		"table": "emp"
+		"table": "city"
 	},
 	"join": {
 	},
 	"where": {
-		"condition": [
-			{ "column": "name",
+		"conditions": [
+			{ "column": "cityName",
 			  "type": "None",
-			  "operator": "=",
-			  "value": "saf"
+			  "operator": "!=",
+			  "value": "'Pune'"
+			},
+			{
+			  "operator": "AND"
+			},
+			{ "column": "id",
+			  "type": "None",
+			  "operator": "LIKE",
+			  "value": "'1'"
 			}
 		]
 	},
 	"group_by": {
 	},
-	"order_by": {
-	}
+	"select": {
+	},
 }

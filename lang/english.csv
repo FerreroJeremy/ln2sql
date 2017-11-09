@@ -2,10 +2,10 @@ AVG: average
 SUM: sum, total
 MAX: maximum
 MIN: minimum
-COUNT: number, how many, count 
+COUNT: number, how many, count
 JUNCTION: and
 DISJUNCTION: or
-GREATER: greater, over
+GREATER: greater, over ,greater than
 LESS: less
 BETWEEN: between, per
 ORDER: order, ordered
@@ -13,4 +13,5 @@ ASC: ascending, increasing
 DESC: descending, decreasing, inverse, reverse, opposite
 GROUP: group, grouped
 NEGATION: not, no
-EQUAL: like, is, equal, equals
+EQUAL: is, equal, equals, like
+LIKE: like, likes, LIKE, LIKES
