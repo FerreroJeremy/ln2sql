@@ -49,7 +49,7 @@ class SelectParser(Thread):
 
             if number_of_select_column == 0:
                 for count_keyword in self.count_keywords:
-                    if count_keyword in self.phrase:
+                    if count_keyword.lower() in (word.lower() for word in self.phrase):
                         is_count = True
 
                 if is_count:
@@ -72,19 +72,19 @@ class SelectParser(Thread):
                     phrase = ' '.join(select_phrases[i])
 
                     for keyword in self.average_keywords:
-                        if keyword in phrase:
+                        if keyword in (word.lower() for word in phrase):
                             select_type = 'AVG'
                     for keyword in self.count_keywords:
-                        if keyword in phrase:
+                        if keyword in (word.lower() for word in phrase):
                             select_type = 'COUNT'
                     for keyword in self.max_keywords:
-                        if keyword in phrase:
+                        if keyword in (word.lower() for word in phrase):
                             select_type = 'MAX'
                     for keyword in self.min_keywords:
-                        if keyword in phrase:
+                        if keyword in (word.lower() for word in phrase):
                             select_type = 'MIN'
                     for keyword in self.sum_keywords:
-                        if keyword in phrase:
+                        if keyword in (word.lower() for word in phrase):
                             select_type = 'SUM'
 
                     if (i != len(select_phrases) - 1) or (select_type is not None):
@@ -375,31 +375,31 @@ class WhereParser(Thread):
                         break
                 phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
 
-                if phrase_keyword in self.count_keywords:  # before the column
+                if phrase_keyword in (word.lower() for word in self.count_keywords):  # before the column
                     self.count_keyword_offset.append(i)
-                if phrase_keyword in self.sum_keywords:  # before the column
+                if phrase_keyword in (word.lower() for word in self.sum_keywords):  # before the column
                     self.sum_keyword_offset.append(i)
-                if phrase_keyword in self.average_keywords:  # before the column
+                if phrase_keyword in (word.lower() for word in self.average_keywords):  # before the column
                     self.average_keyword_offset.append(i)
-                if phrase_keyword in self.max_keywords:  # before the column
+                if phrase_keyword in (word.lower() for word in self.max_keywords):  # before the column
                     self.max_keyword_offset.append(i)
-                if phrase_keyword in self.min_keywords:  # before the column
+                if phrase_keyword in (word.lower() for word in self.min_keywords):  # before the column
                     self.min_keyword_offset.append(i)
-                if phrase_keyword in self.greater_keywords:  # after the column
+                if phrase_keyword in (word.lower() for word in self.greater_keywords):  # after the column
                     self.greater_keyword_offset.append(i)
-                if phrase_keyword in self.less_keywords:  # after the column
+                if phrase_keyword in (word.lower() for word in self.less_keywords):  # after the column
                     self.less_keyword_offset.append(i)
-                if phrase_keyword in self.between_keywords:  # after the column
+                if phrase_keyword in (word.lower() for word in self.between_keywords):  # after the column
                     self.between_keyword_offset.append(i)
-                if phrase_keyword in self.junction_keywords:  # after the column
+                if phrase_keyword in (word.lower() for word in self.junction_keywords):  # after the column
                     self.junction_keyword_offset.append(i)
-                if phrase_keyword in self.disjunction_keywords:  # after the column
+                if phrase_keyword in (word.lower() for word in self.disjunction_keywords):  # after the column
                     self.disjunction_keyword_offset.append(i)
                 # between the column and the equal, greater or less keyword
-                if phrase_keyword in self.negation_keywords:
+                if phrase_keyword in (word.lower() for word in self.negation_keywords):
                     self.negation_keyword_offset.append(i)
 
-                if phrase_keyword in self.like_keywords:  # after the column
+                if phrase_keyword in (word.lower() for word in self.like_keywords):  # after the column
                     self.like_keyword_offset.append(i)
 
 
@@ -614,8 +614,7 @@ class Parser:
         filter_list = [",", "!"]
 
         for filter_element in filter_list:
-            input_for_finding_value = input_for_finding_value.replace(
-                filter_element, " ")
+            input_for_finding_value = input_for_finding_value.replace(filter_element, " ")
 
         input_word_list = input_for_finding_value.split()
 
@@ -674,7 +673,7 @@ class Parser:
             # for assigner such as 'like' one should go for a different feature query ,eg " where LIKE %value% ;"
 
             for idx,assigner in enumerate(assignment_list):
-                if assigner in self.like_keywords:
+                if assigner in (word.lower() for word in self.like_keywords):
                     assigner = str(" " + assigner + " ")
                     irext = irext.replace(assigner, str(" "+maverickjoy_like_assigner+" "))
                 else:
@@ -758,9 +757,9 @@ class Parser:
                 number_of_disjunction_words = 0
 
                 for word in from_phrases[i]:
-                    if word in self.junction_keywords:
+                    if word in (word.lower() for word in self.junction_keywords):
                         number_of_junction_words += 1
-                    if word in self.disjunction_keywords:
+                    if word in (word.lower() for word in self.disjunction_keywords):
                         number_of_disjunction_words += 1
 
                 if (number_of_junction_words + number_of_disjunction_words) > 0:
@@ -793,7 +792,7 @@ class Parser:
         yet_where = 0
 
         for i in range(0, len(where_phrase)):
-            if where_phrase[i] in self.order_by_keywords:
+            if where_phrase[i] in (word.lower() for word in self.order_by_keywords):
                 if yet_where > 0:
                     if previous_phrase_type == 1:
                         order_by_phrase.append(where_phrase[previous_index:i])
@@ -804,7 +803,7 @@ class Parser:
                 previous_index = i
                 previous_phrase_type = 1
                 yet_where += 1
-            if where_phrase[i] in self.group_by_keywords:
+            if where_phrase[i] in (word.lower() for word in self.group_by_keywords):
                 if yet_where > 0:
                     if previous_phrase_type == 1:
                         order_by_phrase.append(where_phrase[previous_index:i])
@@ -836,8 +835,6 @@ class Parser:
         order_by_parser.start()
 
         queries = from_parser.join()
-
-
 
         if queries is None:
             raise ParsingException("There is at least one unattainable column from the table of FROM!")
