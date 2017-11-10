@@ -17,29 +17,69 @@ class SimplisticTest(unittest.TestCase):
     def test_main(self):
         tests = [
             {
-                'input': 'city',
+                'input': 'List me the info of city table',
                 'sqlDump': './database/city.sql',
                 'output': 'SELECT * FROM city;'
             },
             {
-                'input': 'cityName from city',
+                'input': 'What is the number of the city in this database?',
                 'sqlDump': './database/city.sql',
-                'output': 'SELECT city.cityName FROM city;'
+                'output': 'SELECT COUNT(*) FROM city;'
             },
             {
-                'input': 'all id from city',
+                'input': 'Tell me all id from city',
                 'sqlDump': './database/city.sql',
                 'output': 'SELECT city.id FROM city;'
             },
             {
-                'input': 'all name of emp',
+                'input': 'What are the name of emp',
                 'sqlDump': './database/city.sql',
                 'output': 'SELECT emp.name FROM emp;'
             },
             {
-                'input': 'all name and score of all emp',
+                'input': 'List all name and score of all emp',
                 'sqlDump': './database/city.sql',
                 'output': 'SELECT emp.name, emp.score FROM emp;'
+            },
+            {
+                'input': 'Count how many city there are where the name is Matthew ?',
+                'sqlDump': './database/city.sql',
+                'output': "SELECT COUNT(*) FROM city INNER JOIN emp ON emp.cityId = city.id WHERE emp.name = 'matthew';"
+            },
+            {
+                'input': 'What is the emp with the name is rupinder ?',
+                'sqlDump': './database/city.sql',
+                'output': "SELECT * FROM emp WHERE emp.name = 'rupinder';"
+            },
+            {
+                'input': 'What is the cityName and the score of the emp whose name is rupinder',
+                'sqlDump': './database/city.sql',
+                'output': "SELECT city.cityName, emp.score FROM emp INNER JOIN city ON emp.cityId = city.id WHERE emp.name = 'matthew';"
+            },
+            {
+                'input': 'Count how many city there are where the score is greater than 2 ?',
+                'sqlDump': './database/city.sql',
+                'output': "SELECT COUNT(*) FROM city INNER JOIN emp ON emp.cityId = city.id WHERE emp.score > '2';"
+            },
+            {
+                'input': '',
+                'sqlDump': './database/city.sql',
+                'output': ''
+            },
+            {
+                'input': '',
+                'sqlDump': './database/city.sql',
+                'output': ''
+            },
+            {
+                'input': '',
+                'sqlDump': './database/city.sql',
+                'output': ''
+            },
+            {
+                'input': '',
+                'sqlDump': './database/city.sql',
+                'output': ''
             },
         ]
 

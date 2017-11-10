@@ -3,6 +3,7 @@
 import re
 import sys
 import unicodedata
+import string
 from threading import Thread
 from ParsingException import ParsingException
 from Query import *
@@ -608,7 +609,7 @@ class Parser:
         columns_of_select = []
         columns_of_where = []
 
-        input_for_finding_value = sentence
+        input_for_finding_value = sentence.decode('utf-8').rstrip(string.punctuation)
         columns_of_values_of_where = []
 
         filter_list = [",", "!"]
