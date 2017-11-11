@@ -87,38 +87,73 @@ class LangConfig:
 			content = f.readlines()
 			self.avg_keywords = map(self.remove_accents, map(str.strip, content[0].replace(':',',').split(",")))
 			self.avg_keywords = self.avg_keywords[1:len(self.avg_keywords)]
+			self.avg_keywords = [keyword.lower() for keyword in self.avg_keywords]
+
 			self.sum_keywords = map(self.remove_accents, map(str.strip, content[1].replace(':',',').split(",")))
 			self.sum_keywords = self.sum_keywords[1:len(self.sum_keywords)]
+			self.sum_keywords = [keyword.lower() for keyword in self.sum_keywords]
+
 			self.max_keywords = map(self.remove_accents, map(str.strip, content[2].replace(':',',').split(",")))
 			self.max_keywords = self.max_keywords[1:len(self.max_keywords)]
+			self.max_keywords = [keyword.lower() for keyword in self.max_keywords]
+
 			self.min_keywords = map(self.remove_accents, map(str.strip, content[3].replace(':',',').split(",")))
 			self.min_keywords = self.min_keywords[1:len(self.min_keywords)]
+			self.min_keywords = [keyword.lower() for keyword in self.min_keywords]
+
 			self.count_keywords = map(self.remove_accents, map(str.strip, content[4].replace(':',',').split(",")))
 			self.count_keywords = self.count_keywords[1:len(self.count_keywords)]
+			self.count_keywords = [keyword.lower() for keyword in self.count_keywords]
+
 			self.junction_keywords = map(self.remove_accents, map(str.strip, content[5].replace(':',',').split(",")))
 			self.junction_keywords = self.junction_keywords[1:len(self.junction_keywords)]
+			self.junction_keywords = [keyword.lower() for keyword in self.junction_keywords]
+
 			self.disjunction_keywords = map(self.remove_accents, map(str.strip, content[6].replace(':',',').split(",")))
 			self.disjunction_keywords = self.disjunction_keywords[1:len(self.disjunction_keywords)]
+			self.disjunction_keywords = [keyword.lower() for keyword in self.disjunction_keywords]
+
 			self.greater_keywords = map(self.remove_accents, map(str.strip, content[7].replace(':',',').split(",")))
 			self.greater_keywords = self.greater_keywords[1:len(self.greater_keywords)]
+			self.greater_keywords = [keyword.lower() for keyword in self.greater_keywords]
+
 			self.less_keywords = map(self.remove_accents, map(str.strip, content[8].replace(':',',').split(",")))
 			self.less_keywords = self.less_keywords[1:len(self.less_keywords)]
+			self.less_keywords = [keyword.lower() for keyword in self.less_keywords]
+
 			self.between_keywords = map(self.remove_accents, map(str.strip, content[9].replace(':',',').split(",")))
 			self.between_keywords = self.between_keywords[1:len(self.between_keywords)]
+			self.between_keywords = [keyword.lower() for keyword in self.between_keywords]
+
 			self.order_by_keywords = map(self.remove_accents, map(str.strip, content[10].replace(':',',').split(",")))
 			self.order_by_keywords = self.order_by_keywords[1:len(self.order_by_keywords)]
+			self.order_by_keywords = [keyword.lower() for keyword in self.order_by_keywords]
+
 			self.asc_keywords = map(self.remove_accents, map(str.strip, content[11].replace(':',',').split(",")))
 			self.asc_keywords = self.asc_keywords[1:len(self.asc_keywords)]
+			self.asc_keywords = [keyword.lower() for keyword in self.asc_keywords]
+
 			self.desc_keywords = map(self.remove_accents, map(str.strip, content[12].replace(':',',').split(",")))
 			self.desc_keywords = self.desc_keywords[1:len(self.desc_keywords)]
+			self.desc_keywords = [keyword.lower() for keyword in self.desc_keywords]
+
 			self.group_by_keywords = map(self.remove_accents, map(str.strip, content[13].replace(':',',').split(",")))
 			self.group_by_keywords = self.group_by_keywords[1:len(self.group_by_keywords)]
+			self.group_by_keywords = [keyword.lower() for keyword in self.group_by_keywords]
+
 			self.negation_keywords = map(self.remove_accents, map(str.strip, content[14].replace(':',',').split(",")))
 			self.negation_keywords = self.negation_keywords[1:len(self.negation_keywords)]
+			self.negation_keywords = [keyword.lower() for keyword in self.negation_keywords]
+
 			self.equal_keywords = map(self.remove_accents, map(str.strip, content[15].replace(':',',').split(",")))
 			self.equal_keywords = self.equal_keywords[1:len(self.equal_keywords)]
+			self.equal_keywords = [keyword.lower() for keyword in self.equal_keywords]
+
 			self.like_keywords = map(self.remove_accents, map(str.strip, content[16].replace(':',',').split(",")))
 			self.like_keywords = self.like_keywords[1:len(self.like_keywords)]
+			self.like_keywords = [keyword.lower() for keyword in self.like_keywords]
+
+
 
 	def print_me(self):
 		print self.avg_keywords
