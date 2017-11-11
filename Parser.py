@@ -147,10 +147,8 @@ class FromParser(Thread):
         return differences
 
     def is_direct_join_is_possible(self, table_src, table_trg):
-        fk_column_of_src_table = self.database_object.get_foreign_keys_of_table(
-            table_src)
-        fk_column_of_trg_table = self.database_object.get_foreign_keys_of_table(
-            table_trg)
+        fk_column_of_src_table = self.database_object.get_foreign_keys_of_table(table_src)
+        fk_column_of_trg_table = self.database_object.get_foreign_keys_of_table(table_trg)
 
         for column in fk_column_of_src_table:
             if column.is_foreign()['foreign_table'] == table_trg:
@@ -158,7 +156,7 @@ class FromParser(Thread):
 
         for column in fk_column_of_trg_table:
             if column.is_foreign()['foreign_table'] == table_src:
-                return [(table_trg, column.get_name()), (table_src, column.is_foreign()['foreign_column'])]
+                return [(table_src, column.is_foreign()['foreign_column']), (table_trg, column.get_name())]
 
         """ @todo Restore the following lines for implicit inner join on same id columns. """
 
@@ -193,14 +191,14 @@ class FromParser(Thread):
         links = differences
 
         for join in links:
-            if join[0][0] == table_trg:
+            if join[1][0] == table_trg:
                 return [0, join]
 
         path = []
         historic.append(table_src)
 
         for join in links:
-            result = [1, self.is_join(historic, join[0][0], table_trg)]
+            result = [1, self.is_join(historic, join[1][0], table_trg)]
             if result[1] != []:
                 if result[0] == 0:
                     path.append(result[1])
