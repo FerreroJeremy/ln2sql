@@ -70,7 +70,21 @@ class SelectParser(Thread):
 
                 for i in range(0, len(select_phrases)):
                     select_type = None
-                    phrase = ' '.join(select_phrases[i])
+
+                    # phrase = ' '.join(select_phrases[i]) => This is wrong
+                    # As later when doing operation (word.lower() for word in phrase)
+                    # apart from word it will be spliting by letters. eg -> try it for "Count id from city where cityName is not Pune and id like 1"
+                    # with and without it, you will understand.
+
+                    phrase = [word.lower() for word in select_phrases[i]]
+                    # print "phrase : ",phrase
+                    # print "self.count_keywords : ",self.count_keywords
+
+                    # "self.average_keywords,self.count_keywords, etc" this should also be lowered as User can input "COunt" in english.csv
+                    # and hence that could be a problem and as it is  during comparision we are converting RHS to lower.
+                    # Rather than doing .lower() everytime and degrading the performance its better to do it at one place.
+                    # Apart from performance Code changes should be also at one place hence, I believe .lower() should be done
+                    # in LangConfig.py than everytime when it is being used in parser.py
 
                     for keyword in self.average_keywords:
                         if keyword in (word.lower() for word in phrase):
@@ -374,6 +388,7 @@ class WhereParser(Thread):
                         offset_of[phrase[i]] = i
                         column_offset.append(i)
                         break
+                    
                 phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
 
                 if phrase_keyword in (word.lower() for word in self.count_keywords):  # before the column
