@@ -71,21 +71,8 @@ class SelectParser(Thread):
                 for i in range(0, len(select_phrases)):
                     select_type = None
 
-                    # phrase = ' '.join(select_phrases[i]) => This is wrong
-                    # As later when doing operation (word.lower() for word in phrase)
-                    # apart from word it will be spliting by letters. eg -> try it for "Count id from city where cityName is not Pune and id like 1"
-                    # with and without it, you will understand.
-
                     phrase = [word.lower() for word in select_phrases[i]]
-                    # print "phrase : ",phrase
-                    # print "self.count_keywords : ",self.count_keywords
-
-                    # "self.average_keywords,self.count_keywords, etc" this should also be lowered as User can input "COunt" in english.csv
-                    # and hence that could be a problem and as it is  during comparision we are converting RHS to lower.
-                    # Rather than doing .lower() everytime and degrading the performance its better to do it at one place.
-                    # Apart from performance, Code changes should be also at one place hence, I believe .lower() should be done
-                    # in LangConfig.py, than everytime when it is being used in parser.py
-
+                    
                     for keyword in self.average_keywords:
                         if keyword in phrase:
                             select_type = 'AVG'
@@ -622,7 +609,7 @@ class Parser:
         columns_of_select = []
         columns_of_where = []
 
-        input_for_finding_value = sentence.decode('utf-8').rstrip(string.punctuation)
+        input_for_finding_value = sentence.decode('utf-8').rstrip(string.punctuation.replace('"','').replace("'",""))
         columns_of_values_of_where = []
 
         filter_list = [",", "!"]
@@ -659,6 +646,7 @@ class Parser:
         end_phrase = input_word_list[len(start_phrase) + len(med_phrase):]
         irext = ' '.join(end_phrase)
 
+
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
@@ -683,8 +671,6 @@ class Parser:
 
             maverickjoy_general_assigner = "*res*@3#>>*"
             maverickjoy_like_assigner = "*like*@3#>>*"
-            # Feature Addition
-            # for assigner such as 'like' one should go for a different feature query ,eg " where LIKE %value% ;"
 
             for idx,assigner in enumerate(assignment_list):
                 if assigner in self.like_keywords:
@@ -700,10 +686,12 @@ class Parser:
                     irext = irext.replace(assigner, str(" "+maverickjoy_general_assigner+" "))
 
 
+
             # replace all spaces from values to <_> for proper value assignment in SQL
             # eg. (where name is 'abc def') -> (where name is abc<_>def)
             for i in re.findall("(['\"].*?['\"])", irext):
                 irext = irext.replace(i, i.replace(' ', '<_>').replace("'", '').replace('"',''))
+
 
             irext_list = irext.split()
 
@@ -718,7 +706,6 @@ class Parser:
                     if index < len(irext_list) and irext_list[index] != maverickjoy_like_assigner and irext_list[index] != maverickjoy_general_assigner:
                         # replace back <_> to spaces from the values assigned
                         columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
-
             # print "columns_of_values_of_where : ",columns_of_values_of_where
 
         tables_of_from = []
