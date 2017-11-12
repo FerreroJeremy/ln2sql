@@ -72,7 +72,7 @@ class SelectParser(Thread):
                     select_type = None
 
                     phrase = [word.lower() for word in select_phrases[i]]
-                    
+
                     for keyword in self.average_keywords:
                         if keyword in phrase:
                             select_type = 'AVG'
@@ -593,7 +593,9 @@ class Parser:
         self.negation_keywords = config.get_negation_keywords()
         self.equal_keywords = config.get_equal_keywords()
         self.like_keywords = config.get_like_keywords()
-
+        # self.distinct_keywords = config.get_distinct_keywords()
+        # @todo DISTINCT functionality needs to be implemented
+        
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus
 

@@ -5,7 +5,7 @@ MIN: minimum
 COUNT: number, how many, COunt
 JUNCTION: and
 DISJUNCTION: or
-GREATER: greater, over ,greater than
+GREATER: greater, over, greater than, more than
 LESS: less , less than
 BETWEEN: between, per
 ORDER: order, ordered
