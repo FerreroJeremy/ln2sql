@@ -652,7 +652,7 @@ class Parser:
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
-            irext = irext.lower()
+            irext = self.remove_accents(irext.decode('utf-8').lower())
             # .lower() is necessary to make our own irext case insensetive for proper value extraction and it will not even
             # reflect any problems for Case Sensetive fields , it is just for improving logic for our extracting assigners.
             # eg -> "show data for city where cityName is LIke Pune" A query like this would also work even if lang you dont write all the permutations of 'like'.
@@ -708,7 +708,6 @@ class Parser:
                     if index < len(irext_list) and irext_list[index] != maverickjoy_like_assigner and irext_list[index] != maverickjoy_general_assigner:
                         # replace back <_> to spaces from the values assigned
                         columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
-            # print "columns_of_values_of_where : ",columns_of_values_of_where
 
         tables_of_from = []
         select_phrase = ''
