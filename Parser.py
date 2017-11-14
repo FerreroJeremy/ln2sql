@@ -14,7 +14,7 @@ sys.setdefaultencoding("utf-8")
 
 class SelectParser(Thread):
 
-    def __init__(self, columns_of_select, tables_of_from, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, database_dico):
+    def __init__(self, columns_of_select, tables_of_from, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, distinct_keywords, database_dico):
         Thread.__init__(self)
         self.select_objects = []
         self.columns_of_select = columns_of_select
@@ -25,6 +25,7 @@ class SelectParser(Thread):
         self.average_keywords = average_keywords
         self.max_keywords = max_keywords
         self.min_keywords = min_keywords
+        self.distinct_keywords = distinct_keywords
         self.database_dico = database_dico
 
     def get_tables_of_column(self, column):
@@ -43,58 +44,54 @@ class SelectParser(Thread):
             return str(one_table_of_column) + '.' + str(column)
 
     def run(self):
-        for table_of_from in self.tables_of_from:
+        for table_of_from in self.tables_of_from: # for each query
             self.select_object = Select()
             is_count = False
             number_of_select_column = len(self.columns_of_select)
 
             if number_of_select_column == 0:
+                select_type = []
                 for count_keyword in self.count_keywords:
                     if count_keyword in (word.lower() for word in self.phrase):
-                        is_count = True
+                        select_type.append('COUNT')
 
-                if is_count:
-                    self.select_object.add_column(None, 'COUNT')
-                else:
-                    self.select_object.add_column(None, None)
+                self.select_object.add_column(None, select_type)
             else:
                 select_phrases = []
                 previous_index = 0
                 for i in range(0, len(self.phrase)):
                     if self.phrase[i] in self.columns_of_select:
-                        select_phrases.append(
-                            self.phrase[previous_index:i + 1])
+                        select_phrases.append(self.phrase[previous_index:i + 1])
                         previous_index = i + 1
 
                 select_phrases.append(self.phrase[previous_index:])
 
-                for i in range(0, len(select_phrases)):
-                    select_type = None
+                for i in range(0, len(select_phrases)): # for each select phrase (i.e. column processing)
+                    select_type = []
 
                     phrase = [word.lower() for word in select_phrases[i]]
 
                     for keyword in self.average_keywords:
                         if keyword in phrase:
-                            select_type = 'AVG'
+                            select_type.append('AVG')
                     for keyword in self.count_keywords:
                         if keyword in phrase:
-                            select_type = 'COUNT'
+                            select_type.append('COUNT')
                     for keyword in self.max_keywords:
                         if keyword in phrase:
-                            select_type = 'MAX'
+                            select_type.append('MAX')
                     for keyword in self.min_keywords:
                         if keyword in phrase:
-                            select_type = 'MIN'
+                            select_type.append('MIN')
                     for keyword in self.sum_keywords:
                         if keyword in phrase:
-                            select_type = 'SUM'
+                            select_type.append('SUM')
+                    for keyword in self.distinct_keywords:
+                        if keyword in phrase:
+                            select_type.append('DISTINCT')
 
-                    if (i != len(select_phrases) - 1) or (select_type is not None):
-                        if i >= len(self.columns_of_select):
-                            column = None
-                        else:
-                            column = self.get_column_name_with_alias_table(
-                                self.columns_of_select[i], table_of_from)
+                    if (i != len(select_phrases) - 1):
+                        column = self.get_column_name_with_alias_table(self.columns_of_select[i], table_of_from)
                         self.select_object.add_column(column, select_type)
 
             self.select_objects.append(self.select_object)
@@ -246,7 +243,7 @@ class FromParser(Thread):
 
 class WhereParser(Thread):
 
-    def __init__(self, phrases, tables_of_from, columns_of_values_of_where, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, database_dico, like_keywords):
+    def __init__(self, phrases, tables_of_from, columns_of_values_of_where, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, greater_keywords, less_keywords, between_keywords, negation_keywords, junction_keywords, disjunction_keywords, like_keywords, distinct_keywords, database_dico):
         Thread.__init__(self)
         self.where_objects = []
         self.phrases = phrases
@@ -263,9 +260,9 @@ class WhereParser(Thread):
         self.negation_keywords = negation_keywords
         self.junction_keywords = junction_keywords
         self.disjunction_keywords = disjunction_keywords
-        self.database_dico = database_dico
-        self.columns_of_values_of_where = columns_of_values_of_where
         self.like_keywords = like_keywords
+        self.distinct_keywords = distinct_keywords
+        self.database_dico = database_dico
 
     def get_tables_of_column(self, column):
         tmp_table = []
@@ -593,8 +590,7 @@ class Parser:
         self.negation_keywords = config.get_negation_keywords()
         self.equal_keywords = config.get_equal_keywords()
         self.like_keywords = config.get_like_keywords()
-        # self.distinct_keywords = config.get_distinct_keywords()
-        # @todo DISTINCT functionality needs to be implemented
+        self.distinct_keywords = config.get_distinct_keywords()
         
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus
@@ -824,9 +820,9 @@ class Parser:
         else:
             new_where_phrase.append(where_phrase)
 
-        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.database_dico)
+        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.distinct_keywords, self.database_dico)
         from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
-        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.database_dico, self.like_keywords)
+        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.like_keywords, self.distinct_keywords, self.database_dico)
         group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
         order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.asc_keywords, self.desc_keywords, self.database_dico)
 

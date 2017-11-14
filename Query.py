@@ -42,20 +42,28 @@ class Select():
 		column_type = selection[1]
 
 		if column is None:
-			if column_type == 'COUNT':
-				return color.BOLD + 'COUNT(' + color.END + '*' + color.BOLD + ')' + color.END
+			if column_type is not None:
+				if 'COUNT' in column_type:
+					return color.BOLD + 'COUNT(' + color.END + '*' + color.BOLD + ')' + color.END
+				else:
+					return '*'
 			else:
 				return '*'
 		else:
-			if column_type == 'COUNT':
+			if 'DISTINCT' in column_type:
+				if 'COUNT' in column_type:
+					return color.BOLD + 'COUNT(DISTINCT ' + color.END + str(column) + color.BOLD + ')' + color.END
+				else:
+					return color.BOLD + 'DISTINCT ' + color.END + str(column)
+			if 'COUNT' in column_type:
 				return color.BOLD + 'COUNT(' + color.END + str(column) + color.BOLD + ')' + color.END
-			elif column_type == 'AVG':
+			elif 'AVG' in column_type:
 				return color.BOLD + 'AVG(' + color.END + str(column) + color.BOLD + ')' + color.END
-			elif column_type == 'SUM':
+			elif 'SUM' in column_type:
 				return color.BOLD + 'SUM(' + color.END + str(column) + color.BOLD + ')' + color.END
-			elif column_type == 'MAX':
+			elif 'MAX' in column_type:
 				return color.BOLD + 'MAX(' + color.END + str(column) + color.BOLD + ')' + color.END
-			elif column_type == 'MIN':
+			elif 'MIN' in column_type:
 				return color.BOLD + 'MIN(' + color.END + str(column) + color.BOLD + ')' + color.END
 			else:
 				return str(column)

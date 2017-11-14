@@ -147,6 +147,42 @@ class SimplisticTest(unittest.TestCase):
                 'database': './database/tal.sql',
                 'language': './lang/french.csv',
                 'output': "SELECT AVG(eleve.age) FROM eleve;"
+            },
+            {
+                'input': "Quels sont distinctivement les age des eleve ?",
+                'database': './database/tal.sql',
+                'language': './lang/french.csv',
+                'output': "SELECT DISTINCT eleve.age FROM eleve;"
+            },
+            {
+                'input': "compte distinctivement les eleve ?",
+                'database': './database/tal.sql',
+                'language': './lang/french.csv',
+                'output': "SELECT COUNT(*) FROM eleve;"
+            },
+            {
+                'input': "Compte distinctivement les age des eleve ?",
+                'database': './database/tal.sql',
+                'language': './lang/french.csv',
+                'output': "SELECT COUNT(DISTINCT eleve.age) FROM eleve;"
+            },
+            {
+                'input': "count distinctly how many city there are ordered by name in descending and ordered by score?",
+                'database': './database/city.sql',
+                'language': './lang/english.csv',
+                'output': "SELECT COUNT(*) FROM city INNER JOIN emp ON city.id = emp.cityId ORDER BY emp.name DESC, emp.score ASC;"
+            },
+            {
+                'input': "Count distinctly how many different name of city there are ordered by name in descending and ordered by score?",
+                'database': './database/city.sql',
+                'language': './lang/english.csv',
+                'output': "SELECT COUNT(DISTINCT emp.name) FROM city INNER JOIN emp ON city.id = emp.cityId ORDER BY emp.name DESC, emp.score ASC;"
+            },
+            {
+                'input': "What are the distinct name of city with a score equals to 9?",
+                'database': './database/city.sql',
+                'language': './lang/english.csv',
+                'output': "SELECT DISTINCT emp.name FROM city INNER JOIN emp ON city.id = emp.cityId WHERE emp.score = '9';"
             }
         ]
 

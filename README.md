@@ -34,6 +34,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 	- [X] one column
 	- [X] multiple columns
 	- [X] all columns
+	- [X] distinct select
 	- [X] aggregate functions
 		- [X] count-select
 		- [X] sum-select
@@ -54,7 +55,7 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 		- [X] not equal operator
 		- [X] greater-than operator
 		- [X] less-than operator
-		- [X] LIKE operator
+		- [X] like operator
 		- [ ] between operator (not 100% efficient)
 	- [X] aggregate functions
 		- [X] sum in condition
@@ -65,10 +66,8 @@ If you want a version using TreeTagger, a <a rel="wrapper" href="https://perso.l
 	- [X] ASC
 	- [X] DESC
 - [X] GROUP BY
-- [X] alias
 - [X] multiple queries
 - [X] exception and error handling
-- [X] negation support
 - [ ] detection of values (not 100% efficient)
 
 ## How to use it?

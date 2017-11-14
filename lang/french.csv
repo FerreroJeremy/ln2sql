@@ -2,7 +2,7 @@ AVG: moyenne
 SUM: somme, total
 MAX: maximum, maximal, plus grand
 MIN: minimum, minimal, plus petit
-COUNT: combien, nombre
+COUNT: combien, nombre, compte
 JUNCTION: et
 DISJUNCTION: ou
 GREATER: plus grand, supérieur, supérieur à
@@ -13,5 +13,6 @@ ASC: ascendant, ascendante, croissant
 DESC: descendant, descendante, décroissant, inverse, inversé, inversée
 GROUP: groupe, groupé, rangé
 NEGATION: ne, pas, aucun
-EQUAL: est
+EQUAL: est, égal, égal à
 LIKE: comme
+DISTINCT: distinct, distincte, distincts, distinctes, distinctive, distinctement, distinctivement

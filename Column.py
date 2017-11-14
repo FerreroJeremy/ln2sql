@@ -8,7 +8,7 @@ sys.setdefaultencoding("utf-8")
 
 class Column:
     name = ''
-    type = ''
+    type = []
     primary = False
     foreign = False
     
@@ -19,7 +19,7 @@ class Column:
             self.name = name
 
         if type is None:
-            self.type = ''
+            self.type = []
         else:
             self.type = type
 
@@ -34,6 +34,9 @@ class Column:
     
     def set_type(self, type):
         self.type = type
+		
+    def add_type(self, type):
+        self.type.append(type)
 
     def is_primary(self):
         return self.primary
