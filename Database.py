@@ -22,9 +22,14 @@ class color:
     END = '\033[0m'
 
 class Database:
+    thesaurus_object = None
+    tables = []
     
     def __init__(self):
         self.tables = []
+        
+    def set_thesaurus(self, thesaurus):
+        self.thesaurus_object = thesaurus
     
     def get_number_of_tables(self):
         return len(self.tables)
@@ -110,6 +115,8 @@ class Database:
             if 'TABLE' in line:
                 table_name = re.search("`(\w+)`", line)
                 table.set_name(table_name.group(1))
+                if self.thesaurus_object is not None:
+                    table.set_equivalences(self.thesaurus_object.get_synonyms_of_a_word(table.get_name()))
             elif 'PRIMARY KEY' in line:
                 primary_key_columns = re.findall("`(\w+)`", line)
                 for primary_key_column in primary_key_columns:
@@ -118,7 +125,11 @@ class Database:
                 column_name = re.search("`(\w+)`", line)
                 if column_name is not None:
                     column_type = self.predict_type(line)
-                    table.add_column(column_name.group(1), column_type)
+                    if self.thesaurus_object is not None:
+                        equivalences = self.thesaurus_object.get_synonyms_of_a_word(column_name.group(1))
+                    else:
+                        equivalences = []
+                    table.add_column(column_name.group(1), column_type, equivalences)
         return table
 
     def alter_table(self, alter_string):

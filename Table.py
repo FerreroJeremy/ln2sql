@@ -11,8 +11,9 @@ from Column import Column
 class Table:
     name = ''
     columns = []
+    equivalences = []
     
-    def __init__(self, name=None, columns=None):
+    def __init__(self, name=None, columns=None, equivalences=None):
         if name is None:
             self.name = ''
         else:
@@ -22,6 +23,11 @@ class Table:
             self.columns = []
         else:
             self.columns = columns
+
+        if equivalences is None:
+            self.equivalences = []
+        else:
+            self.equivalences = equivalences
     
     def get_name(self):
         return self.name
@@ -40,8 +46,23 @@ class Table:
             if column.get_name() == column_name:
                 return column
 
-    def add_column(self, column_name, column_type):
-        self.columns.append(Column(column_name, column_type))
+    def add_column(self, column_name, column_type, column_equivalences):
+        self.columns.append(Column(column_name, column_type, column_equivalences))
+
+    def get_equivalences(self):
+        return self.equivalences
+
+    def set_equivalences(self, equivalences):
+        self.equivalences = equivalences
+
+    def add_equivalence(self, equivalence):
+        self.equivalences.append(equivalence)
+
+    def is_equivalent(self, word):
+        if word in self.equivalences:
+            return true
+        else:
+            return false
 
     def get_primary_keys(self):
         primary_keys = []

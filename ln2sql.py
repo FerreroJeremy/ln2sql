@@ -27,19 +27,21 @@ class color:
 
 class ln2sql:
     def __init__(self, database_path, input_sentence, language_path, thesaurus_path, json_output_path):
+
         database = Database()
+
+        if thesaurus_path is not None:
+            thesaurus = Thesaurus()
+            thesaurus.load(thesaurus_path)
+            database.set_thesaurus(thesaurus)
+        
         database.load(database_path)
-        # database.print_me()
+        database.print_me()
 
         config = LangConfig()
         config.load(language_path)
 
         parser = Parser(database, config)
-
-        if thesaurus_path is not None:
-            thesaurus = Thesaurus()
-            thesaurus.load(thesaurus_path)
-            parser.set_thesaurus(thesaurus)
 
         queries = parser.parse_sentence(input_sentence)
 

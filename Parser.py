@@ -548,8 +548,6 @@ def _transformationSortAlgo(transitionalList):
 class Parser:
     database_object = None
     database_dico = None
-    language = None
-    thesaurus_object = None
 
     count_keywords = []
     sum_keywords = []
@@ -591,9 +589,6 @@ class Parser:
         self.equal_keywords = config.get_equal_keywords()
         self.like_keywords = config.get_like_keywords()
         self.distinct_keywords = config.get_distinct_keywords()
-        
-    def set_thesaurus(self, thesaurus):
-        self.thesaurus_object = thesaurus
 
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))

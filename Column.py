@@ -9,10 +9,11 @@ sys.setdefaultencoding("utf-8")
 class Column:
     name = ''
     type = []
+    equivalences = []
     primary = False
     foreign = False
     
-    def __init__(self, name=None, type=None):
+    def __init__(self, name=None, type=None, equivalences=None):
         if name is None:
             self.name = ''
         else:
@@ -22,6 +23,11 @@ class Column:
             self.type = []
         else:
             self.type = type
+
+        if equivalences is None:
+            self.equivalences = []
+        else:
+            self.equivalences = equivalences
 
     def get_name(self):
         return self.name
@@ -34,9 +40,24 @@ class Column:
     
     def set_type(self, type):
         self.type = type
-		
+
     def add_type(self, type):
         self.type.append(type)
+
+    def get_equivalences(self):
+        return self.equivalences
+
+    def set_equivalences(self, equivalences):
+        self.equivalences = equivalences
+
+    def add_equivalence(self, equivalence):
+        self.equivalences.append(equivalence)
+
+    def is_equivalent(self, word):
+        if word in self.equivalences:
+            return true
+        else:
+            return false
 
     def is_primary(self):
         return self.primary
