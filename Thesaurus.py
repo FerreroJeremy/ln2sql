@@ -12,12 +12,15 @@ class Thesaurus:
     
     def add_entry(self, word, synonyms):
         self.dictionnary[word] = synonyms
-    
-    def add_synonym_of_a_word(self, word, synonym):
+
+    def add_synonym_to_a_word(self, word, synonym):
+        self.dictionnary[word].append(synonym)
+
+    def add_synonyms_to_a_word(self, word, synonyms):
         if word in self.dictionnary:
-            self.dictionnary[word].append(synonym)
+            self.dictionnary[word] += synonyms
         else:
-            self.dictionnary[word] = synonym
+            self.dictionnary[word] = synonyms
     
     def get_synonyms_of_a_word(self, word):
         if word in self.dictionnary.keys():
@@ -37,7 +40,7 @@ class Thesaurus:
                     word = self.remove_accents(line[0])
                     synonyms = self.remove_accents(content[line_id + 1]).split("|")
                     synonyms.pop(0)
-                    self.add_synonym_of_a_word(word, synonyms)
+                    self.add_synonyms_to_a_word(word, synonyms)
 
     def print_me(self):
         for keys,values in self.dictionnary.items():
