@@ -36,7 +36,7 @@ class ln2sql:
             database.set_thesaurus(thesaurus)
         
         database.load(database_path)
-        database.print_me()
+        #database.print_me()
 
         config = LangConfig()
         config.load(language_path)

@@ -193,6 +193,23 @@ class SimplisticTest(unittest.TestCase):
             sys.stdout = sys.__stdout__
             self.assertEqual(self._cleanOutput(capturedOutput.getvalue()), test['output'])
 
+        thesaurusTest = [
+            {
+                'input': "Compte le nombre d'étudiant",
+                'database': './database/tal.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT COUNT(*) FROM eleve;"
+            }
+        ]
+
+        for test in thesaurusTest:
+            capturedOutput = StringIO.StringIO()
+            sys.stdout = capturedOutput
+            ln2sql_main(['-d', test['database'], '-l', test['language'], '-i', test['input'], '-t', test['thesaurus']])
+            sys.stdout = sys.__stdout__
+            self.assertEqual(self._cleanOutput(capturedOutput.getvalue()), test['output'])
+
         errorTest = [
             {
                 'input': 'Quel est le nom des reservation ?',
