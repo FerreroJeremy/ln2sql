@@ -144,25 +144,25 @@ class SimplisticTest(unittest.TestCase):
             },
             {
                 'input': "Quel est la moyenne d'age des eleve ?",
-                'database': './database/tal.sql',
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv',
                 'output': "SELECT AVG(eleve.age) FROM eleve;"
             },
             {
                 'input': "Quels sont distinctivement les age des eleve ?",
-                'database': './database/tal.sql',
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv',
                 'output': "SELECT DISTINCT eleve.age FROM eleve;"
             },
             {
                 'input': "compte distinctivement les eleve ?",
-                'database': './database/tal.sql',
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv',
                 'output': "SELECT COUNT(*) FROM eleve;"
             },
             {
                 'input': "Compte distinctivement les age des eleve ?",
-                'database': './database/tal.sql',
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv',
                 'output': "SELECT COUNT(DISTINCT eleve.age) FROM eleve;"
             },
@@ -193,13 +193,68 @@ class SimplisticTest(unittest.TestCase):
             sys.stdout = sys.__stdout__
             self.assertEqual(self._cleanOutput(capturedOutput.getvalue()), test['output'])
 
+
+
+class ThesaurusTest(unittest.TestCase):
+
+    def _cleanOutput(self, s):
+        s = s.split("SELECT")[1]        # remove table schema
+        s = re.sub("\\033.*?m", "", s)  # remove color codes
+        s = s.replace('\n',' ')         # remove '\n'
+        s = s.split(';')[0]             # remove spaces after ;
+        s = "SELECT" + s + ';'          # put back lost SELECT and ';'
+        return s
+
+    def test_main(self):
         thesaurusTest = [
             {
                 'input': "Compte le nombre d'étudiant",
-                'database': './database/tal.sql',
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv',
                 'thesaurus': 'thesaurus/th_french.dat',
                 'output': "SELECT COUNT(*) FROM eleve;"
+            },
+            {
+                'input': "Compte le nombre des dénomination des étudiant",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT COUNT(eleve.nom) FROM eleve;"
+            },
+            {
+                'input': "Quelles sont les ancienneté et les dénomination des élève ?",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT eleve.age, eleve.nom FROM eleve;"
+            },
+            {
+                'input': "Quelles sont les ancienneté et les dénomination des étudiant ?",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT eleve.age, eleve.nom FROM eleve;"
+            },
+            {
+                'input': "Quelles sont les salle des classe",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT classe.salle FROM classe;"
+            },
+            {
+                'input': "Quelles sont les salle des cours",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT classe.salle FROM classe;"
+            },
+            {
+                'input': "Quelles sont les pièce des cours",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT classe.salle FROM classe;"
             }
         ]
 
@@ -210,31 +265,39 @@ class SimplisticTest(unittest.TestCase):
             sys.stdout = sys.__stdout__
             self.assertEqual(self._cleanOutput(capturedOutput.getvalue()), test['output'])
 
+class ExceptionTest(unittest.TestCase):
+
+    def test_main(self):
         errorTest = [
             {
-                'input': 'Quel est le nom des reservation ?',
-                'database': './database/hotel.sql',
+                'input': 'Quel est le nom des reservation ?', # No table name found in sentence!
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv'
             },
             {
-                'input': 'Affiche moi les étudiants',
-                'database': './database/city.sql',
-                'language': './lang/english.csv'
+                'input': 'Affiche moi.', # No keyword found in sentence!
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv'
             },
             {
-                'input': 'Affiche moi les étudiants',
-                'database': './database/tal.sql',
-                'language': './lang/english.csv'
+                'input': 'Affiche moi les étudiants', # No keyword found in sentence!
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv'
             },
             {
-                'input': "Quel est le professeur qui enseigne la matière SVT ?",
-                'database': './database/tal.sql',
+                'input': "Quel est le professeur qui enseigne la matière SVT ?", # There is at least column `matiere` that is unreachable from table `PROFESSEUR`!
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv'
+            },
+            {
+                'input': "compte les salle des élève", # There is at least column `salle` that is unreachable from table `ELEVE`!
+                'database': './database/ecole.sql',
                 'language': './lang/french.csv'
             }
         ]
 
         for test in errorTest:
-            self.assertRaises(ParsingException, ln2sql_main, ['-d', test['database'], '-l', test['language'], '-i', test['input']])
+            self.assertRaises(Exception, ln2sql_main, ['-d', test['database'], '-l', test['language'], '-i', test['input']])
 
 if __name__ == '__main__':
     unittest.main()

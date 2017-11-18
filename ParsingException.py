@@ -25,4 +25,4 @@ class ParsingException(Exception):
         self.reason = reason
 
     def __str__(self):
-        return color.BOLD + color.RED + 'Error: ' + self.reason + color.END
+        return color.BOLD + color.RED + self.reason + color.END

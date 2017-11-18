@@ -14,7 +14,7 @@ sys.setdefaultencoding("utf-8")
 
 class SelectParser(Thread):
 
-    def __init__(self, columns_of_select, tables_of_from, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, distinct_keywords, database_dico):
+    def __init__(self, columns_of_select, tables_of_from, phrase, count_keywords, sum_keywords, average_keywords, max_keywords, min_keywords, distinct_keywords, database_dico, database_object):
         Thread.__init__(self)
         self.select_objects = []
         self.columns_of_select = columns_of_select
@@ -27,6 +27,7 @@ class SelectParser(Thread):
         self.min_keywords = min_keywords
         self.distinct_keywords = distinct_keywords
         self.database_dico = database_dico
+        self.database_object = database_object
 
     def get_tables_of_column(self, column):
         tmp_table = []
@@ -43,10 +44,18 @@ class SelectParser(Thread):
         else:
             return str(one_table_of_column) + '.' + str(column)
 
+    def uniquify(self, list): 
+       already = []
+       for element in list:
+           if element not in already:
+               already.append(element)
+       return already
+
     def run(self):
         for table_of_from in self.tables_of_from: # for each query
             self.select_object = Select()
             is_count = False
+            self.columns_of_select = self.uniquify(self.columns_of_select)
             number_of_select_column = len(self.columns_of_select)
 
             if number_of_select_column == 0:
@@ -55,14 +64,16 @@ class SelectParser(Thread):
                     if count_keyword in (word.lower() for word in self.phrase):
                         select_type.append('COUNT')
 
-                self.select_object.add_column(None, select_type)
+                self.select_object.add_column(None, self.uniquify(select_type))
             else:
                 select_phrases = []
                 previous_index = 0
+
                 for i in range(0, len(self.phrase)):
-                    if self.phrase[i] in self.columns_of_select:
-                        select_phrases.append(self.phrase[previous_index:i + 1])
-                        previous_index = i + 1
+                    for column_name in self.columns_of_select:
+                        if (self.phrase[i] == column_name) or (self.phrase[i] in self.database_object.get_column_with_this_name(column_name).get_equivalences()):
+                            select_phrases.append(self.phrase[previous_index:i + 1])
+                            previous_index = i + 1
 
                 select_phrases.append(self.phrase[previous_index:])
 
@@ -92,7 +103,7 @@ class SelectParser(Thread):
 
                     if (i != len(select_phrases) - 1):
                         column = self.get_column_name_with_alias_table(self.columns_of_select[i], table_of_from)
-                        self.select_object.add_column(column, select_type)
+                        self.select_object.add_column(column, self.uniquify(select_type))
 
             self.select_objects.append(self.select_object)
 
@@ -141,8 +152,6 @@ class FromParser(Thread):
         for column in fk_column_of_trg_table:
             if column.is_foreign()['foreign_table'] == table_src:
                 return [(table_src, column.is_foreign()['foreign_column']), (table_trg, column.get_name())]
-
-        """ @todo Restore the following lines for implicit inner join on same id columns. """
 
         # pk_table_src = self.database_object.get_primary_key_names_of_table(table_src)
         # pk_table_trg = self.database_object.get_primary_key_names_of_table(table_trg)
@@ -223,18 +232,28 @@ class FromParser(Thread):
                     foreign_table = self.get_tables_of_column(column)[0]
                     join_object.add_table(foreign_table)
                     link = self.get_link(table_of_from, foreign_table)
-                    links.extend(link)
+
+                    if not link:
+                        self.queries = ParsingException("There is at least column `" + column + "` that is unreachable from table `" + table_of_from.upper() + "`!")
+                        return
+                    else:
+                        links.extend(link)
+
             for column in self.columns_of_where:
                 if column not in self.database_dico[table_of_from]:
                     foreign_table = self.get_tables_of_column(column)[0]
                     join_object.add_table(foreign_table)
                     link = self.get_link(table_of_from, foreign_table)
-                    links.extend(link)
+
+                    if not link:
+                        self.queries = ParsingException("There is at least column `" + column + "` that is unreachable from table `" + table_of_from.upper() + "`!")
+                        return
+                    else:
+                        links.extend(link)
+
             join_object.set_links(self.unique_ordered(links))
             query.set_join(join_object)
             self.queries.append(query)
-            if len(join_object.get_tables()) > len(join_object.get_links()):
-                self.queries = None
 
     def join(self):
         Thread.join(self)
@@ -526,25 +545,6 @@ class OrderByParser(Thread):
         return self.order_by_objects
 
 
-# ---------------------------------------PART OF ALGORITHM FOR VALUE EXTRACTION STRARTS
-def _myCmp(s1,s2):
-    # if len(s1.split()) == 1 and len(s2.split()) == 1:
-    if len(s1.split()) == len(s2.split()) :
-        if len(s1) >= len(s2) :
-            return 1
-        else:
-            return -1
-    else:
-        if len(s1.split()) >= len(s2.split()):
-            return 1
-        else:
-            return -1
-
-def _transformationSortAlgo(transitionalList):
-    return sorted(transitionalList,cmp=_myCmp,reverse=True)
-# ---------------------------------------PART OF ALGORITHM FOR VALUE EXTRACTION ENDS
-
-
 class Parser:
     database_object = None
     database_dico = None
@@ -590,11 +590,28 @@ class Parser:
         self.like_keywords = config.get_like_keywords()
         self.distinct_keywords = config.get_distinct_keywords()
 
+    def myCmp(self, s1,s2):
+        if len(s1.split()) == len(s2.split()) :
+            if len(s1) >= len(s2) :
+                return 1
+            else:
+                return -1
+        else:
+            if len(s1.split()) >= len(s2.split()):
+                return 1
+            else:
+                return -1
+
+    def transformationSortAlgo(self, transitionalList):
+        return sorted(transitionalList,cmp=self.myCmp,reverse=True)
+
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))
         return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
     def parse_sentence(self, sentence):
+        sys.tracebacklimit = 0 # Remove traceback from Exception
+
         number_of_table = 0
         number_of_select_column = 0
         number_of_where_column = 0
@@ -639,14 +656,11 @@ class Parser:
         end_phrase = input_word_list[len(start_phrase) + len(med_phrase):]
         irext = ' '.join(end_phrase)
 
-
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
             irext = self.remove_accents(irext.decode('utf-8').lower())
-            # .lower() is necessary to make our own irext case insensetive for proper value extraction and it will not even
-            # reflect any problems for Case Sensetive fields , it is just for improving logic for our extracting assigners.
-            # eg -> "show data for city where cityName is LIke Pune" A query like this would also work even if lang you dont write all the permutations of 'like'.
+
             filter_list = [",", "!"]
 
             for filter_element in filter_list:
@@ -659,8 +673,7 @@ class Parser:
             assignment_list.append('=')
             # custom operators added as they can be possibilities
 
-            assignment_list = _transformationSortAlgo(assignment_list) # Algorithmic logic for best substitution for extraction of values with the help of assigners.
-
+            assignment_list = self.transformationSortAlgo(assignment_list) # Algorithmic logic for best substitution for extraction of values with the help of assigners.
 
             maverickjoy_general_assigner = "*res*@3#>>*"
             maverickjoy_like_assigner = "*like*@3#>>*"
@@ -678,13 +691,10 @@ class Parser:
 
                     irext = irext.replace(assigner, str(" "+maverickjoy_general_assigner+" "))
 
-
-
             # replace all spaces from values to <_> for proper value assignment in SQL
             # eg. (where name is 'abc def') -> (where name is abc<_>def)
             for i in re.findall("(['\"].*?['\"])", irext):
                 irext = irext.replace(i, i.replace(' ', '<_>').replace("'", '').replace('"',''))
-
 
             irext_list = irext.split()
 
@@ -818,27 +828,33 @@ class Parser:
         else:
             new_where_phrase.append(where_phrase)
 
-        select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.distinct_keywords, self.database_dico)
-        from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
-        where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.like_keywords, self.distinct_keywords, self.database_dico)
-        group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
-        order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.asc_keywords, self.desc_keywords, self.database_dico)
+        try:
+            select_parser = SelectParser(columns_of_select, tables_of_from, select_phrase, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.distinct_keywords, self.database_dico, self.database_object)
+            from_parser = FromParser(tables_of_from, columns_of_select, columns_of_where, self.database_object)
+            where_parser = WhereParser(new_where_phrase, tables_of_from, columns_of_values_of_where, self.count_keywords, self.sum_keywords, self.average_keywords, self.max_keywords, self.min_keywords, self.greater_keywords, self.less_keywords, self.between_keywords, self.negation_keywords, self.junction_keywords, self.disjunction_keywords, self.like_keywords, self.distinct_keywords, self.database_dico)
+            group_by_parser = GroupByParser(group_by_phrase, tables_of_from, self.database_dico)
+            order_by_parser = OrderByParser(order_by_phrase, tables_of_from, self.asc_keywords, self.desc_keywords, self.database_dico)
 
-        select_parser.start()
-        from_parser.start()
-        where_parser.start()
-        group_by_parser.start()
-        order_by_parser.start()
+            select_parser.start()
+            from_parser.start()
+            where_parser.start()
+            group_by_parser.start()
+            order_by_parser.start()
 
-        queries = from_parser.join()
+            queries = from_parser.join()
+        except:
+            raise ParsingException("Parsing error occured in thread!")
 
-        if queries is None:
-            raise ParsingException("There is at least one unattainable column from the table of FROM!")
+        if isinstance(queries, ParsingException):
+            raise queries
 
-        select_objects = select_parser.join()
-        where_objects = where_parser.join()
-        group_by_objects = group_by_parser.join()
-        order_by_objects = order_by_parser.join()
+        try:
+            select_objects = select_parser.join()
+            where_objects = where_parser.join()
+            group_by_objects = group_by_parser.join()
+            order_by_objects = order_by_parser.join()
+        except:
+            raise ParsingException("Parsing error occured in thread!")
 
         for i in range(0, len(queries)):
             query = queries[i]

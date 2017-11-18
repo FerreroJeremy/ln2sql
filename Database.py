@@ -37,6 +37,12 @@ class Database:
     def get_tables(self):
         return self.tables
 
+    def get_column_with_this_name(self, name):
+        for table in self.tables:
+            for column in table.get_columns():
+                if column.get_name() == name:
+                    return column
+
     def get_table_by_name(self, table_name):
         for table in self.tables:
             if table.get_name() == table_name:
