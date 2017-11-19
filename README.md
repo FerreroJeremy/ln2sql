@@ -106,7 +106,7 @@ You can improve the stop word filtering using a stop word list. You can build yo
 You can directly use the python wrapper by the following way:
 ```
 Usage:
-	python ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]
+	python ln2sql.py -d <path> -l <path> -i <input-sentence> [-j <path>] [-t <path>] [-s <path>]
 Parameters:
 	-h					print this help message
 	-d <path>				path to sql dump file
@@ -114,17 +114,12 @@ Parameters:
 	-i <input-sentence>			input sentence to parse
 	-j <path>				path to JSON output file
 	-t <path>				path to thesaurus file
+	-s <path>				path to stopwords file
 ```
 example of usage:
 ```
 python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
 ```
-
-Values for WHERE clause should be specified in single(') or double(") quotes for multi word values.example :
-```
-python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "show data for city with cityName = 'San Jose'"
-```
-<p align="center"><img src="https://user-images.githubusercontent.com/11170508/32624509-80e01846-c5af-11e7-9d1b-eb8d4bba85e5.jpg" width="900"></p>
 
 or by graphical interface by typing the following command:
 ```
@@ -182,6 +177,3 @@ The tool is implemented under the Model-View-Controller pattern. The classes imp
 The above diagram was modeled with <a rel="staruml" href="http://staruml.io/">StarUML</a>.
 <br/>
 <br/>
-<a target='_blank' rel='nofollow' href='https://app.codesponsor.io/link/6EJKfuCZe6SgaRxXWTmxqnAN/FerreroJeremy/ln2sql'>
-  <img alt='Sponsor' width='888' height='68' src='https://app.codesponsor.io/embed/6EJKfuCZe6SgaRxXWTmxqnAN/FerreroJeremy/ln2sql.svg' />
-</a>

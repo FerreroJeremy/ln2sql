@@ -609,7 +609,7 @@ class Parser:
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))
         return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
-    def parse_sentence(self, sentence):
+    def parse_sentence(self, sentence, stopwordsFilter=None):
         sys.tracebacklimit = 0 # Remove traceback from Exception
 
         number_of_table = 0
@@ -618,6 +618,9 @@ class Parser:
         last_table_position = 0
         columns_of_select = []
         columns_of_where = []
+
+        if stopwordsFilter is not None:
+            sentence = stopwordsFilter.filter(sentence)
 
         input_for_finding_value = sentence.decode('utf-8').rstrip(string.punctuation.replace('"','').replace("'",""))
         columns_of_values_of_where = []

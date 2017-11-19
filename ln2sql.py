@@ -26,14 +26,19 @@ class color:
     END = '\033[0m'
 
 class ln2sql:
-    def __init__(self, database_path, input_sentence, language_path, thesaurus_path, json_output_path):
+    def __init__(self, database_path, language_path, input_sentence, json_output_path, thesaurus_path, stopwords_path):
 
         database = Database()
+        stopwordsFilter = None
 
         if thesaurus_path is not None:
             thesaurus = Thesaurus()
             thesaurus.load(thesaurus_path)
             database.set_thesaurus(thesaurus)
+
+        if stopwords_path is not None:
+            stopwordsFilter = StopwordFilter()
+            stopwordsFilter.load(stopwords_path)
         
         database.load(database_path)
         #database.print_me()
@@ -43,7 +48,7 @@ class ln2sql:
 
         parser = Parser(database, config)
 
-        queries = parser.parse_sentence(input_sentence)
+        queries = parser.parse_sentence(input_sentence, stopwordsFilter)
 
         if json_output_path is not None:
             self.remove_json(json_output_path)
@@ -60,7 +65,7 @@ class ln2sql:
 def print_help_message():
     print '\n'
     print 'Usage:'
-    print '\tpython ln2sql.py -d <path> -l <path> -i <input-sentence> [-t <path>] [-j <path>]'
+    print '\tpython ln2sql.py -d <path> -l <path> -i <input-sentence> [-j <path>] [-t <path>] [-s <path>]'
     print 'Parameters:'
     print '\t-h\t\t\tprint this help message'
     print '\t-d <path>\t\tpath to SQL dump file'
@@ -68,16 +73,18 @@ def print_help_message():
     print '\t-i <input-sentence>\tinput sentence to parse'
     print '\t-j <path>\t\tpath to JSON output file'
     print '\t-t <path>\t\tpath to thesaurus file'
+    print '\t-s <path>\t\tpath to stopwords file'
     print '\n'
 
 def main(argv):
     try:
-        opts, args = getopt.getopt(argv,"d:l:i:t:j:")
+        opts, args = getopt.getopt(argv,"d:l:i:j:t:s:")
         database_path = None
         input_sentence = None
         language_path = None
         thesaurus_path = None
         json_output_path = None
+        stopwords_path = None
 
         for i in range(0, len(opts)):
             if opts[i][0] == "-d":
@@ -90,6 +97,8 @@ def main(argv):
                 json_output_path = opts[i][1]
             elif opts[i][0] == "-t":
                 thesaurus_path = opts[i][1]
+            elif opts[i][0] == "-s":
+                stopwords_path = opts[i][1]
             else:
                 print_help_message()
                 sys.exit()
@@ -100,13 +109,12 @@ def main(argv):
         else:
             if thesaurus_path is not None:
                 thesaurus_path = str(thesaurus_path)
+            if stopwords_path is not None:
+                stopwords_path = str(stopwords_path)
             if json_output_path is not None:
                 json_output_path = str(json_output_path)
 
-        #try:
-        ln2sql(str(database_path), str(input_sentence), str(language_path), thesaurus_path, json_output_path)
-        #except Exception, e:
-        #    print color.BOLD + color.RED + str(e) + color.END
+        ln2sql(str(database_path), str(language_path), str(input_sentence), json_output_path, thesaurus_path, stopwords_path)
 
     except getopt.GetoptError:
         print_help_message()
