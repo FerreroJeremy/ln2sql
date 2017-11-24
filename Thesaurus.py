@@ -8,23 +8,23 @@ import unicodedata
 class Thesaurus:
     
     def __init__(self):
-        self.dictionnary = {}
+        self.dictionary = {}
     
     def add_entry(self, word, synonyms):
-        self.dictionnary[word] = synonyms
+        self.dictionary[word] = synonyms
 
     def add_synonym_to_a_word(self, word, synonym):
-        self.dictionnary[word].append(synonym)
+        self.dictionary[word].append(synonym)
 
     def add_synonyms_to_a_word(self, word, synonyms):
-        if word in self.dictionnary:
-            self.dictionnary[word] += synonyms
+        if word in self.dictionary:
+            self.dictionary[word] += synonyms
         else:
-            self.dictionnary[word] = synonyms
+            self.dictionary[word] = synonyms
     
     def get_synonyms_of_a_word(self, word):
-        if word in self.dictionnary.keys():
-            return self.dictionnary[word]
+        if word in self.dictionary.keys():
+            return self.dictionary[word]
 
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', unicode(string))
@@ -43,6 +43,6 @@ class Thesaurus:
                     self.add_synonyms_to_a_word(word, synonyms)
 
     def print_me(self):
-        for keys,values in self.dictionnary.items():
+        for keys,values in self.dictionary.items():
             print(keys)
             print(values)
