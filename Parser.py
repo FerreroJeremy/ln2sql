@@ -8,9 +8,6 @@ from threading import Thread
 from ParsingException import ParsingException
 from Query import *
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
 
 class SelectParser(Thread):
 
@@ -302,7 +299,7 @@ class WhereParser(Thread):
         return list(set(a) & set(b))
 
     def predict_operation_type(self, previous_column_offset, current_column_offset):
-        interval_offset = range(previous_column_offset, current_column_offset)
+        interval_offset = list(range(previous_column_offset, current_column_offset))
         if(len(self.intersect(interval_offset, self.count_keyword_offset)) >= 1):
             return 'COUNT'
         elif(len(self.intersect(interval_offset, self.sum_keyword_offset)) >= 1):
@@ -317,7 +314,7 @@ class WhereParser(Thread):
             return None
 
     def predict_operator(self, current_column_offset, next_column_offset):
-        interval_offset = range(current_column_offset, next_column_offset)
+        interval_offset = list(range(current_column_offset, next_column_offset))
 
         if(len(self.intersect(interval_offset, self.negation_keyword_offset)) >= 1) and (len(self.intersect(interval_offset, self.greater_keyword_offset)) >= 1):
             return '<'
@@ -337,7 +334,7 @@ class WhereParser(Thread):
             return '='
 
     def predict_junction(self, previous_column_offset, current_column_offset):
-        interval_offset = range(previous_column_offset, current_column_offset)
+        interval_offset = list(range(previous_column_offset, current_column_offset))
         junction = 'AND'
         if(len(self.intersect(interval_offset, self.disjunction_keyword_offset)) >= 1):
             return 'OR'
@@ -590,24 +587,12 @@ class Parser:
         self.like_keywords = config.get_like_keywords()
         self.distinct_keywords = config.get_distinct_keywords()
 
-    def myCmp(self, s1,s2):
-        if len(s1.split()) == len(s2.split()) :
-            if len(s1) >= len(s2) :
-                return 1
-            else:
-                return -1
-        else:
-            if len(s1.split()) >= len(s2.split()):
-                return 1
-            else:
-                return -1
-
     def transformationSortAlgo(self, transitionalList):
-        return sorted(transitionalList,cmp=self.myCmp,reverse=True)
+        return sorted(transitionalList,key=lambda s: s.split(),reverse=True)
 
     def remove_accents(self, string):
-        nkfd_form = unicodedata.normalize('NFKD', unicode(string))
-        return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
+        nkfd_form = unicodedata.normalize('NFKD', str(string))
+        return "".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
     def parse_sentence(self, sentence, stopwordsFilter=None):
         sys.tracebacklimit = 0 # Remove traceback from Exception
@@ -622,7 +607,7 @@ class Parser:
         if stopwordsFilter is not None:
             sentence = stopwordsFilter.filter(sentence)
 
-        input_for_finding_value = sentence.decode('utf-8').rstrip(string.punctuation.replace('"','').replace("'",""))
+        input_for_finding_value = sentence.rstrip(string.punctuation.replace('"','').replace("'",""))
         columns_of_values_of_where = []
 
         filter_list = [",", "!"]
@@ -662,7 +647,7 @@ class Parser:
         ''' @todo set this part of the algorithm (detection of values of where) in the part of the phrases where parsing '''
 
         if irext:
-            irext = self.remove_accents(irext.decode('utf-8').lower())
+            irext = self.remove_accents(irext.lower())
 
             filter_list = [",", "!"]
 
@@ -718,7 +703,7 @@ class Parser:
         from_phrase = ''
         where_phrase = ''
 
-        words = re.findall(r"[\w]+", self.remove_accents(sentence.decode('utf-8')))
+        words = re.findall(r"[\w]+", self.remove_accents(sentence))
 
         for i in range(0, len(words)):
             for table_name in self.database_dico:
