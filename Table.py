@@ -3,9 +3,6 @@
 import sys
 import unicodedata
 
-reload(sys)
-sys.setdefaultencoding("utf-8")
-
 from Column import Column
 
 class Table:

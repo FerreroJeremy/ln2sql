@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*
 
 import sys
-reload(sys)
-sys.setdefaultencoding("utf-8")
 import unicodedata
 
 class Thesaurus:
@@ -23,12 +21,12 @@ class Thesaurus:
             self.dictionary[word] = synonyms
     
     def get_synonyms_of_a_word(self, word):
-        if word in self.dictionary.keys():
+        if word in list(self.dictionary.keys()):
             return self.dictionary[word]
 
     def remove_accents(self, string):
-        nkfd_form = unicodedata.normalize('NFKD', unicode(string))
-        return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
+        nkfd_form = unicodedata.normalize('NFKD', str(string))
+        return "".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
     def load(self, path):
         with open(path) as f:
@@ -43,6 +41,6 @@ class Thesaurus:
                     self.add_synonyms_to_a_word(word, synonyms)
 
     def print_me(self):
-        for keys,values in self.dictionary.items():
+        for keys,values in list(self.dictionary.items()):
             print(keys)
             print(values)
