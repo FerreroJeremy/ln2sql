@@ -2,15 +2,14 @@
 import os, sys
 import unicodedata
 
-from constants import color
-from Database import Database
-from LangConfig import LangConfig
-from Parser import Parser
-from Thesaurus import Thesaurus
-from StopwordFilter import StopwordFilter
+from .database import Database
+from .langConfig import LangConfig
+from .parser import Parser
+from .thesaurus import Thesaurus
+from .stopwordFilter import StopwordFilter
 
 
-class ln2sql:
+class Ln2sql:
     def __init__(
         self,
         database_path,
@@ -72,7 +71,7 @@ def main():
 
     args = arg_parser.parse_args()
 
-    ln2sql(
+    Ln2sql(
         database_path=args.database,
         language_path=args.language,
         input_sentence=args.sentence,

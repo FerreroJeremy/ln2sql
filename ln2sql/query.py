@@ -1,7 +1,7 @@
 import sys
 import unicodedata
 
-from constants import color
+from .constants import Color
 
 
 class Select():
@@ -30,7 +30,7 @@ class Select():
 		if column is None:
 			if column_type is not None:
 				if 'COUNT' in column_type:
-					return color.BOLD + 'COUNT(' + color.END + '*' + color.BOLD + ')' + color.END
+					return Color.BOLD + 'COUNT(' + Color.END + '*' + Color.BOLD + ')' + Color.END
 				else:
 					return '*'
 			else:
@@ -38,19 +38,19 @@ class Select():
 		else:
 			if 'DISTINCT' in column_type:
 				if 'COUNT' in column_type:
-					return color.BOLD + 'COUNT(DISTINCT ' + color.END + str(column) + color.BOLD + ')' + color.END
+					return Color.BOLD + 'COUNT(DISTINCT ' + Color.END + str(column) + Color.BOLD + ')' + Color.END
 				else:
-					return color.BOLD + 'DISTINCT ' + color.END + str(column)
+					return Color.BOLD + 'DISTINCT ' + Color.END + str(column)
 			if 'COUNT' in column_type:
-				return color.BOLD + 'COUNT(' + color.END + str(column) + color.BOLD + ')' + color.END
+				return Color.BOLD + 'COUNT(' + Color.END + str(column) + Color.BOLD + ')' + Color.END
 			elif 'AVG' in column_type:
-				return color.BOLD + 'AVG(' + color.END + str(column) + color.BOLD + ')' + color.END
+				return Color.BOLD + 'AVG(' + Color.END + str(column) + Color.BOLD + ')' + Color.END
 			elif 'SUM' in column_type:
-				return color.BOLD + 'SUM(' + color.END + str(column) + color.BOLD + ')' + color.END
+				return Color.BOLD + 'SUM(' + Color.END + str(column) + Color.BOLD + ')' + Color.END
 			elif 'MAX' in column_type:
-				return color.BOLD + 'MAX(' + color.END + str(column) + color.BOLD + ')' + color.END
+				return Color.BOLD + 'MAX(' + Color.END + str(column) + Color.BOLD + ')' + Color.END
 			elif 'MIN' in column_type:
-				return color.BOLD + 'MIN(' + color.END + str(column) + color.BOLD + ')' + color.END
+				return Color.BOLD + 'MIN(' + Color.END + str(column) + Color.BOLD + ')' + Color.END
 			else:
 				return str(column)
 
@@ -62,7 +62,7 @@ class Select():
 			else:
 				select_string = select_string + str(self.print_column(self.columns[i])) + ', '
 
-		return color.BOLD + 'SELECT ' + color.END + select_string
+		return Color.BOLD + 'SELECT ' + Color.END + select_string
 
 	def print_json(self, output):
 		if len(self.columns) >= 1:
@@ -105,7 +105,7 @@ class From():
 		return self.table
 
 	def __str__(self):
-		return '\n' + color.BOLD + 'FROM ' + color.END + str(self.table)
+		return '\n' + Color.BOLD + 'FROM ' + Color.END + str(self.table)
 
 	def print_json(self, output):
 		if self.table != '':
@@ -141,13 +141,13 @@ class Join():
 		if len(self.links) >= 1:
 			string = ''
 			for i in range(0, len(self.links)):
-				string += '\n' + color.BOLD + 'INNER JOIN ' + color.END + str(self.links[i][1][0]) + '\n' + color.BOLD + 'ON ' + color.END + str(self.links[i][0][0]) + '.' + str(self.links[i][0][1]) + ' = ' + str(self.links[i][1][0]) + '.' + str(self.links[i][1][1])
+				string += '\n' + Color.BOLD + 'INNER JOIN ' + Color.END + str(self.links[i][1][0]) + '\n' + Color.BOLD + 'ON ' + Color.END + str(self.links[i][0][0]) + '.' + str(self.links[i][0][1]) + ' = ' + str(self.links[i][1][0]) + '.' + str(self.links[i][1][1])
 			return string
 		elif len(self.tables) >= 1:
 			if len(self.tables) == 1:
-				return '\n' + color.BOLD + 'NATURAL JOIN ' + color.END + self.tables[0]
+				return '\n' + Color.BOLD + 'NATURAL JOIN ' + Color.END + self.tables[0]
 			else:
-				string = '\n' + color.BOLD + 'NATURAL JOIN ' + color.END
+				string = '\n' + Color.BOLD + 'NATURAL JOIN ' + Color.END
 				for i in range(0, len(self.tables)):
 					if i == (len(self.tables)-1):
 						string += str(self.tables[i])
@@ -214,13 +214,13 @@ class Condition():
 		if column_type is None:
 			return self.column
 		else:
-			return color.BOLD + str(column_type) + '(' + color.END + self.column + color.BOLD + ')' + color.END
+			return Color.BOLD + str(column_type) + '(' + Color.END + self.column + Color.BOLD + ')' + Color.END
 
 	def get_pretty_operator(self, operator):
 		if operator == 'BETWEEN':
-			return color.BOLD + 'BETWEEN' + color.END + ' OOV ' + color.BOLD + 'AND' + color.END
+			return Color.BOLD + 'BETWEEN' + Color.END + ' OOV ' + Color.BOLD + 'AND' + Color.END
 		else:
-			return color.BOLD + operator + color.END
+			return Color.BOLD + operator + Color.END
 
 	def __str__(self):
 		return str(self.get_column_with_type_operation(self.column, self.column_type)) + ' ' + str(self.get_pretty_operator(self.operator)) + ' ' + str(self.value)
@@ -250,9 +250,9 @@ class Where():
 		if len(self.conditions) >= 1:
 			for i in range(0, len(self.conditions)):
 				if i == 0:
-					string += '\n' + color.BOLD + 'WHERE' + color.END + ' ' + str(self.conditions[i][1])
+					string += '\n' + Color.BOLD + 'WHERE' + Color.END + ' ' + str(self.conditions[i][1])
 				else:
-					string += '\n' + color.BOLD + str(self.conditions[i][0]) + color.END + ' ' + str(self.conditions[i][1])
+					string += '\n' + Color.BOLD + str(self.conditions[i][0]) + Color.END + ' ' + str(self.conditions[i][1])
 
 			return string
 		else:
@@ -308,7 +308,7 @@ class GroupBy():
 
 	def __str__(self):
 		if self.column is not None:
-			return '\n' + color.BOLD + 'GROUP BY ' + color.END + str(self.column)
+			return '\n' + Color.BOLD + 'GROUP BY ' + Color.END + str(self.column)
 		else:
 			return ''
 
@@ -336,12 +336,12 @@ class OrderBy():
 
 	def __str__(self):
 		if self.columns != []:
-			string = color.BOLD + 'ORDER BY ' + color.END
+			string = Color.BOLD + 'ORDER BY ' + Color.END
 			for i in range(0, len(self.columns)):
 				if i == (len(self.columns)-1):
-					string += self.columns[i][0] + ' ' + color.BOLD + self.columns[i][1] + color.END
+					string += self.columns[i][0] + ' ' + Color.BOLD + self.columns[i][1] + Color.END
 				else:
-					string += self.columns[i][0] + ' ' + color.BOLD + self.columns[i][1] + color.END + ', '
+					string += self.columns[i][0] + ' ' + Color.BOLD + self.columns[i][1] + Color.END + ', '
 			return '\n' + string
 		else:
 			return ''

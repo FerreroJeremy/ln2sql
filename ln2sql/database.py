@@ -1,8 +1,8 @@
 import sys, re
 import unicodedata
 
-from constants import color
-from Table import Table
+from .constants import Color
+from .table import Table
 
 
 class Database:
@@ -145,9 +145,9 @@ class Database:
             print('+-------------------------------------+')
             for column in table.columns:
                 if column.is_primary():
-                    print("| 🔑 %31s           |" % (color.BOLD + column.get_name() + ' (' + column.get_type() + ')' + color.END))
+                    print("| 🔑 %31s           |" % (Color.BOLD + column.get_name() + ' (' + column.get_type() + ')' + Color.END))
                 elif column.is_foreign():
-                    print("| #️⃣ %31s           |" % (color.ITALIC + column.get_name() + ' (' + column.get_type() + ')' + color.END))
+                    print("| #️⃣ %31s           |" % (Color.ITALIC + column.get_name() + ' (' + column.get_type() + ')' + Color.END))
                 else:
                     print("|   %23s           |" % (column.get_name() + ' (' + column.get_type() + ')'))
             print('+-------------------------------------+\n')

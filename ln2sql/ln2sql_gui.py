@@ -1,10 +1,11 @@
 #!/usr/bin/python3
+import unicodedata
 from tkinter import *
 import tkinter.filedialog
 from tkinter.messagebox import *
-from ln2sql import ln2sql
 
-import unicodedata
+from .ln2sql import Ln2sql
+
 
 class App:
 	def __init__(self, root):

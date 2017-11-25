@@ -3,8 +3,9 @@ import sys
 import unicodedata
 import string
 from threading import Thread
-from ParsingException import ParsingException
-from Query import *
+
+from .parsingException import ParsingException
+from .query import *
 
 
 class SelectParser(Thread):
