@@ -5,6 +5,8 @@ import unicodedata
 
 from Table import Table
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class color:
     PURPLE = '\033[95m'

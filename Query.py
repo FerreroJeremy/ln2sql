@@ -3,6 +3,9 @@
 import sys
 import unicodedata
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
+
 class color:
     PURPLE = '\033[95m'
     CYAN = '\033[96m'

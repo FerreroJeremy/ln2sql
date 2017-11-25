@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*
 
-import io
+import StringIO
 import sys,re
 import unittest
 from ln2sql import main as ln2sql_main
 from ParsingException import ParsingException
+
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 
 class SimplisticTest(unittest.TestCase):
@@ -190,7 +193,7 @@ class SimplisticTest(unittest.TestCase):
         ]
 
         for test in correctTest:
-            capturedOutput = io.StringIO()
+            capturedOutput = StringIO.StringIO()
             sys.stdout = capturedOutput
             ln2sql_main(['-d', test['database'], '-l', test['language'], '-i', test['input']])
             sys.stdout = sys.__stdout__
@@ -286,7 +289,7 @@ class ThesaurusTest(unittest.TestCase):
         ]
 
         for test in thesaurusTest:
-            capturedOutput = io.StringIO()
+            capturedOutput = StringIO.StringIO()
             sys.stdout = capturedOutput
             ln2sql_main(['-d', test['database'], '-l', test['language'], '-i', test['input'], '-t', test['thesaurus']])
             sys.stdout = sys.__stdout__

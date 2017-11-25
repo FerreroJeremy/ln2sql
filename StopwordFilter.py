@@ -4,6 +4,8 @@ import re
 import sys
 import unicodedata
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class StopwordFilter:
     
@@ -18,7 +20,7 @@ class StopwordFilter:
     
     def filter(self, sentence):
         tmp_sentence = ""
-        words = re.findall(r"[\w]+", self.remove_accents(sentence))
+        words = re.findall(r"[\w]+", self.remove_accents(sentence.decode('utf-8')))
         for word in words:
             word = self.remove_accents(word).lower()
             if word not in self.list:
@@ -26,8 +28,8 @@ class StopwordFilter:
         return tmp_sentence.strip()
 
     def remove_accents(self, string):
-        nkfd_form = unicodedata.normalize('NFKD', str(string))
-        return "".join([c for c in nkfd_form if not unicodedata.combining(c)])
+        nkfd_form = unicodedata.normalize('NFKD', unicode(string))
+        return u"".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
     def load(self, path):
         with open(path) as f:

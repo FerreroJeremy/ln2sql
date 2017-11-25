@@ -10,6 +10,8 @@ from Parser import Parser
 from Thesaurus import Thesaurus
 from StopwordFilter import StopwordFilter
 
+reload(sys)
+sys.setdefaultencoding("utf-8")
 
 class color:
     PURPLE = '\033[95m'
@@ -54,25 +56,25 @@ class ln2sql:
                 query.print_json(json_output_path)
 
         for query in queries:
-            print(query)
+            print query
 
     def remove_json(self, filename="output.json"):
         if os.path.exists(filename):
             os.remove(filename)
 
 def print_help_message():
-    print('\n')
-    print('Usage:')
-    print('\tpython ln2sql.py -d <path> -l <path> -i <input-sentence> [-j <path>] [-t <path>] [-s <path>]')
-    print('Parameters:')
-    print('\t-h\t\t\tprint this help message')
-    print('\t-d <path>\t\tpath to SQL dump file')
-    print('\t-l <path>\t\tpath to language configuration file')
-    print('\t-i <input-sentence>\tinput sentence to parse')
-    print('\t-j <path>\t\tpath to JSON output file')
-    print('\t-t <path>\t\tpath to thesaurus file')
-    print('\t-s <path>\t\tpath to stopwords file')
-    print('\n')
+    print '\n'
+    print 'Usage:'
+    print '\tpython ln2sql.py -d <path> -l <path> -i <input-sentence> [-j <path>] [-t <path>] [-s <path>]'
+    print 'Parameters:'
+    print '\t-h\t\t\tprint this help message'
+    print '\t-d <path>\t\tpath to SQL dump file'
+    print '\t-l <path>\t\tpath to language configuration file'
+    print '\t-i <input-sentence>\tinput sentence to parse'
+    print '\t-j <path>\t\tpath to JSON output file'
+    print '\t-t <path>\t\tpath to thesaurus file'
+    print '\t-s <path>\t\tpath to stopwords file'
+    print '\n'
 
 def main(argv):
     try:
