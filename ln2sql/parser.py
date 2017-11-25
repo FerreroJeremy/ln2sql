@@ -40,7 +40,7 @@ class SelectParser(Thread):
         else:
             return str(one_table_of_column) + '.' + str(column)
 
-    def uniquify(self, list): 
+    def uniquify(self, list):
        already = []
        for element in list:
            if element not in already:
@@ -359,7 +359,7 @@ class WhereParser(Thread):
         else:
             return 'OR'
 
-    def uniquify(self, list): 
+    def uniquify(self, list):
        already = []
        for element in list:
            if element not in already:
@@ -495,8 +495,8 @@ class GroupByParser(Thread):
                         columns = self.database_object.get_table_by_name(table_name).get_columns()
                         for column in columns:
                             if (phrase[i] == column.get_name()) or (phrase[i] in column.get_equivalences()):
-                            	column_with_alias = self.get_column_name_with_alias_table(column.get_name(), table_of_from)
-                            	group_by_object.set_column(column_with_alias)
+                                column_with_alias = self.get_column_name_with_alias_table(column.get_name(), table_of_from)
+                                group_by_object.set_column(column_with_alias)
             self.group_by_objects.append(group_by_object)
 
     def join(self):
@@ -723,7 +723,7 @@ class Parser:
                         columns_of_values_of_where.append(str("'" + str(irext_list[index]).replace('<_>', ' ') + "'"))
 
         ''' ----------------------------------------------------------------------------------------------------------- '''
-        
+
         tables_of_from = []
         select_phrase = ''
         from_phrase = ''
@@ -800,10 +800,10 @@ class Parser:
                     real_tables_of_from.append(table)
 
         tables_of_from = real_tables_of_from
-        
+
         if len(tables_of_from) == 0:
             raise ParsingException("No table name found in sentence!")
-        
+
         group_by_phrase = []
         order_by_phrase = []
         new_where_phrase = []

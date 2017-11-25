@@ -26,7 +26,7 @@ class Column:
 
     def get_type(self):
         return self.type
-    
+
     def set_type(self, type):
         self.type = type
 

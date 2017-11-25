@@ -4,7 +4,7 @@ import unicodedata
 from .column import Column
 
 class Table:
-    
+
     def __init__(self, name='', columns=None, equivalences=None):
         self.name = name
 
@@ -15,16 +15,16 @@ class Table:
         if not equivalences:
             equivalences = []
         self.equivalences = equivalences
-    
+
     def get_name(self):
         return self.name
-    
+
     def set_name(self, name):
         self.name = name
 
     def get_number_of_columns(self):
         return len(self.columns)
-    
+
     def get_columns(self):
         return self.columns
 

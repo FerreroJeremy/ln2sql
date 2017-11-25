@@ -31,7 +31,7 @@ class Ln2sql:
         if stopwords_path:
             stopwordsFilter = StopwordFilter()
             stopwordsFilter.load(stopwords_path)
-        
+
         database.load(database_path)
         #database.print_me()
 

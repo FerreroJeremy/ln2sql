@@ -2,10 +2,10 @@ import sys
 import unicodedata
 
 class Thesaurus:
-    
+
     def __init__(self):
         self.dictionary = {}
-    
+
     def add_entry(self, word, synonyms):
         self.dictionary[word] = synonyms
 
@@ -17,7 +17,7 @@ class Thesaurus:
             self.dictionary[word] += synonyms
         else:
             self.dictionary[word] = synonyms
-    
+
     def get_synonyms_of_a_word(self, word):
         if word in list(self.dictionary.keys()):
             return self.dictionary[word]

@@ -6,17 +6,17 @@ from .table import Table
 
 
 class Database:
-    
+
     def __init__(self):
         self.tables = []
         self.thesaurus_object = None
-        
+
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus
-    
+
     def get_number_of_tables(self):
         return len(self.tables)
-    
+
     def get_tables(self):
         return self.tables
 
@@ -30,7 +30,7 @@ class Database:
         for table in self.tables:
             if table.get_name() == table_name:
                 return table
-    
+
     def get_tables_into_dictionnary(self):
         data = {}
         for table in self.tables:
@@ -73,7 +73,7 @@ class Database:
 
     def add_table(self, table):
         self.tables.append(table)
-    
+
     def load(self, path):
         with open(path) as f:
             content = f.read()
