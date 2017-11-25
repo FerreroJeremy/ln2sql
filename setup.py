@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
- 
+
 setup(
     name='ln2sql',
     version='0.1',
@@ -11,4 +11,4 @@ setup(
     packages=find_packages(exclude=['tests']),
     long_description=open('README.md').read(),
     setup_requires=['pytest'],
-) 
+)

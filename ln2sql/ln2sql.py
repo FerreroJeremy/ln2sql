@@ -1,23 +1,22 @@
 #!/usr/bin/python3
-import os, sys
-import unicodedata
+import os
 
 from .database import Database
 from .langConfig import LangConfig
 from .parser import Parser
-from .thesaurus import Thesaurus
 from .stopwordFilter import StopwordFilter
+from .thesaurus import Thesaurus
 
 
 class Ln2sql:
     def __init__(
-        self,
-        database_path,
-        language_path,
-        input_sentence,
-        json_output_path=None,
-        thesaurus_path=None,
-        stopwords_path=None,
+            self,
+            database_path,
+            language_path,
+            input_sentence,
+            json_output_path=None,
+            thesaurus_path=None,
+            stopwords_path=None,
     ):
 
         database = Database()
@@ -33,7 +32,7 @@ class Ln2sql:
             stopwordsFilter.load(stopwords_path)
 
         database.load(database_path)
-        #database.print_me()
+        # database.print_me()
 
         config = LangConfig()
         config.load(language_path)
@@ -79,6 +78,7 @@ def main():
         thesaurus_path=args.thesaurus,
         stopwords_path=args.stopwords,
     )
+
 
 if __name__ == '__main__':
     main()

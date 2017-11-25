@@ -1,11 +1,7 @@
-import sys
-import unicodedata
-
 from .constants import Color
 
 
 class Select():
-
     def __init__(self):
         self.columns = []
 
@@ -56,7 +52,7 @@ class Select():
     def __str__(self):
         select_string = ''
         for i in range(0, len(self.columns)):
-            if i == (len(self.columns)-1):
+            if i == (len(self.columns) - 1):
                 select_string = select_string + str(self.print_column(self.columns[i]))
             else:
                 select_string = select_string + str(self.print_column(self.columns[i])) + ', '
@@ -74,12 +70,14 @@ class Select():
                 output.write('\t"select": {\n')
                 output.write('\t\t"columns": [\n')
                 for i in range(0, len(self.columns)):
-                    if i == (len(self.columns)-1):
-                        output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.columns[i][0])) + '",\n')
+                    if i == (len(self.columns) - 1):
+                        output.write(
+                            '\t\t\t{ "column": "' + self.get_just_column_name(str(self.columns[i][0])) + '",\n')
                         output.write('\t\t\t  "type": "' + str(self.columns[i][1]) + '"\n')
                         output.write('\t\t\t}\n')
                     else:
-                        output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.columns[i][0])) + '",\n')
+                        output.write(
+                            '\t\t\t{ "column": "' + self.get_just_column_name(str(self.columns[i][0])) + '",\n')
                         output.write('\t\t\t  "type": "' + str(self.columns[i][1]) + '"\n')
                         output.write('\t\t\t},\n')
                 output.write('\t\t]\n')
@@ -87,6 +85,7 @@ class Select():
         else:
             output.write('\t"select": {\n')
             output.write('\t},\n')
+
 
 class From():
     table = ''
@@ -115,6 +114,7 @@ class From():
             output.write('\t"from": {\n')
             output.write('\t},\n')
 
+
 class Join():
     tables = []
     links = []
@@ -140,7 +140,9 @@ class Join():
         if len(self.links) >= 1:
             string = ''
             for i in range(0, len(self.links)):
-                string += '\n' + Color.BOLD + 'INNER JOIN ' + Color.END + str(self.links[i][1][0]) + '\n' + Color.BOLD + 'ON ' + Color.END + str(self.links[i][0][0]) + '.' + str(self.links[i][0][1]) + ' = ' + str(self.links[i][1][0]) + '.' + str(self.links[i][1][1])
+                string += '\n' + Color.BOLD + 'INNER JOIN ' + Color.END + str(
+                    self.links[i][1][0]) + '\n' + Color.BOLD + 'ON ' + Color.END + str(self.links[i][0][0]) + '.' + str(
+                    self.links[i][0][1]) + ' = ' + str(self.links[i][1][0]) + '.' + str(self.links[i][1][1])
             return string
         elif len(self.tables) >= 1:
             if len(self.tables) == 1:
@@ -148,7 +150,7 @@ class Join():
             else:
                 string = '\n' + Color.BOLD + 'NATURAL JOIN ' + Color.END
                 for i in range(0, len(self.tables)):
-                    if i == (len(self.tables)-1):
+                    if i == (len(self.tables) - 1):
                         string += str(self.tables[i])
                     else:
                         string += str(self.tables[i]) + ', '
@@ -166,7 +168,7 @@ class Join():
                 output.write('\t"join": {\n')
                 output.write('\t\t"tables": [')
                 for i in range(0, len(self.tables)):
-                    if i == (len(self.tables)-1):
+                    if i == (len(self.tables) - 1):
                         output.write('"' + str(self.tables[i]) + '"')
                     else:
                         output.write('"' + str(self.tables[i]) + '", ')
@@ -175,6 +177,7 @@ class Join():
         else:
             output.write('\t"join": {\n')
             output.write('\t},\n')
+
 
 class Condition():
     column = ''
@@ -222,11 +225,16 @@ class Condition():
             return Color.BOLD + operator + Color.END
 
     def __str__(self):
-        return str(self.get_column_with_type_operation(self.column, self.column_type)) + ' ' + str(self.get_pretty_operator(self.operator)) + ' ' + str(self.value)
+        return str(self.get_column_with_type_operation(self.column, self.column_type)) + ' ' + str(
+            self.get_pretty_operator(self.operator)) + ' ' + str(self.value)
 
     def print_json(self, output):
 
-        output.write('\t\t\t{ "column": "' + self.get_just_column_name(str(self.column)) + '",\n\t\t\t  "type": "' + str(self.column_type) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(self.value) + '"\n\t\t\t}')
+        output.write(
+            '\t\t\t{ "column": "' + self.get_just_column_name(str(self.column)) + '",\n\t\t\t  "type": "' + str(
+                self.column_type) + '",\n\t\t\t  "operator": "' + str(self.operator) + '",\n\t\t\t  "value": "' + str(
+                self.value) + '"\n\t\t\t}')
+
 
 class Where():
     conditions = []
@@ -251,7 +259,8 @@ class Where():
                 if i == 0:
                     string += '\n' + Color.BOLD + 'WHERE' + Color.END + ' ' + str(self.conditions[i][1])
                 else:
-                    string += '\n' + Color.BOLD + str(self.conditions[i][0]) + Color.END + ' ' + str(self.conditions[i][1])
+                    string += '\n' + Color.BOLD + str(self.conditions[i][0]) + Color.END + ' ' + str(
+                        self.conditions[i][1])
 
             return string
         else:
@@ -264,7 +273,6 @@ class Where():
                 output.write('\t\t"condition": [\n')
                 self.conditions[0][1].print_json(output)
 
-
                 output.write('\n')
                 output.write('\t\t]\n')
                 output.write('\t},\n')
@@ -275,7 +283,7 @@ class Where():
                     if i != 0:
                         output.write('\t\t\t{\n\t\t\t  "operator": "' + str(self.conditions[i][0]) + '"\n\t\t\t},\n')
                     self.conditions[i][1].print_json(output)
-                    if i != (len(self.conditions)-1):
+                    if i != (len(self.conditions) - 1):
                         output.write(',')
                     output.write('\n')
                 output.write('\t\t]\n')
@@ -283,6 +291,7 @@ class Where():
         else:
             output.write('\t"where": {\n')
             output.write('\t},\n')
+
 
 class GroupBy():
     column = None
@@ -320,6 +329,7 @@ class GroupBy():
             output.write('\t"group_by": {\n')
             output.write('\t},\n')
 
+
 class OrderBy():
     columns = []
 
@@ -337,7 +347,7 @@ class OrderBy():
         if self.columns != []:
             string = Color.BOLD + 'ORDER BY ' + Color.END
             for i in range(0, len(self.columns)):
-                if i == (len(self.columns)-1):
+                if i == (len(self.columns) - 1):
                     string += self.columns[i][0] + ' ' + Color.BOLD + self.columns[i][1] + Color.END
                 else:
                     string += self.columns[i][0] + ' ' + Color.BOLD + self.columns[i][1] + Color.END + ', '
@@ -356,7 +366,7 @@ class OrderBy():
                 output.write('\t"select": {\n')
                 output.write('\t\t"columns": [\n')
                 for i in range(0, len(self.columns)):
-                    if i == (len(self.columns)-1):
+                    if i == (len(self.columns) - 1):
                         output.write('\t\t\t{ "column": "' + str(self.columns[i][0]) + '",\n')
                         output.write('\t\t\t  "order": "' + str(self.columns[i][1]) + '"\n')
                         output.write('\t\t\t}\n')
@@ -369,6 +379,7 @@ class OrderBy():
         else:
             output.write('\t"select": {\n')
             output.write('\t},\n')
+
 
 class Query():
     select = None
@@ -441,7 +452,8 @@ class Query():
         return self.order_by
 
     def __str__(self):
-        return '\n' + str(self.select) + str(self._from) + str(self.join) + str(self.where) + str(self.group_by) + str(self.order_by) + ';\n'
+        return '\n' + str(self.select) + str(self._from) + str(self.join) + str(self.where) + str(self.group_by) + str(
+            self.order_by) + ';\n'
 
     def print_json(self, filename="output.json"):
         output = open(filename, 'a')

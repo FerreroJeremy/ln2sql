@@ -1,12 +1,9 @@
-import sys
-import unicodedata
-
 from .column import Column
 
-class Table:
 
+class Table:
     def __init__(self, name='', columns=None, equivalences=None):
-        self.name = name
+        self._name = name
 
         if not columns:
             columns = []
@@ -16,11 +13,13 @@ class Table:
             equivalences = []
         self.equivalences = equivalences
 
-    def get_name(self):
-        return self.name
+    @property
+    def name(self):
+        return self._name
 
-    def set_name(self, name):
-        self.name = name
+    @name.setter
+    def name(self, value):
+        self._name = value
 
     def get_number_of_columns(self):
         return len(self.columns)
@@ -30,7 +29,7 @@ class Table:
 
     def get_column_by_name(self, column_name):
         for column in self.columns:
-            if column.get_name() == column_name:
+            if column.name == column_name:
                 return column
 
     def add_column(self, column_name, column_type, column_equivalences):
@@ -39,17 +38,14 @@ class Table:
     def get_equivalences(self):
         return self.equivalences
 
-    def set_equivalences(self, equivalences):
-        self.equivalences = equivalences
-
     def add_equivalence(self, equivalence):
         self.equivalences.append(equivalence)
 
     def is_equivalent(self, word):
         if word in self.equivalences:
-            return true
+            return True
         else:
-            return false
+            return False
 
     def get_primary_keys(self):
         primary_keys = []
@@ -62,12 +58,12 @@ class Table:
         primary_keys = []
         for column in self.columns:
             if column.is_primary():
-                primary_keys.append(column.get_name())
+                primary_keys.append(column.name)
         return primary_keys
 
     def add_primary_key(self, primary_key_column):
         for column in self.columns:
-            if column.get_name() == primary_key_column:
+            if column.name == primary_key_column:
                 column.set_as_primary()
 
     def get_foreign_keys(self):
@@ -81,10 +77,10 @@ class Table:
         foreign_keys = []
         for column in self.columns:
             if column.is_foreign():
-                foreign_keys.append(column.get_name())
+                foreign_keys.append(column.name)
         return foreign_keys
 
     def add_foreign_key(self, column_name, foreign_table, foreign_column):
         for column in self.columns:
-            if column.get_name() == column_name:
-                column.set_as_foreign({'foreign_table':foreign_table,'foreign_column':foreign_column})
+            if column.name == column_name:
+                column.set_as_foreign({'foreign_table': foreign_table, 'foreign_column': foreign_column})

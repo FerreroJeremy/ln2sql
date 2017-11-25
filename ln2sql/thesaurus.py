@@ -1,8 +1,7 @@
-import sys
 import unicodedata
 
-class Thesaurus:
 
+class Thesaurus:
     def __init__(self):
         self.dictionary = {}
 
@@ -30,7 +29,7 @@ class Thesaurus:
         with open(path) as f:
             content = f.readlines()
             # we jump content[0] because it is the encoding-type line : useless to parse
-            for line_id in range(1,len(content)):
+            for line_id in range(1, len(content)):
                 if '(' not in content[line_id]:
                     line = content[line_id].split("|")
                     word = self.remove_accents(line[0])
@@ -39,6 +38,6 @@ class Thesaurus:
                     self.add_synonyms_to_a_word(word, synonyms)
 
     def print_me(self):
-        for keys,values in list(self.dictionary.items()):
+        for keys, values in list(self.dictionary.items()):
             print(keys)
             print(values)

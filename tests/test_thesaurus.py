@@ -1,5 +1,4 @@
-import io
-import sys,re
+import re
 
 from ln2sql.ln2sql import Ln2sql
 
@@ -7,13 +6,15 @@ DATABASE_PATH = './ln2sql/database/'
 LANG_PATH = './ln2sql/lang/'
 THESAURUS_PATH = './ln2sql/thesaurus/'
 
-def _cleanOutput(s):
-    s = s.split("SELECT")[1]        # remove table schema
+
+def _clean_output(s):
+    s = s.split("SELECT")[1]  # remove table schema
     s = re.sub("\\033.*?m", "", s)  # remove color codes
-    s = s.replace('\n',' ')         # remove '\n'
-    s = s.split(';')[0]             # remove spaces after ;
-    s = "SELECT" + s + ';'          # put back lost SELECT and ';'
+    s = s.replace('\n', ' ')  # remove '\n'
+    s = s.split(';')[0]  # remove spaces after ;
+    s = "SELECT" + s + ';'  # put back lost SELECT and ';'
     return s
+
 
 def test_main():
     thesaurusTest = [
@@ -93,6 +94,6 @@ def test_main():
     ]
 
     for test in thesaurusTest:
-        assert _cleanOutput(Ln2sql(
+        assert _clean_output(Ln2sql(
             test['database'], test['language'], test['input'], thesaurus_path=test['thesaurus']
         ).get_query()) == test['output']

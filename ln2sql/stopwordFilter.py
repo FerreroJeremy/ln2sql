@@ -1,10 +1,8 @@
 import re
-import sys
 import unicodedata
 
 
 class StopwordFilter:
-
     def __init__(self):
         self.list = []
 
