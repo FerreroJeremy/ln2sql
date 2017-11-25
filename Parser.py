@@ -429,9 +429,6 @@ class WhereParser(Thread):
                 if phrase_keyword in self.like_keywords:  # after the column
                     self.like_keyword_offset.append(i)
 
-        print(self.columns_of_values_of_where)
-        print(columns_of_where)
-
         for table_of_from in self.tables_of_from:
             where_object = Where()
             for i in range(0, len(column_offset)):
