@@ -5,7 +5,6 @@ from .constants import Color
 
 
 class Select():
-	columns = []
 
 	def __init__(self):
 		self.columns = []

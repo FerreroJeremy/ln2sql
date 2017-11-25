@@ -3,27 +3,20 @@ import unicodedata
 
 
 class Column:
-    name = ''
-    type = []
-    equivalences = []
-    primary = False
-    foreign = False
-    
-    def __init__(self, name=None, type=None, equivalences=None):
-        if name is None:
-            self.name = ''
-        else:
-            self.name = name
 
-        if type is None:
-            self.type = []
-        else:
-            self.type = type
+    def __init__(self, name='', type=None, equivalences=None):
+        self.name = name
 
-        if equivalences is None:
-            self.equivalences = []
-        else:
-            self.equivalences = equivalences
+        if not type:
+            type = []
+        self.type = type
+
+        if not equivalences:
+            equivalences = []
+        self.equivalences = equivalences
+
+        self.primary = False
+        self.foreign = False
 
     def get_name(self):
         return self.name

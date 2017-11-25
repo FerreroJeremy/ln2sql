@@ -6,11 +6,10 @@ from .table import Table
 
 
 class Database:
-    thesaurus_object = None
-    tables = []
     
     def __init__(self):
         self.tables = []
+        self.thesaurus_object = None
         
     def set_thesaurus(self, thesaurus):
         self.thesaurus_object = thesaurus

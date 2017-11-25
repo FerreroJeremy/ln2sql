@@ -4,25 +4,17 @@ import unicodedata
 from .column import Column
 
 class Table:
-    name = ''
-    columns = []
-    equivalences = []
     
-    def __init__(self, name=None, columns=None, equivalences=None):
-        if name is None:
-            self.name = ''
-        else:
-            self.name = name
+    def __init__(self, name='', columns=None, equivalences=None):
+        self.name = name
 
-        if columns is None:
-            self.columns = []
-        else:
-            self.columns = columns
+        if not columns:
+            columns = []
+        self.columns = columns
 
-        if equivalences is None:
-            self.equivalences = []
-        else:
-            self.equivalences = equivalences
+        if not equivalences:
+            equivalences = []
+        self.equivalences = equivalences
     
     def get_name(self):
         return self.name
