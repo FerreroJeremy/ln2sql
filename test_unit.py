@@ -180,6 +180,12 @@ class SimplisticTest(unittest.TestCase):
                 'database': './database/city.sql',
                 'language': './lang/english.csv',
                 'output': "SELECT DISTINCT emp.name FROM city INNER JOIN emp ON city.id = emp.cityId WHERE emp.score = '9';"
+            },
+            {
+                'input': "Compte les nom des élève dont les nom sont BELLE",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'output': "SELECT COUNT(eleve.nom) FROM eleve WHERE eleve.nom = 'belle';"
             }
         ]
 
@@ -252,6 +258,30 @@ class ThesaurusTest(unittest.TestCase):
                 'language': './lang/french.csv',
                 'thesaurus': 'thesaurus/th_french.dat',
                 'output': "SELECT classe.salle FROM classe;"
+            },
+            {
+                'input': "Compte les dénomination des étudiant dont les dénomination sont BELLE",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT COUNT(eleve.nom) FROM eleve WHERE eleve.nom = 'belle';"
+            },
+            {
+                'input': "Compte les dénomination des étudiant dont les dénomination sont BELLE et l'ancienneté est 25",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT COUNT(eleve.nom) FROM eleve WHERE eleve.nom = 'belle' AND eleve.age = '25';"
+            }
+        ]
+
+        thesaurusTest2 = [
+            {
+                'input': "Quel est le cours où la pièce est B45",
+                'database': './database/ecole.sql',
+                'language': './lang/french.csv',
+                'thesaurus': 'thesaurus/th_french.dat',
+                'output': "SELECT * FROM classe WHERE classe.salle = 'b45';"
             }
         ]
 

@@ -1,5 +1,5 @@
 clean:
 	rm -rf *.json *.pyc
 test:
-	python -m unittest test_unit
+	python3 -m unittest test_unit
 	rm -rf *.json *.pyc
