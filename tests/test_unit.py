@@ -228,9 +228,6 @@ def test_exception():
             'language': LANG_PATH + 'french.csv'
         }
     ]
-    with pytest.raises(Exception):
-        Ln2sql(test['database'], test['language'], test['input']).get_query()
-
-
-if __name__ == '__main__':
-    unittest.main()
+    for test in errorTest:
+        with pytest.raises(Exception):
+            Ln2sql(test['database'], test['language'], test['input']).get_query()
