@@ -1,6 +1,7 @@
 import io
 import sys,re
 import unittest
+
 from ln2sql import main as ln2sql_main
 from ParsingException import ParsingException
 
