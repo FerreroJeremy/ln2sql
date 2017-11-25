@@ -1,7 +1,7 @@
 import sys
 import unicodedata
 
-from constants import color
+from .constants import Color
 
 
 class ParsingException(Exception):
@@ -11,4 +11,4 @@ class ParsingException(Exception):
         self.reason = reason
 
     def __str__(self):
-        return color.BOLD + color.RED + self.reason + color.END
+        return Color.BOLD + Color.RED + self.reason + Color.END

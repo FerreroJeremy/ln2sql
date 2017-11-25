@@ -1,7 +1,7 @@
 import sys
 import unicodedata
 
-from Column import Column
+from .column import Column
 
 class Table:
     name = ''
