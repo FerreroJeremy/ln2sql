@@ -1,9 +1,7 @@
-import io
-import sys,re
+import re
 import pytest
 
-from ln2sql import main as ln2sql_main
-from ParsingException import ParsingException
+from ln2sql import ln2sql
 
 
 def _cleanOutput(s):
@@ -187,11 +185,9 @@ def test_main():
     ]
 
     for test in correctTest:
-        capturedOutput = io.StringIO()
-        sys.stdout = capturedOutput
-        ln2sql_main(['-d', test['database'], '-l', test['language'], '-i', test['input']])
-        sys.stdout = sys.__stdout__
-        assert _cleanOutput(capturedOutput.getvalue()) == test['output']
+        assert _cleanOutput(
+            ln2sql(test['database'], test['language'], test['input']).get_query()
+        ) == test['output']
 
 
 def test_exception():
@@ -223,7 +219,7 @@ def test_exception():
         }
     ]
     with pytest.raises(Exception):
-        ln2sql_main(['-d', test['database'], '-l', test['language'], '-i', test['input']])
+        ln2sql(test['database'], test['language'], test['input']).get_query()
 
 if __name__ == '__main__':
     unittest.main()

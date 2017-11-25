@@ -1,7 +1,7 @@
 import io
 import sys,re
 
-from ln2sql import main as ln2sql_main
+from ln2sql import ln2sql
 from ParsingException import ParsingException
 
 def _cleanOutput(s):
@@ -90,8 +90,6 @@ def test_main():
     ]
 
     for test in thesaurusTest:
-        capturedOutput = io.StringIO()
-        sys.stdout = capturedOutput
-        ln2sql_main(['-d', test['database'], '-l', test['language'], '-i', test['input'], '-t', test['thesaurus']])
-        sys.stdout = sys.__stdout__
-        assert _cleanOutput(capturedOutput.getvalue()) == test['output']
+        assert _cleanOutput(ln2sql(
+            test['database'], test['language'], test['input'], thesaurus_path=test['thesaurus']
+        ).get_query()) == test['output']
