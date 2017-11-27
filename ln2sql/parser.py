@@ -609,7 +609,7 @@ class Parser:
         self.distinct_keywords = config.get_distinct_keywords()
 
     def transformationSortAlgo(self, transitionalList):
-        return sorted(transitionalList, key=lambda s: s.split(), reverse=True)
+        return sorted(transitionalList, key=lambda s: (len(s.split()), s), reverse=True)
 
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', str(string))
