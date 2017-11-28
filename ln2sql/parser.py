@@ -608,8 +608,9 @@ class Parser:
         self.like_keywords = config.get_like_keywords()
         self.distinct_keywords = config.get_distinct_keywords()
 
-    def transformationSortAlgo(self, transitionalList):
-        return sorted(transitionalList, key=lambda s: (len(s.split()), s), reverse=True)
+    @staticmethod
+    def transformation_sort(transition_list):
+        return sorted(sorted(transition_list), key=lambda s: len(s.split()), reverse=True)
 
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', str(string))
@@ -688,12 +689,12 @@ class Parser:
             assignment_list = self.equal_keywords + self.like_keywords + self.greater_keywords + self.less_keywords + self.negation_keywords
             # As these words can also be part of assigners
 
+            # custom operators added as they can be possibilities
             assignment_list.append(':')
             assignment_list.append('=')
-            # custom operators added as they can be possibilities
 
-            assignment_list = self.transformationSortAlgo(
-                assignment_list)  # Algorithmic logic for best substitution for extraction of values with the help of assigners.
+            # Algorithmic logic for best substitution for extraction of values with the help of assigners.
+            assignment_list = self.transformation_sort(assignment_list)
 
             maverickjoy_general_assigner = "*res*@3#>>*"
             maverickjoy_like_assigner = "*like*@3#>>*"
