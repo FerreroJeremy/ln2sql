@@ -1,13 +1,8 @@
-import sys
-import unicodedata
-
 from .constants import Color
 
 
 class ParsingException(Exception):
-    reason = ''
-    
-    def __init__(self, reason):
+    def __init__(self, reason=''):
         self.reason = reason
 
     def __str__(self):

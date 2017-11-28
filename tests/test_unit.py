@@ -1,4 +1,5 @@
 import re
+
 import pytest
 
 from ln2sql.ln2sql import Ln2sql
@@ -7,13 +8,15 @@ DATABASE_PATH = './ln2sql/database/'
 LANG_PATH = './ln2sql/lang/'
 THESAURUS_PATH = './ln2sql/thesaurus/'
 
-def _cleanOutput(s):
-    s = s.split("SELECT")[1]        # remove table schema
+
+def _clean_output(s):
+    s = s.split("SELECT")[1]  # remove table schema
     s = re.sub("\\033.*?m", "", s)  # remove color codes
-    s = s.replace('\n',' ')         # remove '\n'
-    s = s.split(';')[0]             # remove spaces after ;
-    s = "SELECT" + s + ';'          # put back lost SELECT and ';'
+    s = s.replace('\n', ' ')  # remove '\n'
+    s = s.split(';')[0]  # remove spaces after ;
+    s = "SELECT" + s + ';'  # put back lost SELECT and ';'
     return s
+
 
 def test_main():
     correctTest = [
@@ -132,10 +135,12 @@ def test_main():
             'output': "SELECT client.adresse FROM client WHERE client.nom = 'jean' AND client.age > '14';"
         },
         {
-            'input': "Quel est l'adresse et le numéro de téléphone du client dont le nom est Marc et dont l'age est supérieur à 14 groupé par adresse ?",
+            'input': "Quel est l'adresse et le numéro de téléphone du client dont le nom est Marc et "
+                     "dont l'age est supérieur à 14 groupé par adresse ?",
             'database': DATABASE_PATH + 'hotel.sql',
             'language': LANG_PATH + 'french.csv',
-            'output': "SELECT client.adresse, client.telephone FROM client WHERE client.nom = 'marc' AND client.age > '14' GROUP BY client.adresse;"
+            'output': "SELECT client.adresse, client.telephone FROM client WHERE client.nom = 'marc' AND c"
+                      "lient.age > '14' GROUP BY client.adresse;"
         },
         {
             'input': "Quel est la moyenne d'age des eleve ?",
@@ -188,7 +193,7 @@ def test_main():
     ]
 
     for test in correctTest:
-        assert _cleanOutput(
+        assert _clean_output(
             Ln2sql(test['database'], test['language'], test['input']).get_query()
         ) == test['output']
 
@@ -196,33 +201,33 @@ def test_main():
 def test_exception():
     errorTest = [
         {
-            'input': 'Quel est le nom des reservation ?', # No table name found in sentence!
+            'input': 'Quel est le nom des reservation ?',  # No table name found in sentence!
             'database': DATABASE_PATH + 'ecole.sql',
             'language': LANG_PATH + 'french.csv'
         },
         {
-            'input': 'Affiche moi.', # No keyword found in sentence!
+            'input': 'Affiche moi.',  # No keyword found in sentence!
             'database': DATABASE_PATH + 'ecole.sql',
             'language': LANG_PATH + 'french.csv'
         },
         {
-            'input': 'Affiche moi les étudiants', # No keyword found in sentence!
+            'input': 'Affiche moi les étudiants',  # No keyword found in sentence!
             'database': DATABASE_PATH + 'ecole.sql',
             'language': LANG_PATH + 'french.csv'
         },
         {
-            'input': "Quel est le professeur qui enseigne la matière SVT ?", # There is at least column `matiere` that is unreachable from table `PROFESSEUR`!
+            'input': "Quel est le professeur qui enseigne la matière SVT ?",
+            # There is at least column `matiere` that is unreachable from table `PROFESSEUR`!
             'database': DATABASE_PATH + 'ecole.sql',
             'language': LANG_PATH + 'french.csv'
         },
         {
-            'input': "compte les salle des élève", # There is at least column `salle` that is unreachable from table `ELEVE`!
+            'input': "compte les salle des élève",
+            # There is at least column `salle` that is unreachable from table `ELEVE`!
             'database': DATABASE_PATH + 'ecole.sql',
             'language': LANG_PATH + 'french.csv'
         }
     ]
-    with pytest.raises(Exception):
-        Ln2sql(test['database'], test['language'], test['input']).get_query()
-
-if __name__ == '__main__':
-    unittest.main()
+    for test in errorTest:
+        with pytest.raises(Exception):
+            Ln2sql(test['database'], test['language'], test['input']).get_query()

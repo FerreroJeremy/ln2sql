@@ -1,19 +1,17 @@
 import re
-import sys
 import unicodedata
 
 
 class StopwordFilter:
-    
     def __init__(self):
         self.list = []
-    
+
     def add_stopword(self, word):
         self.list.append(word)
 
     def get_stopword_list(self):
         return self.list
-    
+
     def filter(self, sentence):
         tmp_sentence = ""
         words = re.findall(r"[\w]+", self.remove_accents(sentence))

@@ -1,59 +1,41 @@
-import sys
-import unicodedata
-
-
 class Column:
-    name = ''
-    type = []
-    equivalences = []
-    primary = False
-    foreign = False
-    
-    def __init__(self, name=None, type=None, equivalences=None):
-        if name is None:
-            self.name = ''
-        else:
-            self.name = name
+    def __init__(self, name='', type=None, equivalences=None):
+        self._name = name
 
-        if type is None:
-            self.type = []
-        else:
-            self.type = type
+        if not type:
+            type = []
+        self._type = type
 
-        if equivalences is None:
-            self.equivalences = []
-        else:
-            self.equivalences = equivalences
+        if not equivalences:
+            equivalences = []
+        self._equivalences = equivalences
 
-    def get_name(self):
-        return self.name
+        self.primary = False
+        self.foreign = False
 
-    def set_name(self, name):
-        self.name = name
+    @property
+    def name(self):
+        return self._name
 
-    def get_type(self):
-        return self.type
-    
-    def set_type(self, type):
-        self.type = type
+    @property
+    def type(self):
+        return self._type
 
     def add_type(self, type):
         self.type.append(type)
 
-    def get_equivalences(self):
-        return self.equivalences
-
-    def set_equivalences(self, equivalences):
-        self.equivalences = equivalences
+    @property
+    def equivalences(self):
+        return self._equivalences
 
     def add_equivalence(self, equivalence):
         self.equivalences.append(equivalence)
 
     def is_equivalent(self, word):
         if word in self.equivalences:
-            return true
+            return True
         else:
-            return false
+            return False
 
     def is_primary(self):
         return self.primary
