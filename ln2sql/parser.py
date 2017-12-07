@@ -2,6 +2,7 @@ import re
 import string
 import sys
 import unicodedata
+import functools
 from threading import Thread
 
 from .parsingException import ParsingException
@@ -608,9 +609,25 @@ class Parser:
         self.like_keywords = config.get_like_keywords()
         self.distinct_keywords = config.get_distinct_keywords()
 
+
+    def _myCmp(s1,s2):
+    if len(s1.split()) == len(s2.split()) :
+        if len(s1) >= len(s2) :
+            return 1
+        else:
+            return -1
+    else:
+        if len(s1.split()) >= len(s2.split()):
+            return 1
+        else:
+            return -1
+
+
     @staticmethod
     def transformation_sort(transition_list):
-        return sorted(sorted(transition_list), key=lambda s: len(s.split()), reverse=True)
+        # Sort on basis of two keys split length and then token lengths in the respective priority.
+        return sorted(transitionalList, key=functools.cmp_to_key(_myCmp),reverse=True)
+
 
     def remove_accents(self, string):
         nkfd_form = unicodedata.normalize('NFKD', str(string))
