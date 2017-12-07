@@ -609,7 +609,7 @@ class Parser:
         self.like_keywords = config.get_like_keywords()
         self.distinct_keywords = config.get_distinct_keywords()
 
-
+    @staticmethod
     def _myCmp(s1,s2):
         if len(s1.split()) == len(s2.split()) :
             if len(s1) >= len(s2) :
