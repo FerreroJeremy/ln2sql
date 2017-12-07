@@ -611,16 +611,16 @@ class Parser:
 
 
     def _myCmp(s1,s2):
-    if len(s1.split()) == len(s2.split()) :
-        if len(s1) >= len(s2) :
-            return 1
+        if len(s1.split()) == len(s2.split()) :
+            if len(s1) >= len(s2) :
+                return 1
+            else:
+                return -1
         else:
-            return -1
-    else:
-        if len(s1.split()) >= len(s2.split()):
-            return 1
-        else:
-            return -1
+            if len(s1.split()) >= len(s2.split()):
+                return 1
+            else:
+                return -1
 
 
     @staticmethod
