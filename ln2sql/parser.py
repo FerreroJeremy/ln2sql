@@ -626,7 +626,7 @@ class Parser:
     @staticmethod
     def transformation_sort(transition_list):
         # Sort on basis of two keys split length and then token lengths in the respective priority.
-        return sorted(transitionalList, key=functools.cmp_to_key(_myCmp),reverse=True)
+        return sorted(transition_list, key=functools.cmp_to_key(_myCmp),reverse=True)
 
 
     def remove_accents(self, string):
