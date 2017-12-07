@@ -1,0 +1,10 @@
+branches:
+  only:
+    - master
+language: python
+python:
+  - "3.5"
+script: # run tests
+  - make test
+notifications:
+  email: false
