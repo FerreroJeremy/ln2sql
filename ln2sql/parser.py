@@ -396,6 +396,7 @@ class WhereParser(Thread):
         self.like_keyword_offset = []
 
         for phrase in self.phrases:
+            phrase_offset_string = ''
             for i in range(0, len(phrase)):
                 for table_name in self.database_dico:
                     columns = self.database_object.get_table_by_name(table_name).get_columns()
