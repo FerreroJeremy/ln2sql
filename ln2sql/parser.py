@@ -417,32 +417,55 @@ class WhereParser(Thread):
                 # till now greater than was working because greater was also present in the list which was getting matched
                 # to check try "more than" which is also from the same greater than list (e.g QUERY-> "how many name there are in emp in which the cityId is more than 3")
 
-                if phrase_keyword in self.count_keywords:  # before the column
-                    self.count_keyword_offset.append(i)
-                if phrase_keyword in self.sum_keywords:  # before the column
-                    self.sum_keyword_offset.append(i)
-                if phrase_keyword in self.average_keywords:  # before the column
-                    self.average_keyword_offset.append(i)
-                if phrase_keyword in self.max_keywords:  # before the column
-                    self.max_keyword_offset.append(i)
-                if phrase_keyword in self.min_keywords:  # before the column
-                    self.min_keyword_offset.append(i)
-                if phrase_keyword in self.greater_keywords:  # after the column
-                    self.greater_keyword_offset.append(i)
-                if phrase_keyword in self.less_keywords:  # after the column
-                    self.less_keyword_offset.append(i)
-                if phrase_keyword in self.between_keywords:  # after the column
-                    self.between_keyword_offset.append(i)
-                if phrase_keyword in self.junction_keywords:  # after the column
-                    self.junction_keyword_offset.append(i)
-                if phrase_keyword in self.disjunction_keywords:  # after the column
-                    self.disjunction_keyword_offset.append(i)
-                # between the column and the equal, greater or less keyword
-                if phrase_keyword in self.negation_keywords:
-                    self.negation_keyword_offset.append(i)
+                phrase_offset_string += phrase_keyword + " "
 
-                if phrase_keyword in self.like_keywords:  # after the column
-                    self.like_keyword_offset.append(i)
+                for keyword in self.count_keywords:
+                    if keyword in phrase_offset_string :
+                        self.count_keyword_offset.append(i)
+
+                for keyword in self.sum_keywords:
+                    if keyword in phrase_offset_string :
+                        self.sum_keyword_offset.append(i)
+
+                for keyword in self.average_keywords:
+                    if keyword in phrase_offset_string :
+                        self.average_keyword_offset.append(i)
+
+                for keyword in self.max_keywords:
+                    if keyword in phrase_offset_string :
+                        self.max_keyword_offset.append(i)
+
+                for keyword in self.min_keywords:
+                    if keyword in phrase_offset_string :
+                        self.min_keyword_offset.append(i)
+
+                for keyword in self.greater_keywords:
+                    if keyword in phrase_offset_string :
+                        self.greater_keyword_offset.append(i)
+
+                for keyword in self.less_keywords:
+                    if keyword in phrase_offset_string :
+                        self.less_keyword_offset.append(i)
+
+                for keyword in self.between_keywords:
+                    if keyword in phrase_offset_string :
+                        self.between_keyword_offset.append(i)
+
+                for keyword in self.junction_keywords:
+                    if keyword in phrase_offset_string :
+                        self.junction_keyword_offset.append(i)
+
+                for keyword in self.disjunction_keywords:
+                    if keyword in phrase_offset_string :
+                        self.disjunction_keyword_offset.append(i)
+
+                for keyword in self.negation_keywords:
+                    if keyword in phrase_offset_string :
+                        self.negation_keyword_offset.append(i)
+
+                for keyword in self.like_keywords:
+                    if keyword in phrase_offset_string :
+                        self.like_keyword_offset.append(i)
 
         for table_of_from in self.tables_of_from:
             where_object = Where()
