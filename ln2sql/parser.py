@@ -411,52 +411,46 @@ class WhereParser(Thread):
                     break
 
                 phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
-
-                # @todo multiple word matching from .lang
-                # for multiple words this type of single word offset matching wont work,
-                # till now greater than was working because greater was also present in the list which was getting matched
-                # to check try "more than" which is also from the same greater than list (e.g QUERY-> "how many name there are in emp in which the cityId is more than 3")
-
                 phrase_offset_string += phrase_keyword + " "
 
                 for keyword in self.count_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # before the column
                         self.count_keyword_offset.append(i)
 
                 for keyword in self.sum_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # before the column
                         self.sum_keyword_offset.append(i)
 
                 for keyword in self.average_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # before the column
                         self.average_keyword_offset.append(i)
 
                 for keyword in self.max_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # before the column
                         self.max_keyword_offset.append(i)
 
                 for keyword in self.min_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # before the column
                         self.min_keyword_offset.append(i)
 
                 for keyword in self.greater_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # after the column
                         self.greater_keyword_offset.append(i)
 
                 for keyword in self.less_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # after the column
                         self.less_keyword_offset.append(i)
 
                 for keyword in self.between_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # after the column
                         self.between_keyword_offset.append(i)
 
                 for keyword in self.junction_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # after the column
                         self.junction_keyword_offset.append(i)
 
                 for keyword in self.disjunction_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # after the column
                         self.disjunction_keyword_offset.append(i)
 
                 for keyword in self.negation_keywords:
@@ -464,8 +458,9 @@ class WhereParser(Thread):
                         self.negation_keyword_offset.append(i)
 
                 for keyword in self.like_keywords:
-                    if keyword in phrase_offset_string :
+                    if keyword in phrase_offset_string :    # after the column
                         self.like_keyword_offset.append(i)
+
 
         for table_of_from in self.tables_of_from:
             where_object = Where()
