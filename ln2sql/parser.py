@@ -58,7 +58,11 @@ class SelectParser(Thread):
             if number_of_select_column == 0:
                 select_type = []
                 for count_keyword in self.count_keywords:
-                    if count_keyword in (word.lower() for word in self.phrase):
+                    # if count_keyword in (word.lower() for word in self.phrase):
+                    # so that it matches multiple words too in keyword synonymn in .lang rather than just single word for COUNT
+                    # (e.g. QUERY-> "how many city there are in which the employe name is aman ?" )
+                    lower_self_phrase = ' '.join(word.lower() for word in self.phrase)
+                    if count_keyword in lower_self_phrase:
                         select_type.append('COUNT')
 
                 self.select_object.add_column(None, self.uniquify(select_type))
@@ -407,6 +411,11 @@ class WhereParser(Thread):
                     break
 
                 phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
+
+                # @todo multiple word matching from .lang
+                # for multiple words this type of single word offset matching wont work,
+                # till now greater than was working because greater was also present in the list which was getting matched
+                # to check try "more than" which is also from the same greater than list (e.g QUERY-> "how many name there are in emp in which the cityId is more than 3")
 
                 if phrase_keyword in self.count_keywords:  # before the column
                     self.count_keyword_offset.append(i)
