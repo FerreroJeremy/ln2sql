@@ -58,7 +58,11 @@ class SelectParser(Thread):
             if number_of_select_column == 0:
                 select_type = []
                 for count_keyword in self.count_keywords:
-                    if count_keyword in (word.lower() for word in self.phrase):
+                    # if count_keyword in (word.lower() for word in self.phrase):
+                    # so that it matches multiple words too in keyword synonymn in .lang rather than just single word for COUNT
+                    # (e.g. QUERY-> "how many city there are in which the employe name is aman ?" )
+                    lower_self_phrase = ' '.join(word.lower() for word in self.phrase)
+                    if count_keyword in lower_self_phrase:
                         select_type.append('COUNT')
 
                 self.select_object.add_column(None, self.uniquify(select_type))
@@ -392,6 +396,7 @@ class WhereParser(Thread):
         self.like_keyword_offset = []
 
         for phrase in self.phrases:
+            phrase_offset_string = ''
             for i in range(0, len(phrase)):
                 for table_name in self.database_dico:
                     columns = self.database_object.get_table_by_name(table_name).get_columns()
@@ -407,33 +412,68 @@ class WhereParser(Thread):
                     break
 
                 phrase_keyword = str(phrase[i]).lower()  # for robust keyword matching
+                phrase_offset_string += phrase_keyword + " "
 
-                if phrase_keyword in self.count_keywords:  # before the column
-                    self.count_keyword_offset.append(i)
-                if phrase_keyword in self.sum_keywords:  # before the column
-                    self.sum_keyword_offset.append(i)
-                if phrase_keyword in self.average_keywords:  # before the column
-                    self.average_keyword_offset.append(i)
-                if phrase_keyword in self.max_keywords:  # before the column
-                    self.max_keyword_offset.append(i)
-                if phrase_keyword in self.min_keywords:  # before the column
-                    self.min_keyword_offset.append(i)
-                if phrase_keyword in self.greater_keywords:  # after the column
-                    self.greater_keyword_offset.append(i)
-                if phrase_keyword in self.less_keywords:  # after the column
-                    self.less_keyword_offset.append(i)
-                if phrase_keyword in self.between_keywords:  # after the column
-                    self.between_keyword_offset.append(i)
-                if phrase_keyword in self.junction_keywords:  # after the column
-                    self.junction_keyword_offset.append(i)
-                if phrase_keyword in self.disjunction_keywords:  # after the column
-                    self.disjunction_keyword_offset.append(i)
-                # between the column and the equal, greater or less keyword
-                if phrase_keyword in self.negation_keywords:
-                    self.negation_keyword_offset.append(i)
+                for keyword in self.count_keywords:
+                    if keyword in phrase_offset_string :    # before the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.count_keyword_offset.append(i)
 
-                if phrase_keyword in self.like_keywords:  # after the column
-                    self.like_keyword_offset.append(i)
+                for keyword in self.sum_keywords:
+                    if keyword in phrase_offset_string :    # before the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.sum_keyword_offset.append(i)
+
+                for keyword in self.average_keywords:
+                    if keyword in phrase_offset_string :    # before the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.average_keyword_offset.append(i)
+
+                for keyword in self.max_keywords:
+                    if keyword in phrase_offset_string :    # before the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.max_keyword_offset.append(i)
+
+                for keyword in self.min_keywords:
+                    if keyword in phrase_offset_string :    # before the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.min_keyword_offset.append(i)
+
+                for keyword in self.greater_keywords:
+                    if keyword in phrase_offset_string :    # after the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.greater_keyword_offset.append(i)
+
+                for keyword in self.less_keywords:
+                    if keyword in phrase_offset_string :    # after the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.less_keyword_offset.append(i)
+
+                for keyword in self.between_keywords:
+                    if keyword in phrase_offset_string :    # after the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.between_keyword_offset.append(i)
+
+                for keyword in self.junction_keywords:
+                    if keyword in phrase_offset_string :    # after the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.junction_keyword_offset.append(i)
+
+                for keyword in self.disjunction_keywords:
+                    if keyword in phrase_offset_string :    # after the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.disjunction_keyword_offset.append(i)
+
+                for keyword in self.negation_keywords:
+                    if keyword in phrase_offset_string :
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.negation_keyword_offset.append(i)
+
+                for keyword in self.like_keywords:
+                    if keyword in phrase_offset_string :    # after the column
+                        if (phrase_offset_string.find(keyword) + len(keyword) + 1 == len(phrase_offset_string) ) :
+                            self.like_keyword_offset.append(i)
+
 
         for table_of_from in self.tables_of_from:
             where_object = Where()
