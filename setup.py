@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='ln2sql',
-    version='0.1',
+    version='0.2',
     url='https://github.com/FerreroJeremy/ln2sql',
     license='GNU',
     author='Jérémy Ferrero,Vikram Singh,Shashank Khare',
