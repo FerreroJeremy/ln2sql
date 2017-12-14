@@ -1,10 +1,11 @@
-import re
+import os, re
 
 from ln2sql.ln2sql import Ln2sql
 
-DATABASE_PATH = './ln2sql/database/'
-LANG_PATH = './ln2sql/lang/'
-THESAURUS_PATH = './ln2sql/thesaurus/'
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))  # Project directory.
+DATABASE_PATH = os.path.join(BASE_PATH, 'ln2sql/database_store/')
+LANG_PATH = os.path.join(BASE_PATH, 'ln2sql/lang_store/')
+THESAURUS_PATH = os.path.join(BASE_PATH, 'ln2sql/thesaurus_store/')
 
 
 def _clean_output(s):
