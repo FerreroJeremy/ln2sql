@@ -1,4 +1,5 @@
-import os, unicodedata
+import os
+import unicodedata
 
 
 class LangConfig:

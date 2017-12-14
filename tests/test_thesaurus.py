@@ -1,4 +1,5 @@
-import os, re
+import os
+import re
 
 from ln2sql.ln2sql import Ln2sql
 
@@ -96,5 +97,5 @@ def test_main():
 
     for test in thesaurusTest:
         assert _clean_output(Ln2sql(
-            test['database'], test['language'], test['input'], thesaurus_path=test['thesaurus']
-        ).get_query()) == test['output']
+            test['database'], test['language'], thesaurus_path=test['thesaurus']
+        ).get_query(test['input'])) == test['output']

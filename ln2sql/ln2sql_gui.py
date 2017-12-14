@@ -94,9 +94,9 @@ class App:
             if (str(self.database_path_label["text"]) != "No SQL dump selected...") and (
                         str(self.language_path_label["text"]) != "No configuration file selected...") and (
                         str(self.input_sentence_string.get()) != "Enter a sentence..."):
-                Ln2sql(self.database_path_label["text"], self.input_sentence_string.get(),
+                Ln2sql(self.database_path_label["text"],
                        self.language_path_label["text"], thesaurus_path=thesaurus_path,
-                       json_output_path='./output.json')
+                       json_output_path='./output.json').get_query(self.input_sentence_string.get())
                 showinfo('Result', 'Parsing done!')
             else:
                 showwarning('Warning', 'You must fill in all fields, please.')

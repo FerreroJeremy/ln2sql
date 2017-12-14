@@ -1,4 +1,5 @@
-import os, re
+import os
+import re
 
 import pytest
 
@@ -195,7 +196,7 @@ def test_main():
 
     for test in correctTest:
         assert _clean_output(
-            Ln2sql(test['database'], test['language'], test['input']).get_query()
+            Ln2sql(test['database'], test['language']).get_query(test['input'])
         ) == test['output']
 
 
@@ -231,4 +232,4 @@ def test_exception():
     ]
     for test in errorTest:
         with pytest.raises(Exception):
-            Ln2sql(test['database'], test['language'], test['input']).get_query()
+            Ln2sql(test['database'], test['language']).get_query(test['input'])

@@ -14,14 +14,13 @@ class Ln2sql:
             self,
             database_path,
             language_path,
-            input_sentence,
             json_output_path=None,
             thesaurus_path=None,
             stopwords_path=None,
     ):
 
         database = Database()
-        stopwordsFilter = None
+        self.stopwordsFilter = None
 
         if thesaurus_path:
             thesaurus = Thesaurus()
@@ -29,8 +28,8 @@ class Ln2sql:
             database.set_thesaurus(thesaurus)
 
         if stopwords_path:
-            stopwordsFilter = StopwordFilter()
-            stopwordsFilter.load(stopwords_path)
+            self.stopwordsFilter = StopwordFilter()
+            self.stopwordsFilter.load(stopwords_path)
 
         database.load(database_path)
         # database.print_me()
@@ -38,22 +37,24 @@ class Ln2sql:
         config = LangConfig()
         config.load(language_path)
 
-        parser = Parser(database, config)
+        self.parser = Parser(database, config)
+        self.json_output_path = json_output_path
 
-        queries = parser.parse_sentence(input_sentence, stopwordsFilter)
+    def get_query(self, input_sentence):
+        queries = self.parser.parse_sentence(input_sentence, self.stopwordsFilter)
 
-        if json_output_path:
+        if self.json_output_path:
             self.remove_json(json_output_path)
             for query in queries:
-                query.print_json(json_output_path)
+                query.print_json(self.json_output_path)
 
-        self.full_query = ''
+        full_query = ''
+
         for query in queries:
-            self.full_query += str(query)
+            full_query += str(query)
             print(query)
 
-    def get_query(self):
-        return self.full_query
+        return full_query
 
     def remove_json(self, filename="output.json"):
         if os.path.exists(filename):

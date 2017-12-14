@@ -1,4 +1,5 @@
-import os, re
+import os
+import re
 
 from .constants import Color
 from .table import Table
