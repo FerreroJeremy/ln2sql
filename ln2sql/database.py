@@ -1,3 +1,4 @@
+import os
 import re
 
 from .constants import Color
@@ -73,8 +74,14 @@ class Database:
     def add_table(self, table):
         self.tables.append(table)
 
+    @staticmethod
+    def _generate_path(path):
+        cwd = os.path.dirname(__file__)
+        filename = os.path.join(cwd, path)
+        return filename
+
     def load(self, path):
-        with open(path) as f:
+        with open(self._generate_path(path)) as f:
             content = f.read()
             tables_string = [p.split(';')[0] for p in content.split('CREATE') if ';' in p]
             for table_string in tables_string:

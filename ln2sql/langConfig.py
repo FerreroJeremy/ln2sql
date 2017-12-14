@@ -1,3 +1,4 @@
+import os
 import unicodedata
 
 
@@ -80,8 +81,14 @@ class LangConfig:
         nkfd_form = unicodedata.normalize('NFKD', str(string))
         return "".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
+    @staticmethod
+    def _generate_path(path):
+        cwd = os.path.dirname(__file__)
+        filename = os.path.join(cwd, path)
+        return filename
+
     def load(self, path):
-        with open(path) as f:
+        with open(self._generate_path(path)) as f:
             content = f.readlines()
             self.avg_keywords = list(
                 map(self.remove_accents, list(map(str.strip, content[0].replace(':', ',').split(",")))))

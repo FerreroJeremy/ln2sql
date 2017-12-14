@@ -1,10 +1,12 @@
+import os
 import re
 
 from ln2sql.ln2sql import Ln2sql
 
-DATABASE_PATH = './ln2sql/database/'
-LANG_PATH = './ln2sql/lang/'
-THESAURUS_PATH = './ln2sql/thesaurus/'
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))  # Project directory.
+DATABASE_PATH = os.path.join(BASE_PATH, 'ln2sql/database_store/')
+LANG_PATH = os.path.join(BASE_PATH, 'ln2sql/lang_store/')
+THESAURUS_PATH = os.path.join(BASE_PATH, 'ln2sql/thesaurus_store/')
 
 
 def _clean_output(s):
@@ -95,5 +97,5 @@ def test_main():
 
     for test in thesaurusTest:
         assert _clean_output(Ln2sql(
-            test['database'], test['language'], test['input'], thesaurus_path=test['thesaurus']
-        ).get_query()) == test['output']
+            test['database'], test['language'], thesaurus_path=test['thesaurus']
+        ).get_query(test['input'])) == test['output']
