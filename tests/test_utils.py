@@ -1,3 +1,5 @@
+import os
+
 from ln2sql.parser import Parser
 from ln2sql.stopwordFilter import StopwordFilter
 
