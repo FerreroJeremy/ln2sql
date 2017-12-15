@@ -4,7 +4,7 @@ from ln2sql.parser import Parser
 from ln2sql.stopwordFilter import StopwordFilter
 
 BASE_PATH = os.path.dirname(os.path.dirname(__file__))  # Project directory.
-THESAURUS_PATH = os.path.join(BASE_PATH, 'ln2sql/thesaurus_store/')
+STOPWORDS_PATH = os.path.join(BASE_PATH, 'ln2sql/stopwords/')
 
 
 def test_parser_sort_length():
@@ -18,13 +18,13 @@ def test_parser_sort_length_lexical():
     assert Parser.transformation_sort(input_list) == expected
 
 def test_english_stopword_filter():
-    StopwordFilter.load(THESAURUS_PATH + 'th_english.dat')
+    StopwordFilter.load(STOPWORDS_PATH + 'english.txt')
     input_sentence = 'The cat drinks milk when the dog enter in the room and his master look the TV of the hostel'
     expected = 'cat drinks milk dog enter room master tv hostel'
     assert StopwordFilter.filter(input_sentence) == expected
 
 def test_french_stopword_filter():
-    StopwordFilter.load(THESAURUS_PATH + 'th_french.dat')
+    StopwordFilter.load(STOPWORDS_PATH + 'french.txt')
     input_sentence = "Le chat boit du lait au moment où le chien rentre dans la maison et que son maître regarde la TV de l'hôtel"
     expected = 'chat boit lait chien rentre maison maitre regarde tv hotel'
     assert StopwordFilter.filter(input_sentence) == expected
