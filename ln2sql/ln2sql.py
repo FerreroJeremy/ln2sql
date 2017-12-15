@@ -44,7 +44,7 @@ class Ln2sql:
         queries = self.parser.parse_sentence(input_sentence, self.stopwordsFilter)
 
         if self.json_output_path:
-            self.remove_json(json_output_path)
+            self.remove_json(self.json_output_path)
             for query in queries:
                 query.print_json(self.json_output_path)
 
