@@ -3,6 +3,7 @@ import os
 from ln2sql.parser import Parser
 from ln2sql.stopwordFilter import StopwordFilter
 
+BASE_PATH = os.path.dirname(os.path.dirname(__file__))  # Project directory.
 THESAURUS_PATH = os.path.join(BASE_PATH, 'ln2sql/thesaurus_store/')
 
 
