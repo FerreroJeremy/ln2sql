@@ -1,3 +1,4 @@
+import os
 import re
 import unicodedata
 
@@ -25,8 +26,14 @@ class StopwordFilter:
         nkfd_form = unicodedata.normalize('NFKD', str(string))
         return "".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
+    @staticmethod
+    def _generate_path(path):
+        cwd = os.path.dirname(__file__)
+        filename = os.path.join(cwd, path)
+        return filename
+
     def load(self, path):
-        with open(path) as f:
+        with open(self._generate_path(path)) as f:
             lines = f.read().split('\n')
             for word in lines:
                 stopword = self.remove_accents(word).lower()

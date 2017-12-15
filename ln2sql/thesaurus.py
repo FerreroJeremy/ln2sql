@@ -1,3 +1,4 @@
+import os
 import unicodedata
 
 
@@ -25,8 +26,14 @@ class Thesaurus:
         nkfd_form = unicodedata.normalize('NFKD', str(string))
         return "".join([c for c in nkfd_form if not unicodedata.combining(c)])
 
+    @staticmethod
+    def _generate_path(path):
+        cwd = os.path.dirname(__file__)
+        filename = os.path.join(cwd, path)
+        return filename
+
     def load(self, path):
-        with open(path) as f:
+        with open(self._generate_path(path)) as f:
             content = f.readlines()
             # we jump content[0] because it is the encoding-type line : useless to parse
             for line_id in range(1, len(content)):

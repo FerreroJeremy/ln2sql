@@ -3,10 +3,9 @@ import re
 
 from ln2sql.ln2sql import Ln2sql
 
-BASE_PATH = os.path.dirname(os.path.dirname(__file__))  # Project directory.
-DATABASE_PATH = os.path.join(BASE_PATH, 'ln2sql/database_store/')
-LANG_PATH = os.path.join(BASE_PATH, 'ln2sql/lang_store/')
-THESAURUS_PATH = os.path.join(BASE_PATH, 'ln2sql/thesaurus_store/')
+DATABASE_PATH = './ln2sql/database/'
+LANG_PATH = './ln2sql/lang/'
+THESAURUS_PATH = './ln2sql/thesaurus/'
 
 
 def _clean_output(s):
@@ -18,8 +17,14 @@ def _clean_output(s):
     return s
 
 
-def test_main():
-    thesaurusTest = [
+def englishThesaurusUsing():
+    englishThesaurusUsing = [
+
+    ]
+
+
+def frenchThesaurusUsing():
+    frenchThesaurusUsing = [
         {
             'input': "Compte le nombre d'étudiant",
             'database': DATABASE_PATH + 'ecole.sql',
@@ -84,8 +89,11 @@ def test_main():
             'output': "SELECT COUNT(eleve.nom) FROM eleve WHERE eleve.nom = 'belle' AND eleve.age = '25';"
         }
     ]
+    for test in frenchThesaurusUsing:
+        assert _clean_output(Ln2sql(test['database'], test['language'], thesaurus_path=test['thesaurus']).get_query(test['input'])) == test['output']
 
-    thesaurusTest2 = [
+def notImplementedYet():
+    notImplementedYet = [
         {
             'input': "Quel est le cours où la pièce est B45",
             'database': DATABASE_PATH + 'ecole.sql',
@@ -94,8 +102,3 @@ def test_main():
             'output': "SELECT * FROM classe WHERE classe.salle = 'b45';"
         }
     ]
-
-    for test in thesaurusTest:
-        assert _clean_output(Ln2sql(
-            test['database'], test['language'], thesaurus_path=test['thesaurus']
-        ).get_query(test['input'])) == test['output']
