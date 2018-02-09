@@ -124,7 +124,7 @@ python3 -m ln2sql.main -d database_store/city.sql -l lang_store/english.csv -j o
 
 or by graphical interface by typing the following command:
 ```
-python ln2sql_gui.py
+python ln2sql/ln2sql_gui.py
 ```
 a window like the one below will appear:
 <p align="center"><img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/graphical_user_interface.png" width="600"></p>
