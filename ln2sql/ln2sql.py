@@ -7,7 +7,7 @@ from .langConfig import LangConfig
 from .parser import Parser
 from .stopwordFilter import StopwordFilter
 from .thesaurus import Thesaurus
-
+from .constants import Color, without_color
 
 class Ln2sql:
     def __init__(
@@ -17,7 +17,10 @@ class Ln2sql:
             json_output_path=None,
             thesaurus_path=None,
             stopwords_path=None,
+            color=False
     ):
+        if color == False:
+            without_color()
 
         database = Database()
         self.stopwordsFilter = None
