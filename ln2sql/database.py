@@ -109,19 +109,26 @@ class Database:
         table = Table()
         for line in lines:
             if 'TABLE' in line:
-                table_name = re.search(r'(?<=public.)\w+', line)
-                table.name = table_name.group(0)
-
-                # table_name = re.search("`(\w+)`", line)
-                # table.name = table_name.group(1)
+                if flag:
+                    table_name = re.search(r'(?<=public.)\w+', line)
+                    table.name = table_name.group(0)
+                else:
+                    table_name = re.search("`(\w+)`", line)
+                    table.name = table_name.group(1)
                 if self.thesaurus_object is not None:
                     table.equivalences = self.thesaurus_object.get_synonyms_of_a_word(table.name)
             elif 'PRIMARY KEY' in line:
-                primary_key_columns = re.findall("PRIMARY KEY \((\w+)\)", line)
+                if flag:
+                    primary_key_columns = re.findall("PRIMARY KEY \((\w+)\)", line)
+                else:
+                    primary_key_columns = re.findall("`(\w+)`", line)
                 for primary_key_column in primary_key_columns:
                     table.add_primary_key(primary_key_column)
             else:
-                column_name = re.search("(\w+)", line)
+                if flag:
+                    column_name = re.search("(\w+)", line)
+                else:
+                    column_name = re.search("`(\w+)`", line)
                 if column_name is not None:
                     column_type = self.predict_type(line)
                     if self.thesaurus_object is not None:
@@ -140,9 +147,9 @@ class Database:
                     table = self.get_table_by_name(table_name)
                     primary_key_columns = re.findall("PRIMARY KEY \((\w+)\)", line)
                 else:
-                    table_name = re.search("TABLE '(\w+)'", line).group(1)
-                    table = self.get_table_by_name(table_name)
-                    primary_key_columns = re.findall("PRIMARY KEY \('(\w+)'\)", line)
+                     table_name = re.search("TABLE `(\w+)`", line).group(1)
+                     table = self.get_table_by_name(table_name)
+                     primary_key_columns = re.findall("PRIMARY KEY \(`(\w+)`\)", line)
                 for primary_key_column in primary_key_columns:
                     table.add_primary_key(primary_key_column)
             elif 'FOREIGN KEY' in line:
