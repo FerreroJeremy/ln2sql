@@ -106,8 +106,7 @@ You can improve the stop word filtering using a stop word list. You can build yo
 You can directly use the python wrapper by the following way:
 ```
 Usage:
-	From the cloned source:
-	python3 -m ln2sql.main -d <path> -l <path> -i <input-sentence> [-j <path>] [-t <path>] [-s <path>]
+	python ln2sql.py -d <path> -l <path> -i <input-sentence> [-j <path>] [-t <path>] [-s <path>]
 Parameters:
 	-h					print this help message
 	-d <path>				path to sql dump file
@@ -119,12 +118,12 @@ Parameters:
 ```
 example of usage:
 ```
-python3 -m ln2sql.main -d database_store/city.sql -l lang_store/english.csv -j output.json -i "Count how many city there are with the name blob?"
+python ln2sql.py -d database/city.sql -l lang/english.csv -j output.json -i "Count how many city there are with the name blob?"
 ```
 
 or by graphical interface by typing the following command:
 ```
-python ln2sql/ln2sql_gui.py
+python ln2sql_gui.py
 ```
 a window like the one below will appear:
 <p align="center"><img src="https://raw.githubusercontent.com/FerreroJeremy/ln2sql/master/docs/graphical_user_interface.png" width="600"></p>

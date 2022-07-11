@@ -1,7 +1,5 @@
 clean:
 	rm -rf *.json *.pyc
 test:
-	pytest
+	python3 -m unittest test_unit
 	rm -rf *.json *.pyc
-lint:
-	pep8 .
