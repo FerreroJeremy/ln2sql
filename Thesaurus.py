@@ -30,7 +30,7 @@ class Thesaurus:
 
     def load(self, path):
         with open(path) as f:
-            content = f.readlines()
+            content = f.read().splitlines()
             # we jump content[0] because it is the encoding-type line : useless to parse
             for line_id in range(1,len(content)):
                 if '(' not in content[line_id]:

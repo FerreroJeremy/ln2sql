@@ -390,13 +390,12 @@ class WhereParser(Thread):
                 for table_name in self.database_dico:
                     columns = self.database_object.get_table_by_name(table_name).get_columns()
                     for column in columns:
-                        print("aaa")
-                        # if (phrase[i] == column.get_name()) or (phrase[i] in column.get_equivalences()):
-                        #     number_of_where_columns += 1
-                        #     columns_of_where.append(column.get_name())
-                        #     offset_of[phrase[i]] = i
-                        #     column_offset.append(i)
-                        #     break
+                        if (phrase[i] == column.get_name()) or (phrase[i] in column.get_equivalences()):
+                            number_of_where_columns += 1
+                            columns_of_where.append(column.get_name())
+                            offset_of[phrase[i]] = i
+                            column_offset.append(i)
+                            break
                     else:
                         continue
                     break

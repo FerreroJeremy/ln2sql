@@ -23,23 +23,23 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `city`
+-- Table structure for table `frase`
 --
 
-CREATE TABLE `city` (
+CREATE TABLE `frase` (
   `id` int(11) NOT NULL,
   `citynome` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `city`
+-- Dumping data for table `frase`
 --
 
-INSERT INTO `city` (`id`, `citynome`) VALUES
+INSERT INTO `frase` (`id`, `citynome`) VALUES
 (1, 'Igarapava'),
 (2, 'Hillwood'),
 (3, 'San Jose'),
-(4, 'The city'),
+(4, 'The frase'),
 (5, 'South Park');
 
 -- --------------------------------------------------------
@@ -76,9 +76,9 @@ INSERT INTO `emp` (`id`, `nome`, `cityId`, `score`) VALUES
 --
 
 --
--- Indexes for table `city`
+-- Indexes for table `frase`
 --
-ALTER TABLE `city`
+ALTER TABLE `frase`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id` (`id`);
 
@@ -106,7 +106,7 @@ ALTER TABLE `emp`
 -- Constraints for table `emp`
 --
 ALTER TABLE `emp`
-  ADD CONSTRAINT `emp_ibfk_1` FOREIGN KEY (`cityId`) REFERENCES `city` (`id`);
+  ADD CONSTRAINT `emp_ibfk_1` FOREIGN KEY (`cityId`) REFERENCES `frase` (`id`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
