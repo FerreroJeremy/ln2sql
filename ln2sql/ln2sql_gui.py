@@ -3,7 +3,6 @@ import tkinter.filedialog
 from tkinter import *
 from tkinter.messagebox import *
 
-from .ln2sql import Ln2sql
 
 
 class App:
